@@ -12,7 +12,7 @@ class UserSerializer(ModelSerializer):
 class FilteredUserSerializer(UserSerializer):
     class Meta(UserSerializer.Meta):
         fields = ['username', 'email', 'id',
-                  'message', 'points', 'hits', 'misses']
+                  'message', 'points', 'hits', 'misses', 'tips_used']
 
 
 class SlideSerializer(ModelSerializer):

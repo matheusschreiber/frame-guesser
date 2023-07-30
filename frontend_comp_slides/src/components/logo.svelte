@@ -1,1 +1,1 @@
-<a href="/home"><h1>COMP slides</h1></a>
+<a href="/"><img class="w-[400px]" src="logo.png" alt="logo"/></a>

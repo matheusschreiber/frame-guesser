@@ -26,7 +26,7 @@ export default {
     },
     colors: {
       primary: '#40128B',
-      secondary: '#9336B4',
+      secondary: '#432475',
       terciary: '#1F0C3E',
       quaternary: '#432475',
       whitish: '#EFEFEF',
@@ -35,6 +35,7 @@ export default {
       green: '#00EC09',
       yellow: '#EAD83A',
       red: '#EF4343',
+      pink: '#DD58D6',
       blue: '#4369EF',
       cyan: '#00DEEC',
     },

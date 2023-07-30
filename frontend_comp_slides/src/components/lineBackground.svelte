@@ -26,6 +26,18 @@
 </div>
 {/if}
 
+{#if variant==3}
+<div class="flex w-fill justify-center mb-[-1000px] mt-[-50px] ml-[-800px]">
+  <svg xmlns="http://www.w3.org/2000/svg" width="281" height="1077" viewBox="0 0 281 1077" fill="none">
+    <path d="M205.667 1075.5C231.411 1020.98 260.236 934.405 272.62 836" stroke="#EF4343" stroke-width="3" stroke-linecap="round"/>
+    <path d="M171.167 404.5C275.87 535.26 290.463 700.297 272.041 840.5" stroke="#2BEFFC" stroke-width="3" stroke-linecap="round"/>
+    <path d="M171.167 404.5C114.052 333.172 74.9503 270.324 48.8574 216.5" stroke="#EAD83A" stroke-width="3" stroke-linecap="round"/>
+    <path d="M51.5536 222C24.6352 167.689 10.8356 122.343 5.18602 86.5" stroke="#DD58D6" stroke-width="3" stroke-linecap="round"/>
+    <path d="M10.1671 2C2.26996 18.6498 -1.85411 50.4802 6.9308 96.5" stroke="#43EF4A" stroke-width="3" stroke-linecap="round"/>
+  </svg>
+</div>
+{/if}
+
 
 
 

@@ -96,7 +96,7 @@
       </div>
     </div>
 
-    <Button text="COMEÇAR" link="/register" />
+    <Button text="JOGAR" link="/register" />
   </section>
 
   <section class="my-8 flex items-center pt-16 w-full justify-around">

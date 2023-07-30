@@ -19,7 +19,7 @@
 
     <div>
       <p>Use seu nome mesmo, ou aproveite para esbanjar a criatividade</p>
-      <input type="text" placeholder="NOME" name="username"/>
+      <input type="text" placeholder="NOME" name="username" max="30"/>
       <input type="password" placeholder="SENHA" name="password"/>
       <p>Use sua senha mais segura (ex.: senha123)</p>
       <Button text="COMEÇAR" link="/session"/>

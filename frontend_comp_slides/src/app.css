@@ -21,3 +21,47 @@ body {
   background-image: url('backgrounds/page_background.svg');
   background-size: cover;
 }
+
+/* vertical scroll */
+
+/* width */
+#new-scroll::-webkit-scrollbar {
+  width: 2px;
+}
+
+/* Track */
+#new-scroll::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 10px;
+}
+
+/* Handle */
+#new-scroll::-webkit-scrollbar-thumb {
+  background: #EAD83A;
+  border-radius: 5px;
+}
+
+/* Handle on hover */
+#new-scroll::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* horizontal scroll */
+
+/* width */
+#horizontal-scroll-1::-webkit-scrollbar {width: 1px;}
+/* Track */
+#horizontal-scroll-1::-webkit-scrollbar-track {background: transparent;}
+/* Handle */
+#horizontal-scroll-1::-webkit-scrollbar-thumb {background: transparent;}
+/* Handle on hover */
+#horizontal-scroll-1::-webkit-scrollbar-thumb:hover {background: transparent;}
+
+/* width */
+#horizontal-scroll-2::-webkit-scrollbar {width: 1px;}
+/* Track */
+#horizontal-scroll-2::-webkit-scrollbar-track {background: transparent;}
+/* Handle */
+#horizontal-scroll-2::-webkit-scrollbar-thumb {background: transparent;}
+/* Handle on hover */
+#horizontal-scroll-2::-webkit-scrollbar-thumb:hover {background: transparent;}

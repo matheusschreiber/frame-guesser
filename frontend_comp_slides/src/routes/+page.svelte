@@ -1,13 +1,68 @@
-<script>
+<script lang='ts'>
+  import { slide } from "svelte/transition";
   import Button from "../components/button.svelte";
   import Footer from "../components/footer.svelte";
   import LineBackground from "../components/lineBackground.svelte";
   import Logo from "../components/logo.svelte";
+  import { onMount } from 'svelte';
+  import FancyDisciplines from "../components/fancyDisciplines.svelte";
+
+  function loadHorizontlDrag(id:number){
+    const slider = document.getElementById(`horizontal-scroll-${id}`) as any;
+    let isDown = false;
+    let startX = 0;
+    let scrollLeft = 0;
+    console.log(slider)
+
+    slider?.addEventListener('mousedown', (e:any) => {
+      isDown = true;
+      startX = e.pageX - slider?.offsetLeft;
+      scrollLeft = slider?.scrollLeft;
+    });
+    slider?.addEventListener('mouseleave', () => {
+      isDown = false;
+    });
+    slider?.addEventListener('mouseup', () => {
+      isDown = false;
+    });
+    slider?.addEventListener('mousemove', (e:any) => {
+      if(!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - slider?.offsetLeft;
+      const walk = (x - startX); //scroll-fast
+      slider.scrollLeft = scrollLeft - walk;
+    });
+
+    let speed = 0
+    let acceleration = .01
+    let speedLimit = 1
+    let offset = slider.clientWidth*.05
+
+    if (id==1) slider.scrollLeft = slider.clientWidth
+
+    setInterval(()=>{
+
+      if (slider.scrollLeft < offset && speed<speedLimit) speed+=acceleration
+      else if ((slider.scrollLeft>slider.clientWidth-offset*10 || speed<0) && speed>-speedLimit) speed-=acceleration
+
+      
+      slider.scrollLeft += speed
+
+      console.log({width: slider.clientWidth, scroll: slider.scrollLeft, speed: speed})
+    }, 10)
+  }
+ 
+  onMount(() => {
+    loadHorizontlDrag(1)
+    loadHorizontlDrag(2)
+  });
+
+  
 </script>
 
 <main>
   <header class="flex w-full justify-around items-center my-32">
-    <h1 class="text-6xl font-bold text-terciary w-[400px]">Estrutura de Dados II<span class="text-green">_</span></h1>
+    <FancyDisciplines />
     <Logo />
   </header>
   <p class="text-gray font-fredoka w-fit mx-auto text-lg">Você conhece mesmo os slides dos seus professores?</p>
@@ -53,19 +108,16 @@
         faculade <u>sem fazer finais...</u>
       </p>
     </div>
-    <div>
-      <table>
+    <div class="bg-rankings bg-center bg-contain bg-no-repeat py-12 px-8 w-[600px] h-[450px] flex justify-center items-center">
+      <table id="new-scroll" class="w-[80%] text-center ml-8 h-[200px] table-cell overflow-scroll overflow-x-hidden">
         <tbody>
-          <tr>
-            <th>#</th>
-            <th>Nome</th>
-            <th>Pontuação</th>
-          </tr>
-          {#each [1, 2, 3, 4] as item}
-            <tr>
-              <td>{item}</td>
-              <td>JOAOZINHO GAMEPLAYS</td>
-              <td>1200 pts</td>
+          {#each [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as item, i}
+            <tr class="h-10">
+              <td class="{i!=0?'invisible':"visible"} w-8"><img class="mx-auto" src="icons/crown.svg" alt="crown icon"/></td>
+              <td class="font-bold text-gray text-[8pt]">{(item + "").padStart(2, "0")}</td>
+              <td class="font-bold text-terciary text-left pl-2 w-64">joaozinho gameplays yes lesgo</td>
+              <td class="font-bold text-terciary">1200 pts</td>
+              <td class="{i!=0?'invisible':"visible"} w-8"><img class="mx-auto" src="icons/crown.svg" alt="crown icon"/></td>
             </tr>
           {/each}
         </tbody>
@@ -74,15 +126,20 @@
   </section>
 
   <section class="my-8">
-    <h5>DEIXE SEU RECADO</h5>
-    <div class="flex">
-      {#each [1,2,3,4,5] as item}
-      <div>
-        <h3>JOAZINHO GAMEPLAYS</h3>
-        <p>Esquece fio sou muito bom, nem adianta tentar mais</p>
+    <h5 class="mx-auto w-fit text-red font-bold text-sm mb-4">DEIXE SEU RECADO</h5>
+    {#each [1,2] as row }
+      <div id="horizontal-scroll-{row}" class="flex overflow-scroll overflow-x-scroll overflow-y-hidden gap-8 cursor-move">
+        {#each [1,2,3,4,5] as item}
+        <div class="px-8 py-4 flex bg-[#FFF] shadow-medium rounded-xl gap-4 my-4">
+          <img src="icons/user.svg" alt="user icon"/>
+          <div class="w-[300px]">
+            <h3 class="w-full text-sm font-bold text-terciary">JOAZINHO GAMEPLAYS</h3>
+            <p class="w-full font-fredoka text-gray">Esquece fio sou muito bom, nem adianta tentar mais</p>
+          </div>
+        </div>
+        {/each}
       </div>
-      {/each}
-    </div>
+    {/each}
   </section>
 
   <Footer />

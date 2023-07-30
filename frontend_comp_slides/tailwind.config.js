@@ -15,11 +15,13 @@ export default {
     },
     extend: {
       boxShadow: {
+        small: ' 0px 1px 27px 0px rgba(0, 0, 0, 0.15)',
         medium: '0px 0px 22px 0px rgba(0, 0, 0, 0.35)',
         heavy: '0px 0px 31px 0px rgba(0, 0, 0, 0.25)'
       },
       backgroundImage: {
         purple: 'linear-gradient(180deg, #351D5B 0%, #2D1652 100%)',
+        rankings: 'url(backgrounds/rankings_background.svg)'
       }
     },
     colors: {
@@ -29,6 +31,7 @@ export default {
       quaternary: '#432475',
       whitish: '#EFEFEF',
       gray: '#797979',
+      lightgray: '#D9D9D9',
       green: '#00EC09',
       yellow: '#EAD83A',
       red: '#EF4343',

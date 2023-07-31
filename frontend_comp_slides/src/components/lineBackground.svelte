@@ -38,6 +38,22 @@
 </div>
 {/if}
 
+{#if variant==4}
+<div class="flex w-fill justify-center mb-[-1600px] mt-[-50px] ml-[-1000px]">
+  <svg xmlns="http://www.w3.org/2000/svg" width="325" height="1667" viewBox="0 0 325 1667" fill="none">
+    <path d="M8.09766 1330.5C19.3344 1395.5 70.9998 1540 22.9998 1665.5" stroke="#2BEFFC" stroke-width="3" stroke-linecap="round"/>
+    <path d="M83.5985 938.5C83.5985 938.5 -24.4023 1142.5 8.09782 1330.5" stroke="#DD58D6" stroke-width="3" stroke-linecap="round"/>
+    <path d="M322.599 2C309.429 49.0258 298.465 92.1678 289.24 132" stroke="#DD58D6" stroke-width="3" stroke-linecap="round"/>
+    <path d="M291.812 121C269.647 214.896 257.086 290.667 248.281 355.5" stroke="#2BEFFC" stroke-width="3" stroke-linecap="round"/>
+    <path d="M248.966 350.5C235.057 451.555 230.477 526.051 213.654 600.5" stroke="#EAD83A" stroke-width="3" stroke-linecap="round"/>
+    <path d="M183.099 699.5C197.183 664.001 206.949 630.791 214.325 597.5" stroke="#EF4343" stroke-width="3" stroke-linecap="round"/>
+    <path d="M183.099 699.5C124.699 846.7 92.432 920.167 83.5986 938.5" stroke="#43EF4A" stroke-width="3" stroke-linecap="round"/>
+    </svg>
+</div>
+{/if}
+
+
+
 
 
 

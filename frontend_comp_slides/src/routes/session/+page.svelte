@@ -1,4 +1,5 @@
 <script lang='ts'>
+  import Swal from "sweetalert2"
   import Footer from "../../components/footer.svelte";
   import LineBackground from "../../components/lineBackground.svelte";
   import Logo from "../../components/logo.svelte";
@@ -28,6 +29,28 @@
 
   function handleNextSlide() {
     if (currentSlide==slidesAmount) goto(`/results`, { replaceState:false }) 
+
+    if (Math.random()>.5) {
+      Swal.fire({
+        title: '<strong>BOA! RESOSTA CERTA!</strong>',
+        icon: 'success',
+        html: 'Sabe muito!',
+        showConfirmButton: false,
+      }).then(()=>{
+        selected=null          
+      })
+    } else {
+      Swal.fire({
+        title: '<strong>OPS! MAIS SORTE NA PRÓXIMA</strong>',
+        icon: 'error',
+        html: 'Alguém andou faltando algumas aulas',
+        showConfirmButton: false,
+      }).then(()=>{
+        selected=null        
+      })
+    }
+
+    
 
     currentSlide++
   }

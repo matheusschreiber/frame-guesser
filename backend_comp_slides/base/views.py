@@ -9,11 +9,10 @@ from django.http import JsonResponse
 from django.contrib.auth import authenticate, login, logout
 
 from .serializers import FilteredUserSerializer, UserSerializer, SlideSerializer
-from .models import User, Slide
+from .models import User, Slide, SlideImages
+from django.db.models import Q
 
 from random import choice
-
-# user views
 
 
 @api_view(['GET'])
@@ -28,6 +27,8 @@ def apiOverview(request):
 
     return JsonResponse(api_overview, safe=False)
 
+
+# user views
 
 @api_view(['GET'])
 def getUsers(request):
@@ -46,7 +47,7 @@ def loginUser(request):
 @api_view(['POST'])
 def addUser(request):
 
-    request.data['username'] = request.data['username'].strip().lower()
+    request.data['username'] = request.data['username'].strip().lower() # FIXME: tirar isso
     user = UserSerializer(data=request.data)
 
     if User.objects.filter(**request.data).exists():
@@ -93,14 +94,14 @@ def updateUserStats(request):
     session = {
         'hits': request.data['hits'],
         'misses': request.data['misses'],
-        'tips_used': request.data['hits'],
+        'hints_used': request.data['hits'],
     }
 
-    session['points'] = session['hits']*10 - session['tips_used']
+    session['points'] = session['hits']*10 - session['hints_used']
 
     logged_user.hits += session['hits']
     logged_user.misses += session['misses']
-    logged_user.tips_used += session['hits']
+    logged_user.hints_used += session['hits']
     logged_user.points += session['points']
 
     logged_user.save()
@@ -117,8 +118,25 @@ def getRandomSlide(request):
     slides = Slide.objects.all()
 
     if len(slides) > 0:
-        slide = SlideSerializer(choice(slides))
-        return Response(data=slide.data, status=status.HTTP_200_OK)
+        # slide = choice(slides)
+        slide = Slide.objects.get(prof_discipline="Matheus Schreiber | Tecnicas de Busca") # FIXME: provisorio
+
+        if not slide:
+            return Response(data={'error': "No slides registered"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+        first_hint = SlideImages.objects.get(Q(slide=slide) & Q(hint_index=0))
+
+        if not first_hint:
+            return Response(data={'error': "No hints for this slide", 'slide': slide.prof_discipline}, status=status.HTTP_400_BAD_REQUEST)
+        
+        response = {
+            "slide_provisory": slide.prof_discipline,
+            "slide_id": first_hint.slide.id,
+            "slide_image": "/static/" + first_hint.image.name,
+        }
+
+        return Response(data=response, status=status.HTTP_200_OK)
     else:
         return Response(data=[], status=status.HTTP_200_OK)
 
@@ -132,16 +150,37 @@ def updateSlideStats(request, pk):
     session = {
         'hits': request.data['hits'],
         'misses': request.data['misses'],
-        'tips_used': request.data['hits'],
+        'hints_used': request.data['hits'],
     }
 
     slide.hits += session['hits']
     slide.misses += session['misses']
-    slide.tips_used += session['hits']
+    slide.hints_used += session['hits']
 
     slide.save()
 
     return Response(status=status.HTTP_200_OK)
 
 
-# feature de pegar a próxima dica de slide
+@api_view(['POST'])
+@authentication_classes([BasicAuthentication])
+@permission_classes([IsAuthenticated])
+def getHint(request, pk):
+    current_hint = SlideImages.objects.get(id=pk)
+    next_hint = SlideImages.objects.filter(
+        Q(slide=current_hint.slide) &
+        Q(hint_index=current_hint.hint_index+1)
+    )
+
+    if not next_hint:
+        return Response(data={'error': "No hints left"}, status=status.HTTP_400_BAD_REQUEST)
+    else:
+
+        #TODO: adicionar update de status do usuario aqui (ja que ele usou uma dica)
+
+        response = {
+            "slide_id": next_hint[0].id,
+            "slide_image": next_hint[0].image,
+        }
+
+        return Response(data=response, status=status.HTTP_200_OK)

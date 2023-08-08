@@ -34,7 +34,7 @@ class Slide(models.Model):
     created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.prof_discipline
+        return str(self.id) + " | " + self.prof_discipline
 
 
 class SlideImage(models.Model):
@@ -46,7 +46,7 @@ class SlideImage(models.Model):
     created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.slide.prof_discipline + " | " + str(self.hint_index)
+        return str(self.hint_index) + " | " + self.slide.prof_discipline
 
 
 class Run(models.Model):
@@ -60,3 +60,6 @@ class Run(models.Model):
 
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return str(self.id) + " | " + str(self.id_user)

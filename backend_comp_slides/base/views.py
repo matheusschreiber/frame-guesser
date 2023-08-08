@@ -78,157 +78,144 @@ def addMessageToUser(request, pk):
 @api_view(['GET'])
 @authentication_classes([BasicAuthentication])
 @permission_classes([IsAuthenticated])
-def getRandomSlide(request, pk):
+def getRandomSlide(request, pk=None):
+    try:
+        slides = Slide.objects.all()
+        slide = choice(slides)
 
-    # slides = Slide.objects.all()
-    # slide = choice(slides)
+        first_hint = SlideImage.objects.get(Q(slide=slide) & Q(hint_index=0))
 
-    slide = Slide.objects.get(
-        prof_discipline="Matheus Schreiber | Tecnicas de Busca")  # FIXME: provisorio
+        response = {
+            "slide_image_path": "/static/" + first_hint.image.name,
+        }
 
-    if not slide:
-        return Response(data={'error': "No slides registered"}, status=status.HTTP_400_BAD_REQUEST)
+        # if no run id is passed, then its the first slide
+        if not pk:
+            run = RunSerializer(data={
+                "id_user": request.user.id,
+                "current_hint": first_hint.id
+            })
 
-    first_hint = SlideImage.objects.get(Q(slide=slide) & Q(hint_index=0))
+            if not run.is_valid():
+                return Response(data={'error': "Invalid run creation"}, status=status.HTTP_400_BAD_REQUEST)
 
-    if not first_hint:
-        return Response(data={'error': "No hints for this slide"}, status=status.HTTP_400_BAD_REQUEST)
+            run = run.save()
+            response['run_id'] = run.id
 
-    response = {
-        "slide_provisory": slide.prof_discipline,  # FIXME: provisorio
-        "slide_image_path": "/static/" + first_hint.image.name,
-    }
+        # if there is a run id, then append the new slide to it
+        else:
+            run = Run.objects.get(id=pk)
 
-    # if no run id is passed, then its the first slide
-    if not pk:
-        run = RunSerializer(data={
-            "id_user": request.user.id,
-            "current_hint": first_hint.id
-        })
+            if run.slides_left == 0:
+                return Response(data={'error': "Run finished"}, status=status.HTTP_400_BAD_REQUEST)
 
-        if not run.is_valid():
-            return Response(data={'error': "Invalid run creation"}, status=status.HTTP_400_BAD_REQUEST)
+            run.current_hint = first_hint.id
+            run.slides_left -= 1
+            run.save()
 
-        run.save()
-        response['run_id'] = run.id
+            response['run_id'] = run.id
 
-    # if there is a run id, then append the new slide to it
-    else:
-        run = Run.objects.get(id=pk)
+        return Response(data=response, status=status.HTTP_200_OK)
 
-        if not run:
-            return Response(data={'error': "Invalid run"}, status=status.HTTP_400_BAD_REQUEST)
+    except Run.DoesNotExist:
+        return Response(data={'error': "Invalid run"}, status=status.HTTP_400_BAD_REQUEST)
 
-        if run.slides_left == 0:
-            return Response(data={'error': "Run finished"}, status=status.HTTP_400_BAD_REQUEST)
+    except SlideImage.DoesNotExist:
+        return Response(data={'error': "Invalid hint"}, status=status.HTTP_400_BAD_REQUEST)
 
-        run.current_hint = first_hint.id
-        run.slides_left -= 1
-        run.save()
-
-        response['run_id'] = run.id
-
-    return Response(data=response, status=status.HTTP_200_OK)
+    except Slide.DoesNotExist:
+        return Response(data={'error': "Invalid slide"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['POST'])
 @authentication_classes([BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def getHint(request, pk):
-    run = Run.objects.get(id=pk)
+    try:
+        run = Run.objects.get(id=pk)
+        user = User.objects.get(username=request.user.username)
 
-    if not run:
-        return Response(data={'error': "Invalid run"}, status=status.HTTP_400_BAD_REQUEST)
+        if user.username != request.user.username:
+            raise User.DoesNotExist
 
-    user = User.objects.get(username=request.user.username)
+        current_hint = SlideImage.objects.get(id=run.current_hint.id)
 
-    if not user or user.username != request.user.username:
+        next_hint = SlideImage.objects.get(
+            Q(slide=current_hint.slide) &
+            Q(hint_index=current_hint.hint_index+1)
+        )
+
+        user.hints_used += 1
+        user.save()
+
+        run.hints_used += 1
+        run.current_hint = next_hint
+        run.save()
+
+        slide = Slide.objects.get(id=current_hint.slide.id)
+        slide.hints_used += 1
+        slide.save()
+
+        response = {
+            "slide_image_path": "/static/" + next_hint.image.name,
+        }
+
+        return Response(data=response, status=status.HTTP_200_OK)
+
+    except User.DoesNotExist:
         return Response(data={'error': "Invalid user"}, status=status.HTTP_400_BAD_REQUEST)
 
-    current_hint = SlideImage.objects.get(id=run.current_hint.id)
+    except Run.DoesNotExist:
+        return Response(data={'error': "Invalid run"}, status=status.HTTP_400_BAD_REQUEST)
 
-    if not current_hint:
-        return Response(data={'error': "Invalid slide image"}, status=status.HTTP_400_BAD_REQUEST)
+    except SlideImage.DoesNotExist:
+        return Response(data={'error': "Invalid hint"}, status=status.HTTP_400_BAD_REQUEST)
 
-    next_hint = SlideImage.objects.get(
-        Q(slide=current_hint.slide) &
-        Q(hint_index=current_hint.hint_index+1)
-    )
-
-    if not next_hint:
-        return Response(data={'error': "No hints left"}, status=status.HTTP_400_BAD_REQUEST)
-
-    user.hints_used += 1
-    user.save()
-
-    run.hints_used += 1
-    run.save()
-
-    slide = Slide.objects.get(id=current_hint.slide.id)
-
-    if not slide:
+    except Slide.DoesNotExist:
         return Response(data={'error': "Invalid slide"}, status=status.HTTP_400_BAD_REQUEST)
-
-    slide.hints_used += 1
-    slide.save()
-
-    response = {
-        "slide_image_path": "/static/" + next_hint.image.name,
-    }
-
-    return Response(data=response, status=status.HTTP_200_OK)
 
 
 @api_view(['PUT'])
 @authentication_classes([BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def getAnswerSlide(request, pk):
-    run = Run.objects.get(id=pk)
+    try:
 
-    if not run:
-        return Response(data={'error': "Invalid run"}, status=status.HTTP_400_BAD_REQUEST)
+        run = Run.objects.get(id=pk)
+        user = User.objects.get(username=request.user.username)
+        current_hint = SlideImage.objects.get(id=run.current_hint.id)
+        slide = Slide.objects.get(id=current_hint.slide.id)
+        slide_final = SlideImage.objects.get(
+            Q(slide=slide) &
+            Q(hint_index=slide.hints_amount-1)
+        )
 
-    user = User.objects.get(username=request.user.username)
+        answer = False
 
-    if not user or user.username != request.user.username:
+        if slide.prof_discipline == request.data['answer']:
+            slide.hits += 1
+            user.hits += 1
+            run.hits += 1
+            answer = True
+        else:
+            slide.misses += 1
+            user.misses += 1
+            run.misses += 1
+
+        slide.save()
+        user.save()
+        run.save()
+
+        return Response(data={"answer": answer, "slide_image_path": "/static/" + slide_final.image.name, }, status=status.HTTP_200_OK)
+
+    except User.DoesNotExist:
         return Response(data={'error': "Invalid user"}, status=status.HTTP_400_BAD_REQUEST)
 
-    current_hint = SlideImage.objects.get(id=run.current_hint)
+    except Run.DoesNotExist:
+        return Response(data={'error': "Invalid run"}, status=status.HTTP_400_BAD_REQUEST)
 
-    if not current_hint:
-        return Response(data={'error': "Invalid slide image"}, status=status.HTTP_400_BAD_REQUEST)
+    except SlideImage.DoesNotExist:
+        return Response(data={'error': "Invalid hint"}, status=status.HTTP_400_BAD_REQUEST)
 
-    slide = Slide.objects.get(id=current_hint.slide.id)
-
-    if not slide:
+    except Slide.DoesNotExist:
         return Response(data={'error': "Invalid slide"}, status=status.HTTP_400_BAD_REQUEST)
-
-    slide_final = SlideImage.objects.get(
-        Q(slide=slide) &
-        Q(hint_index=slide.hints_amount-1)
-    )
-
-    if not slide_final:
-        return Response(data={'error': "Invalid final slide"}, status=status.HTTP_400_BAD_REQUEST)
-
-    if slide.prof_discipline == request.data['answer']:
-        slide.hits += 1
-        user.hits += 1
-        run.hits += 1
-
-        slide.save()
-        user.save()
-        run.save()
-
-        return Response(data={"answer": True, "slide_image_path": slide_final}, status=status.HTTP_200_OK)
-
-    else:
-        slide.misses += 1
-        user.misses += 1
-        run.misses += 1
-
-        slide.save()
-        user.save()
-        run.save()
-
-        return Response(data={"answer": False, "slide_image_path": slide_final}, status=status.HTTP_200_OK)

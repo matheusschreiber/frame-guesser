@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from .views import apiOverview, addUser, getUsers, \
-    addMessageToUser, loginUser, getRandomSlide, updateUserStats, updateSlideStats
+    addMessageToUser, loginUser, getRandomSlide, updateUserStats, getHint
 
 urlpatterns = [
     path("", apiOverview),
@@ -10,6 +10,7 @@ urlpatterns = [
     path("user/message/<str:pk>", addMessageToUser, name='add-message-user'),
     path("user/login/", loginUser, name="login-user"),
     path("user/update/", updateUserStats, name="update-stats-user"),
-    path("slide/random", getRandomSlide, name="random-slide"),
-    path("slide/update/<str:pk>", updateSlideStats, name="update-stats-slide")
+    path("slide/random/<str:pk>", getRandomSlide, name="random-slide"),
+    path("slide/hint/<str:pk>", getHint, name="hint-slide")
+
 ]

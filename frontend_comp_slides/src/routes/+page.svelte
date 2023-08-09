@@ -1,11 +1,20 @@
 <script lang="ts">
-  import { slide } from "svelte/transition";
   import Button from "../components/button.svelte";
   import Footer from "../components/footer.svelte";
   import LineBackground from "../components/lineBackground.svelte";
   import Logo from "../components/logo.svelte";
   import { onMount } from "svelte";
   import FancyDisciplines from "../components/fancyDisciplines.svelte";
+  import { goto } from "$app/navigation";
+  import { api } from "../services/api";
+
+  type User = {
+    username?: string;
+    points?: number;
+    message?: string;
+  };
+
+  let users: User[] = [{}];
 
   function loadHorizontlDrag(id: number) {
     const slider = document.getElementById(`horizontal-scroll-${id}`) as any;
@@ -34,11 +43,12 @@
     });
 
     let speed = 0;
-    let acceleration = 0.01;
+    let acceleration = 0.05;
     let speedLimit = 1;
     let offset = slider.clientWidth * 0.05;
+    let framerate = 20;
 
-    if (id == 1) slider.scrollLeft = slider.clientWidth;
+    if (id == 1) speedLimit = 2;
 
     setInterval(() => {
       if (slider.scrollLeft < offset && speed < speedLimit)
@@ -56,10 +66,17 @@
         scroll: slider.scrollLeft,
         speed: speed,
       });
-    }, 10);
+    }, framerate);
+  }
+
+  async function fetchUsers() {
+    const response = await api.get("user/list");
+    users = response.data;
   }
 
   onMount(() => {
+    fetchUsers();
+
     loadHorizontlDrag(1);
     loadHorizontlDrag(2);
   });
@@ -74,7 +91,7 @@
     Você conhece mesmo os slides dos seus professores?
   </p>
   <section
-    class="my-8 p-32 bg-purple m-16 rounded-xl shadow-medium text-center overflow-hidden"
+    class="my-8 p-16 pt-32 bg-purple m-32 rounded-xl shadow-medium text-center overflow-hidden"
   >
     <LineBackground />
     <h5 class="mx-auto w-fit text-cyan font-bold text-sm mb-4">COMO JOGAR</h5>
@@ -127,10 +144,15 @@
       </div>
     </div>
 
-    <Button text="JOGAR" func={() => {}} />
+    <Button
+      text="JOGAR"
+      func={() => {
+        goto("/login");
+      }}
+    />
   </section>
 
-  <section class="my-8 flex items-center pt-16 w-full justify-around">
+  <section class="my-8 flex items-center py-10 px-32 w-full justify-around">
     <div>
       <h5 class="w-fit text-blue font-bold text-sm">DESTAQUE-SE</h5>
       <h1 class="font-bold text-terciary text-5xl mb-4">Ranking</h1>
@@ -147,7 +169,7 @@
         class="w-[80%] text-center ml-8 h-[200px] table-cell overflow-scroll overflow-x-hidden"
       >
         <tbody>
-          {#each [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as item, i}
+          {#each users as user, i}
             <tr class="h-10">
               <td class="{i != 0 ? 'invisible' : 'visible'} w-8"
                 ><img
@@ -157,13 +179,13 @@
                 /></td
               >
               <td class="font-bold text-gray text-[8pt]"
-                >{(item + "").padStart(2, "0")}</td
+                >{(i + "").padStart(2, "0")}</td
               >
               <td class="font-bold text-terciary text-left pl-2 w-64"
-                >joaozinho gameplays yes lesgo</td
+                >{user.username}</td
               >
-              <td class="font-bold text-terciary">1200 pts</td>
-              <td class="{i != 0 ? 'invisible' : 'visible'} w-8"
+              <td class="font-bold text-terciary">{user.points} pts</td>
+              <td class="{user.points != 0 ? 'invisible' : 'visible'} w-8"
                 ><img
                   class="mx-auto"
                   src="icons/crown.svg"
@@ -186,17 +208,20 @@
         id="horizontal-scroll-{row}"
         class="flex overflow-scroll overflow-x-scroll overflow-y-hidden gap-8 cursor-move"
       >
-        {#each [1, 2, 3, 4, 5] as item}
+        {#each row == 1 ? users : users.reverse() as user}
           <div
-            class="px-8 py-4 flex bg-[#FFF] shadow-medium rounded-xl gap-4 my-4"
+            class="px-8 py-4 bg-[#FFF] shadow-medium rounded-xl gap-4 my-4 {user.message ==
+            null
+              ? 'hidden'
+              : 'flex'}"
           >
             <img src="icons/user.svg" alt="user icon" />
             <div class="w-[300px]">
               <h3 class="w-full text-sm font-bold text-terciary">
-                JOAZINHO GAMEPLAYS
+                {user.username}
               </h3>
               <p class="w-full font-fredoka text-gray">
-                Esquece fio sou muito bom, nem adianta tentar mais
+                {user.message}
               </p>
             </div>
           </div>

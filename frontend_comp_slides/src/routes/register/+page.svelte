@@ -21,7 +21,7 @@
         password,
       });
 
-      goto("/session");
+      goto("/logged");
     } catch (err: any) {
       Swal.fire("Vish", err.response.data.error, "warning");
     }
@@ -82,7 +82,7 @@
       >
 
       <a href="/login" class="mt-16"
-        ><h4 class="text-pink text-[10pt] mb-[-10px] underline">
+        ><h4 class="text-pink text-[10pt] mb-[-10px] font-bold underline">
           Já tenho uma conta
         </h4></a
       >

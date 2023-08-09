@@ -24,7 +24,7 @@
         }
       );
 
-      goto("/session");
+      goto("/logged");
     } catch (err: any) {
       Swal.fire("Vish", "Credenciais inválidas", "warning");
     }
@@ -65,11 +65,11 @@
         name="password"
         bind:value={password}
       />
-      <a href="/register" class="mt-16"
-        ><h4 class="text-pink text-[10pt] mb-[-10px] underline">
+      <a href="/register" class="mt-16">
+        <h4 class="text-pink text-[10pt] font-bold mb-[-10px] underline">
           Ainda não tenho uma conta
-        </h4></a
-      >
+        </h4>
+      </a>
       <Button text="LOGIN" func={handleLogin} />
     </div>
   </section>

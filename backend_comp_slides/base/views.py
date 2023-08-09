@@ -34,8 +34,6 @@ def loginUser(request):
 @api_view(['POST'])
 def addUser(request):
 
-    # FIXME: tirar isso
-    request.data['username'] = request.data['username'].strip().lower()
     user = UserSerializer(data=request.data)
 
     if User.objects.filter(**request.data).exists():

@@ -15,6 +15,14 @@ from django.db.models import Q
 from random import choice
 
 
+# extra views
+
+@api_view(['GET'])
+def getDisciplines(request):
+    slides = Slide.objects.all().values_list('prof_discipline', flat=True)
+    return Response(data=slides, status=status.HTTP_200_OK)
+
+
 # user views
 
 @api_view(['GET'])

@@ -10,20 +10,23 @@
 
   let username = "";
   let password = "";
-  let confirmPassword = "";
 
-  async function handleRegister() {
-    if (confirmPassword != password) return;
-
+  async function handleLogin() {
     try {
-      const response = await api.post("user/create/", {
-        username,
-        password,
-      });
+      const response = await api.post(
+        "user/login/",
+        {},
+        {
+          auth: {
+            username,
+            password,
+          },
+        }
+      );
 
       goto("/session");
     } catch (err: any) {
-      Swal.fire("Vish", err.response.data.error, "warning");
+      Swal.fire("Vish", "Credenciais inválidas", "warning");
     }
   }
 </script>
@@ -41,13 +44,12 @@
       <h5 class="mx-auto w-fit text-green font-bold text-sm mb-4">
         VAMOS COMEÇAR
       </h5>
-      <h1 class="mb-16 text-whitish text-3xl">Escolha um nome e senha...</h1>
+      <h1 class="mb-16 text-whitish text-3xl">
+        Faça seu login, ou crie uma conta
+      </h1>
     </div>
 
     <div class="flex flex-col w-[350px] gap-4">
-      <p class="text-gray font-fredoka">
-        Use seu nome mesmo, ou aproveite para esbanjar a criatividade
-      </p>
       <input
         class="bg-terciary h-12 px-4 rounded-lg text-whitish placeholder:font-bold placeholder:text-gray"
         type="text"
@@ -56,10 +58,6 @@
         max="30"
         bind:value={username}
       />
-
-      <p class="text-gray font-fredoka mt-4">
-        Use sua senha mais segura (ex.: senha123)
-      </p>
       <input
         class="bg-terciary h-12 px-4 rounded-lg text-whitish placeholder:font-bold placeholder:text-gray"
         type="password"
@@ -67,26 +65,12 @@
         name="password"
         bind:value={password}
       />
-      <input
-        class="bg-terciary h-12 px-4 z-10 rounded-lg text-whitish placeholder:font-bold placeholder:text-gray"
-        type="password"
-        placeholder="CONFIRME A SENHA"
-        name="password"
-        bind:value={confirmPassword}
-      />
-      <span
-        class="text-red z-0 transition-all
-      {confirmPassword != password && confirmPassword != ''
-          ? 'mt-0'
-          : 'mt-[-40px]'}">As senhas estao diferentes</span
-      >
-
-      <a href="/login" class="mt-16"
+      <a href="/register" class="mt-16"
         ><h4 class="text-pink text-[10pt] mb-[-10px] underline">
-          Já tenho uma conta
+          Ainda não tenho uma conta
         </h4></a
       >
-      <Button text="REGISTRAR" func={handleRegister} />
+      <Button text="LOGIN" func={handleLogin} />
     </div>
   </section>
 

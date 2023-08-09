@@ -57,7 +57,7 @@ class SlideTests(TestCase):
         wrong_credentials_header = {
             'HTTP_AUTHORIZATION': 'Basic ' + basic_hashed}
 
-        url = '/api/slide/random'
+        url = reverse('no-run-random-slide')
         response = self.client.get(
             url, **wrong_credentials_header, follow=True)
 
@@ -68,7 +68,7 @@ class SlideTests(TestCase):
         if credentials match for the user, fetch new slide 
         """
 
-        url = '/api/slide/random'
+        url = reverse('no-run-random-slide')
         response = self.client.get(url, **self.basic_auth_header, follow=True)
         self.assertEqual(response.status_code, 200)
 
@@ -78,12 +78,12 @@ class SlideTests(TestCase):
         the id of the run is passed via params
         """
 
-        response = self.client.get(
-            '/api/slide/random', **self.basic_auth_header, follow=True)
+        url = reverse('no-run-random-slide')
+        response = self.client.get(url, **self.basic_auth_header, follow=True)
 
         self.current_run_id = response.data['run_id']
 
-        url = '/api/slide/hint/' + str(self.current_run_id)
+        url = reverse('hint-slide', kwargs={'pk': self.current_run_id})
         response = self.client.post(url, **self.basic_auth_header, follow=True)
 
         self.assertEqual(response.status_code, 200)

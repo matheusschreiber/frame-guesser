@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
 
+from django.contrib.auth.hashers import make_password
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.contrib.auth import authenticate, login, logout
@@ -42,10 +43,19 @@ def loginUser(request):
 @api_view(['POST'])
 def addUser(request):
 
-    user = UserSerializer(data=request.data)
+    if not request.data['username'] or not request.data['password']:
+        return Response(data={'error': "Empty fields detected"}, status=status.HTTP_400_BAD_REQUEST)
 
-    if User.objects.filter(**request.data).exists():
-        return Response(data={'error': "Username already in use"}, status=status.HTTP_201_CREATED)
+    if User.objects.filter(username=request.data['username']).exists():
+        return Response(data={'error': "Username already in use"}, status=status.HTTP_400_BAD_REQUEST)
+
+    if len(request.data['password']) < 8:
+        return Response(data={'error': "Password is too short"}, status=status.HTTP_400_BAD_REQUEST)
+
+    hashed_password = make_password(request.data['password'])
+    request.data['password'] = hashed_password
+
+    user = UserSerializer(data=request.data)
 
     if user.is_valid():
         user.save()

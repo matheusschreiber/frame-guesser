@@ -42,7 +42,6 @@
 
     while (true) {
       let index = Math.floor(Math.random() * disciplines.length);
-      console.log(disciplines[index]);
       await addTyping(disciplines[index]);
       await sleep(duration * 0.45);
       await eraseTyping(disciplines[index]);

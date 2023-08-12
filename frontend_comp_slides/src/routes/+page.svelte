@@ -21,7 +21,6 @@
     let isDown = false;
     let startX = 0;
     let scrollLeft = 0;
-    console.log(slider);
 
     slider?.addEventListener("mousedown", (e: any) => {
       isDown = true;
@@ -61,11 +60,11 @@
 
       slider.scrollLeft += speed;
 
-      console.log({
-        width: slider.clientWidth,
-        scroll: slider.scrollLeft,
-        speed: speed,
-      });
+      // console.log({
+      //   width: slider.clientWidth,
+      //   scroll: slider.scrollLeft,
+      //   speed: speed,
+      // });
     }, framerate);
   }
 

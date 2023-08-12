@@ -7,9 +7,9 @@
   import { goto } from "$app/navigation";
   import { api } from "../../services/api";
   import Swal from "sweetalert2";
+  import { getContext } from "svelte";
 
-  let username = "";
-  let password = "";
+  let username = getContext('username')
 </script>
 
 <main>
@@ -29,7 +29,7 @@
     </div>
 
     <div class="bg-secondary p-4 px-8 rounded-lg text-whitish">
-      <h2>JOAOZINHO gameplay</h2>
+      <h2>{username}</h2>
     </div>
     <a
       href="/"

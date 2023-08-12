@@ -7,6 +7,7 @@
   import { goto } from "$app/navigation";
   import { api } from "../../services/api";
   import Swal from "sweetalert2";
+  import { setContext } from "svelte";
 
   let username = "";
   let password = "";
@@ -21,6 +22,8 @@
         password,
       });
 
+      setContext('username', username)
+      setContext('password', password) // TODO: retirar isso
       goto("/logged");
     } catch (err: any) {
       Swal.fire("Vish", err.response.data.error, "warning");

@@ -7,12 +7,28 @@
   import { goto } from "$app/navigation";
   import { api } from "../../services/api";
   import Swal from "sweetalert2";
+  import { onMount, setContext } from "svelte";
+  import Loading from "../../components/loading.svelte";
 
   let username = "";
   let password = "";
 
+  let loading = false;
+
+  // adding 'form' submition with 'enter'
+  onMount(() => {
+    let inputPassword = document.getElementsByName("password")[0];
+    inputPassword.addEventListener("keypress", function (event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        handleLogin();
+      }
+    });
+  });
+
   async function handleLogin() {
     try {
+      loading = true;
       const response = await api.post(
         "user/login/",
         {},
@@ -23,10 +39,12 @@
           },
         }
       );
-
-      goto("/logged");
+      setContext("username", username);
+      setContext("password", password); // TODO: retirar isso
+      setTimeout(() => goto("/logged"), 1000);
     } catch (err: any) {
-      Swal.fire("Vish", "Credenciais inválidas", "warning");
+      Swal.fire("Vish", "Credenciais inválidas ", "warning");
+      loading = false;
     }
   }
 </script>
@@ -65,12 +83,17 @@
         name="password"
         bind:value={password}
       />
-      <a href="/register" class="mt-16">
-        <h4 class="text-pink text-[10pt] font-bold mb-[-10px] underline">
-          Ainda não tenho uma conta
-        </h4>
-      </a>
-      <Button text="LOGIN" func={handleLogin} />
+
+      {#if loading}
+        <Loading />
+      {:else}
+        <a href="/register" class="mt-16">
+          <h4 class="text-pink text-[10pt] font-bold mb-[-10px] underline">
+            Ainda não tenho uma conta
+          </h4>
+        </a>
+        <Button text="LOGIN" func={handleLogin} />
+      {/if}
     </div>
   </section>
 

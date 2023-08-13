@@ -39,9 +39,9 @@
           },
         }
       );
-      setContext("username", username);
-      setContext("password", password); // TODO: retirar isso
-      setTimeout(() => goto("/logged"), 1000);
+      // setContext("username", username);
+      // setContext("password", password); // TODO: retirar isso
+      setTimeout(() => goto("/logged"), 3000); //FIXME: remove this timeout (this is because the set context takes time to be executed)
     } catch (err: any) {
       Swal.fire("Vish", "Credenciais inválidas ", "warning");
       loading = false;

@@ -96,13 +96,15 @@ def addMessageToUser(request, pk):
 @permission_classes([IsAuthenticated])
 def getRandomSlide(request, pk=None):
     try:
-        slides = Slide.objects.all()
-        slide = choice(slides)
-
-        first_hint = SlideImage.objects.get(Q(slide=slide) & Q(hint_index=0))
+        # slide = Slide.objects.order_by('?').first()
+        slide = Slide.objects.get(id=1)
+        first_hint = SlideImage.objects.get(
+            Q(slide__id=slide.id) & Q(hint_index=0))
 
         response = {
-            "slide_image_path": "/static/" + first_hint.image.name,
+            "slide_image_path": first_hint.image.name,
+            "hints_amount": slide.hints_amount,
+            "difficulty_level": slide.difficulty_level
         }
 
         # if no run id is passed, then its the first slide
@@ -149,9 +151,9 @@ def getRandomSlide(request, pk=None):
 def getHint(request, pk):
     try:
         run = Run.objects.get(id=pk)
-        user = User.objects.get(username=request.user.username)
+        user = User.objects.get(username=run.id_user)
 
-        if user.username != request.user.username:
+        if not user or user.username != request.user.username:
             raise User.DoesNotExist
 
         current_hint = SlideImage.objects.get(id=run.current_hint.id)
@@ -173,7 +175,7 @@ def getHint(request, pk):
         slide.save()
 
         response = {
-            "slide_image_path": "/static/" + next_hint.image.name,
+            "slide_image_path": next_hint.image.name,
         }
 
         return Response(data=response, status=status.HTTP_200_OK)
@@ -196,9 +198,12 @@ def getHint(request, pk):
 @permission_classes([IsAuthenticated])
 def getAnswerSlide(request, pk):
     try:
-
         run = Run.objects.get(id=pk)
-        user = User.objects.get(username=request.user.username)
+        user = User.objects.get(username=run.id_user)
+
+        if not user or user.username != request.user.username:
+            raise User.DoesNotExist
+
         current_hint = SlideImage.objects.get(id=run.current_hint.id)
         slide = Slide.objects.get(id=current_hint.slide.id)
         slide_final = SlideImage.objects.get(
@@ -208,7 +213,7 @@ def getAnswerSlide(request, pk):
 
         answer = False
 
-        if slide.prof_discipline == request.data['answer']:
+        if slide.prof_discipline.lower() == request.data['answer'].lower():
             slide.hits += 1
             user.hits += 1
             run.hits += 1
@@ -222,7 +227,33 @@ def getAnswerSlide(request, pk):
         user.save()
         run.save()
 
-        return Response(data={"answer": answer, "slide_image_path": "/static/" + slide_final.image.name, }, status=status.HTTP_200_OK)
+        return Response(data={"answer": answer, "slide_image_path": slide_final.image.name, "slide": slide.prof_discipline}, status=status.HTTP_200_OK)
+
+    except User.DoesNotExist:
+        return Response(data={'error': "Invalid user"}, status=status.HTTP_400_BAD_REQUEST)
+
+    except Run.DoesNotExist:
+        return Response(data={'error': "Invalid run"}, status=status.HTTP_400_BAD_REQUEST)
+
+    except SlideImage.DoesNotExist:
+        return Response(data={'error': "Invalid hint"}, status=status.HTTP_400_BAD_REQUEST)
+
+    except Slide.DoesNotExist:
+        return Response(data={'error': "Invalid slide"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+@authentication_classes([BasicAuthentication])
+@permission_classes([IsAuthenticated])
+def getAlternatives(request, pk):
+    try:
+        run = Run.objects.get(id=pk)
+        user = User.objects.get(username=run.id_user)
+
+        if not user or user.username != request.user.username:
+            raise User.DoesNotExist
+
+    # TODO: finish this later
 
     except User.DoesNotExist:
         return Response(data={'error': "Invalid user"}, status=status.HTTP_400_BAD_REQUEST)

@@ -40,7 +40,7 @@ class Slide(models.Model):
 class SlideImage(models.Model):
     hint_index = models.IntegerField()
     slide = models.ForeignKey(Slide, on_delete=models.CASCADE)
-    image = models.ImageField(default="default_slide.jpg")
+    image = models.ImageField(default="default_slide.jpg", upload_to='static/')
 
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)

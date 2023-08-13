@@ -1,119 +1,232 @@
-<script lang='ts'>
-  import Swal from "sweetalert2"
+<script lang="ts">
+  import Swal from "sweetalert2";
   import Footer from "../../components/footer.svelte";
   import LineBackground from "../../components/lineBackground.svelte";
   import Logo from "../../components/logo.svelte";
-  import { goto } from '$app/navigation';
-  import { getContext, onMount } from "svelte";
+  import { goto } from "$app/navigation";
+  import { getContext, onMount, setContext } from "svelte";
   import { api } from "../../services/api";
+  import Loading from "../../components/loading.svelte";
+  import { getCookie, setCookie } from "../../services/cookies";
 
-  let confirm = false
-  let selected:number|null= null
-  let tipsAmount = 5
-  let tipsUsed = 0
-  
-  let currentSlide = 1
-  let slidesAmount = 5
+  let confirm = false;
+  let selected: number | null = null;
+  let hintsAmount = 0;
+  let hintsUsed = 0;
 
-  var username:string = getContext('username')
-  var password:string = getContext('password')
+  let currentSlide = 1;
+  let slidesAmount = 5;
+
+  var loading = true;
+  var hasAnswered = false;
+  var answer: number | null = null;
+
+  var username: string = getContext("username");
+  var password: string = getContext("password"); //TODO: remove this when AUTH2.0 is added
+
+  var options = [
+    "Nome Professor | Estrutura de Dados I",
+    "Nome Professor | Estrutura de Dados II",
+    "Nome Professor | Estrutura de Dados III",
+    "Nome Professor | Estrutura de Dados IV",
+  ];
+  var slideImage = "";
 
   function handleConfirm() {
     if (confirm) {
-      console.log('confirm!')
-      if (tipsUsed+1<=tipsAmount) tipsUsed++
-      confirm = false
-    } else confirm = true
+      fetchNewHint();
+      if (hintsUsed + 1 <= hintsAmount) hintsUsed++;
+      confirm = false;
+    } else confirm = true;
   }
 
-  function handleSelection(pos:number) {
-    if (selected==pos) selected = null
-    else selected=pos
+  function handleSelection(pos: number) {
+    if (selected == pos) selected = null;
+    else selected = pos;
   }
 
-  function handleNextSlide() {
-    if (currentSlide==slidesAmount) goto(`/results`, { replaceState:false }) 
+  async function handleNextSlide() {
+    loading = true;
+    if (currentSlide == slidesAmount) goto(`/results`, { replaceState: false });
 
-    if (Math.random()>.5) {
+    let runId = getCookie("runId");
+    if (!runId) return;
+    const response = await api.put(
+      "slide/answer/" + runId,
+      {
+        answer: options[selected ? selected : 0],
+      },
+      {
+        auth: { username: "matheus", password: "123123abc" },
+      }
+    );
+
+    if (response.data.answer == true) {
       Swal.fire({
-        title: '<strong>BOA! RESOSTA CERTA!</strong>',
-        icon: 'success',
-        html: 'Sabe muito!',
+        title: "<strong>BOA! RESOSTA CERTA!</strong>",
+        icon: "success",
+        html: "Sabe muito!",
         showConfirmButton: false,
-      }).then(()=>{
-        selected=null          
-      })
+      });
+    } else if (response.data.answer == false) {
+      Swal.fire({
+        title: "<strong>OPS! MAIS SORTE NA PRÓXIMA</strong>",
+        icon: "error",
+        html: "Alguém andou faltando algumas aulas",
+        showConfirmButton: false,
+      });
     } else {
-      Swal.fire({
-        title: '<strong>OPS! MAIS SORTE NA PRÓXIMA</strong>',
-        icon: 'error',
-        html: 'Alguém andou faltando algumas aulas',
-        showConfirmButton: false,
-      }).then(()=>{
-        selected=null        
-      })
+      Swal.fire("uai", "Houve algum problema com os servidores", "error").then(
+        () => {
+          selected = null;
+        }
+      );
     }
 
-    currentSlide++
+    slideImage = import.meta.env.VITE_API_URL + response.data.slide_image_path;
+
+    options.map((option: string, idx: number) => {
+      if (option.toLowerCase() == response.data.slide.toLowerCase())
+        answer = idx;
+    });
+
+    // currentSlide++; //TODO: finish this
+    loading = false;
+    hasAnswered = true;
   }
 
   async function fetchSlide() {
-    // if (!username || !password) return;
-
-    // const response = await api.get('slide/random', {auth: {username, password}})
-
-    // console.log(response.data)
+    // if (!username || !password) return; //FIXME: chango to auth2
+    const response = await api.get("slide/random", {
+      auth: { username: "matheus", password: "123123abc" },
+    });
+    slideImage = import.meta.env.VITE_API_URL + response.data.slide_image_path;
+    hintsAmount = response.data.hints_amount - 1;
+    setCookie("runId", response.data.run_id);
+    loading = false;
   }
 
-  onMount(()=>{
-    fetchSlide()
-  })
+  async function fetchNewHint() {
+    let runId = getCookie("runId");
+    if (!runId) return;
 
+    const response = await api.post(
+      "slide/hint/" + runId,
+      {},
+      {
+        auth: { username: "matheus", password: "123123abc" },
+      }
+    );
+
+    slideImage = import.meta.env.VITE_API_URL + response.data.slide_image_path;
+  }
+
+  onMount(() => {
+    fetchSlide();
+  });
 </script>
+
 <main>
   <header class="w-full flex justify-center items-center py-8 mt-8">
-    <Logo small/>
+    <Logo small />
   </header>
 
-  <section class="my-8 py-12 bg-purple m-32 rounded-xl shadow-medium text-center overflow-hidden flex flex-col items-center justify-center">
+  <section
+    class="my-8 py-12 bg-purple m-64 rounded-xl shadow-medium text-center overflow-hidden flex flex-col items-center justify-center"
+  >
     <LineBackground variant={3} />
     <div class="flex flex-col items-center justify-center">
-      <h5 class="mx-auto w-fit text-red font-bold text-sm mb-4">NÍVEL DIFÍCIL</h5>
+      <h5 class="mx-auto w-fit text-red font-bold text-sm mb-4">
+        NÍVEL DIFÍCIL
+        <!-- TODO: get this from backend -->
+      </h5>
       <h2 class="text-whitish text-3xl">De quem é esse slide?</h2>
-      <h3 class="mb-8 mt-4 text-whitish bg-terciary w-fit rounded-lg p-4">{currentSlide}/{slidesAmount}</h3>
+      <h3 class="mb-8 mt-4 text-whitish bg-terciary w-fit rounded-lg p-4">
+        {currentSlide}/{slidesAmount}
+      </h3>
     </div>
 
-    <!-- TODO: adicionar um placeholder (uma imagem default enquanto carrega) -->
-    <img class="w-[400px]" src="messi.jpg" alt="slide"/>
+    {#if slideImage == ""}
+      <Loading />
+    {:else}
+      <img class="w-[400px]" src={slideImage} alt="slide" />
+    {/if}
 
     <div class="flex items-center gap-8 mt-4">
-      {#if tipsUsed>0} <p class="absolute font-fredoka text-sm text-whitish mt-[-100px] w-32 ml-[-10px]">{tipsUsed}/{tipsAmount}</p> {/if}
+      {#if hintsUsed > 0}
+        <p
+          class="absolute font-fredoka text-sm text-whitish mt-[-100px] w-32 ml-[-10px]"
+        >
+          {hintsUsed}/{hintsAmount}
+        </p>
+      {/if}
       <div
-        on:click={handleConfirm} role="button" tabindex={1} 
-        class="bg-secondary p-4 rounded-3xl shadow-medium scale-[.4] h-28 w-28 flex 
-        justify-center items-center cursor-pointer border-4 select-none
-        {confirm?'border-yellow':'border-secondary'}" on:keypress={()=>{}}>
-
-        <img src="icons/lamp.svg" alt="icon lamp" class="{confirm?'hidden':'flex'}"/>
-        <img src="icons/tip.svg" alt="confirm icon" class="{confirm?'flex':'hidden'}"/>
+        on:click={hintsUsed != hintsAmount ? () => handleConfirm() : null}
+        role="button"
+        tabindex={1}
+        class="bg-secondary p-4 rounded-3xl shadow-medium scale-[.4] h-28 w-28 flex
+        justify-center items-center border-4 select-none
+        {confirm ? 'border-yellow' : 'border-secondary'}
+        {hintsUsed == hintsAmount
+          ? 'opacity-20 cursor-not-allowed'
+          : 'opacity-100 cursor-pointer'}"
+        on:keypress={() => {}}
+      >
+        <img
+          src="icons/lamp.svg"
+          alt="icon lamp"
+          class={confirm ? "hidden" : "flex"}
+        />
+        <img
+          src="icons/tip.svg"
+          alt="confirm icon"
+          class={confirm ? "flex" : "hidden"}
+        />
       </div>
-      {#if confirm} <p class="absolute font-fredoka text-sm text-whitish mt-32 w-32 ml-[-10px]">Clique novamente para confirmar a sua dica</p> {/if}
-      
-      {#each [1,2,3,4] as item, i}
-        <div on:click={()=>handleSelection(i)} role="button" tabindex={2} on:keypress={()=>{}}
-          class="bg-secondary px-4 py-2 rounded-lg shadow-medium border-2 select-none {selected==i?'border-pink':'border-secondary'}">
-          <h3 class="text-whitish font-bold text-sm">PROFESSOR DA SILVA</h3>
-          <p class="text-gray text-sm">SINAIS E SISTEMAS</p>
+      {#if confirm}
+        <p
+          class="absolute font-fredoka text-sm text-whitish mt-32 w-32 ml-[-10px]"
+        >
+          Clique novamente para confirmar a sua dica
+        </p>
+      {/if}
+
+      {#each options as item, i}
+        <div
+          on:click={() => handleSelection(i)}
+          role="button"
+          tabindex={2}
+          on:keypress={() => {}}
+          class="bg-secondary px-4 py-2 rounded-lg shadow-medium border-2 select-none
+          {answer == i
+            ? 'border-green'
+            : selected == i
+            ? hasAnswered
+              ? 'border-red'
+              : 'border-pink'
+            : 'border-secondary'}"
+        >
+          <h3 class="text-whitish font-bold text-sm">
+            {item.split("|")[0].trim()}
+          </h3>
+          <p class="text-gray text-sm">{item.split("|")[1].trim()}</p>
         </div>
       {/each}
     </div>
 
-    <button class="px-4 py-2 my-8 bg-terciary font-bold text-sm rounded-lg border-2 
-      {selected!=null?'border-green text-green':'border-terciary text-whitish'}"
-      on:click={()=>{handleNextSlide()}}>
-
-      AVANÇAR
-    </button>
+    {#if loading}
+      <Loading />
+    {:else}
+      <button
+        class="px-4 py-2 my-8 bg-terciary font-bold text-sm rounded-lg border-2
+      {selected != null
+          ? 'border-pink text-pink'
+          : 'border-terciary text-whitish'}"
+        on:click={loading ? null : () => handleNextSlide()}
+      >
+        {hasAnswered ? "AVANÇAR" : "VERIFICAR"}
+      </button>
+    {/if}
   </section>
 
   <Footer />

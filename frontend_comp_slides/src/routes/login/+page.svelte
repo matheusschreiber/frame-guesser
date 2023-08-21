@@ -39,7 +39,7 @@
           },
         }
       );
-      // setContext("username", username);
+      setContext("username", username);
       // setContext("password", password); // TODO: retirar isso
       setTimeout(() => goto("/logged"), 3000); //FIXME: remove this timeout (this is because the set context takes time to be executed)
     } catch (err: any) {
@@ -54,9 +54,7 @@
     <Logo small />
   </header>
 
-  <section
-    class="my-8 py-12 pt-0 bg-purple m-32 mb-32 rounded-xl shadow-medium text-center overflow-hidden flex flex-col items-center justify-center"
-  >
+  <section class="my-8 py-12 pt-0 bg-purple m-64 mb-32 rounded-xl shadow-medium text-center overflow-hidden flex flex-col items-center justify-center">
     <LineBackground variant={2} />
     <div>
       <h5 class="mx-auto w-fit text-green font-bold text-sm mb-4">
@@ -68,25 +66,24 @@
     </div>
 
     <div class="flex flex-col w-[350px] gap-4">
-      <input
-        class="bg-terciary h-12 px-4 rounded-lg text-whitish placeholder:font-bold placeholder:text-gray"
-        type="text"
-        placeholder="NOME"
-        name="username"
-        max="30"
-        bind:value={username}
-      />
-      <input
-        class="bg-terciary h-12 px-4 rounded-lg text-whitish placeholder:font-bold placeholder:text-gray"
-        type="password"
-        placeholder="SENHA"
-        name="password"
-        bind:value={password}
-      />
-
       {#if loading}
         <Loading />
       {:else}
+        <input
+          class="bg-terciary h-12 px-4 rounded-lg text-whitish placeholder:font-bold placeholder:text-gray"
+          type="text"
+          placeholder="NOME"
+          name="username"
+          max="30"
+          bind:value={username}
+        />
+        <input
+          class="bg-terciary h-12 px-4 rounded-lg text-whitish placeholder:font-bold placeholder:text-gray"
+          type="password"
+          placeholder="SENHA"
+          name="password"
+          bind:value={password}
+        />
         <a href="/register" class="mt-16">
           <h4 class="text-pink text-[10pt] font-bold mb-[-10px] underline">
             Ainda não tenho uma conta

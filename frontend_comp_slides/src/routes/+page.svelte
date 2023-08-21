@@ -143,12 +143,14 @@
       </div>
     </div>
 
-    <Button
-      text="JOGAR"
-      func={() => {
-        goto("/login");
-      }}
-    />
+    <div class="animate-bounce hover:animate-none w-fit m-auto">
+      <Button
+        text="JOGAR"
+        func={() => {
+          goto("/login");
+        }}
+      />
+    </div>
   </section>
 
   <section class="my-8 flex items-center py-10 px-32 w-full justify-around">

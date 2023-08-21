@@ -36,9 +36,7 @@
     <Logo small />
   </header>
 
-  <section
-    class="my-8 py-12 pt-0 bg-purple m-32 mb-32 rounded-xl shadow-medium text-center overflow-hidden flex flex-col items-center justify-center"
-  >
+  <section class="my-8 py-12 pt-0 bg-purple m-64 mb-32 rounded-xl shadow-medium text-center overflow-hidden flex flex-col items-center justify-center">
     <LineBackground variant={2} />
     <div>
       <h5 class="mx-auto w-fit text-green font-bold text-sm mb-4">

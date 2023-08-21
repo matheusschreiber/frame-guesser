@@ -22,6 +22,15 @@ export default {
       backgroundImage: {
         purple: 'linear-gradient(180deg, #351D5B 0%, #2D1652 100%)',
         rankings: 'url(backgrounds/rankings_background.svg)'
+      },
+      keyframes: {
+        colorWarp: {
+          '0%, 100%': { color: '#40128B' },
+          '50%': { color: '#1F0C3E' },
+        }
+      },
+      animation: {
+        colorWarp: 'colorWarp 10s ease-in-out infinite',
       }
     },
     colors: {

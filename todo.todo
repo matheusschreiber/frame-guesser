@@ -1,0 +1,6 @@
+- [ ] terminar session page
+- [ ] trocar sweet alerts por alertas na propria interface (um h4 com cor diferente por exemplo)
+- [ ] trocar auth basic do axios para auth2
+- [ ] adicionar activity indicators
+- [ ] responsividade (muito importante!!!)
+- [ ] frases aleatórias nos popups de acerto/erro

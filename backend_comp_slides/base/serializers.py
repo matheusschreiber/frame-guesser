@@ -1,5 +1,5 @@
 from rest_framework.serializers import ModelSerializer
-from base.models import User, Slide, SlideImage, Run
+from base.models import User, Slide, SlideImage, Run, SlideRun
 
 
 class UserSerializer(ModelSerializer):
@@ -32,4 +32,10 @@ class RunSerializer(ModelSerializer):
 
     class Meta:
         model = Run
+        fields = '__all__'
+
+class SlideRunSerializer(ModelSerializer):
+
+    class Meta:
+        model = SlideRun
         fields = '__all__'

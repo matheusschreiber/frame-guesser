@@ -2,9 +2,10 @@ from django.contrib import admin
 
 # Register your models here.
 
-from .models import User, Slide, SlideImage, Run
+from .models import User, Slide, SlideImage, Run, SlideRun
 
 admin.site.register(Slide)
 admin.site.register(User)
 admin.site.register(SlideImage)
 admin.site.register(Run)
+admin.site.register(SlideRun)

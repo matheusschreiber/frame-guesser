@@ -63,3 +63,14 @@ class Run(models.Model):
 
     def __str__(self):
         return str(self.id) + " | " + str(self.id_user)
+
+class SlideRun(models.Model):
+    original_slide = models.ForeignKey(Slide, null=True, on_delete=models.SET_NULL)
+    run_id = models.ForeignKey(Run, null=True,  on_delete=models.SET_NULL)
+    has_hit = models.BooleanField(default=False)
+
+    updated = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return str(self.id) + " | " + str(self.run_id.id) + " | " + self.original_slide.prof_discipline

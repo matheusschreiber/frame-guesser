@@ -9,8 +9,8 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.contrib.auth import authenticate, login, logout
 
-from .serializers import FilteredUserSerializer, UserSerializer, SlideSerializer, RunSerializer
-from .models import User, Slide, SlideImage, Run
+from .serializers import FilteredUserSerializer, UserSerializer, SlideSerializer, RunSerializer, SlideRunSerializer
+from .models import User, Slide, SlideImage, Run, SlideRun
 from django.db.models import Q
 
 from random import choice
@@ -96,8 +96,8 @@ def addMessageToUser(request, pk):
 @permission_classes([IsAuthenticated])
 def getRandomSlide(request, pk=None):
     try:
-        # slide = Slide.objects.order_by('?').first()
-        slide = Slide.objects.get(id=1)
+        # TODO: trocar isso para o certo
+        slide = Slide.objects.order_by('?').first()
         first_hint = SlideImage.objects.get(
             Q(slide__id=slide.id) & Q(hint_index=0))
 
@@ -109,6 +109,7 @@ def getRandomSlide(request, pk=None):
 
         # if no run id is passed, then its the first slide
         if not pk:
+            # creating run
             run = RunSerializer(data={
                 "id_user": request.user.id,
                 "current_hint": first_hint.id
@@ -119,6 +120,7 @@ def getRandomSlide(request, pk=None):
 
             run = run.save()
             response['run_id'] = run.id
+            response['slides_left_amount'] = run.slides_left
 
         # if there is a run id, then append the new slide to it
         else:
@@ -127,11 +129,25 @@ def getRandomSlide(request, pk=None):
             if run.slides_left == 0:
                 return Response(data={'error': "Run finished"}, status=status.HTTP_400_BAD_REQUEST)
 
-            run.current_hint = first_hint.id
+            run.current_hint = first_hint
             run.slides_left -= 1
             run.save()
 
             response['run_id'] = run.id
+            response['slides_left_amount'] = run.slides_left
+
+        # creating slide run associated to the slide and the run
+        slide_run = SlideRunSerializer(data={
+            "original_slide": slide.id,
+            "run_id": run.id,
+            "has_hit": False,
+        })
+
+        if not slide_run.is_valid():
+            return Response(data={'error': "Invalid slide_run creation"}, status=status.HTTP_400_BAD_REQUEST)
+
+        slide_run = slide_run.save()
+        response['slide_run_id'] = slide_run.id
 
         return Response(data=response, status=status.HTTP_200_OK)
 
@@ -211,6 +227,8 @@ def getAnswerSlide(request, pk):
             Q(hint_index=slide.hints_amount-1)
         )
 
+        slide_run = SlideRun.objects.get(Q(original_slide=slide.id) & Q(run_id=run.id))
+
         answer = False
 
         if slide.prof_discipline.lower() == request.data['answer'].lower():
@@ -218,14 +236,17 @@ def getAnswerSlide(request, pk):
             user.hits += 1
             run.hits += 1
             answer = True
+            slide_run.has_hit = True
         else:
             slide.misses += 1
             user.misses += 1
             run.misses += 1
+            slide_run.has_hit = False
 
         slide.save()
         user.save()
         run.save()
+        slide_run.save()
 
         return Response(data={"answer": answer, "slide_image_path": slide_final.image.name, "slide": slide.prof_discipline}, status=status.HTTP_200_OK)
 
@@ -245,6 +266,21 @@ def getAnswerSlide(request, pk):
 @api_view(['GET'])
 @authentication_classes([BasicAuthentication])
 @permission_classes([IsAuthenticated])
+def getHistoryRun(request, pk=None):
+    try:
+        run = Run.objects.get(id = pk)
+        slides_run = SlideRun.objects.filter(run_id=run.id)
+
+        response = SlideRunSerializer(slides_run)
+        return Response(data={"slides_run": response}, status=status.HTTP_200_OK)
+
+    except Run.DoesNotExist:
+        return Response(data={'error': "Invalid run"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+@authentication_classes([BasicAuthentication])
+@permission_classes([IsAuthenticated])
 def getAlternatives(request, pk):
     try:
         run = Run.objects.get(id=pk)
@@ -254,6 +290,9 @@ def getAlternatives(request, pk):
             raise User.DoesNotExist
 
     # TODO: finish this later
+
+    # this function selects the alternatives to display in with the slide during the game
+    # it has to make sure that one of them is the right one and the others vary...
 
     except User.DoesNotExist:
         return Response(data={'error': "Invalid user"}, status=status.HTTP_400_BAD_REQUEST)

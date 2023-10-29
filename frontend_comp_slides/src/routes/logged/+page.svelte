@@ -7,9 +7,15 @@
   import { goto } from "$app/navigation";
   import { api } from "../../services/api";
   import Swal from "sweetalert2";
-  import { getContext } from "svelte";
+  import { getContext, onMount } from "svelte";
 
+  import { deleteCookie } from "../../services/cookies";
+  
   let username = getContext('username')
+
+  onMount(()=>{
+    deleteCookie("runId");
+  })
 </script>
 
 <main>

@@ -19,7 +19,7 @@
 
   var loading = true;
   var hasAnswered = false;
-  var answer: number | null = null;
+  var answer: number | null = null; 
   var loadingHint = false;
 
   var username: string = getContext("username");
@@ -34,6 +34,8 @@
   var slideImage = "";
 
   function handleConfirm() {
+    if (hasAnswered) return;
+
     if (confirm) {
       fetchNewHint();
       if (hintsUsed + 1 <= hintsAmount) hintsUsed++;
@@ -57,7 +59,7 @@
         answer: options[selected ? selected : 0],
       },
       {
-        auth: { username: "matheus", password: "123123abc" },
+        auth: { username: "matheus", password: "123123abc" }, //TODO: check auth
       }
     );
 
@@ -83,7 +85,7 @@
       );
     }
 
-    slideImage = import.meta.env.VITE_API_URL + response.data.slide_image_path;
+    slideImage = import.meta.env.VITE_API_URL + '/' + response.data.slide_image_path;
 
     options.map((option: string, idx: number) => {
       if (option.toLowerCase() == response.data.slide.toLowerCase())
@@ -113,13 +115,18 @@
     answer = null;
     selected = null;
     hintsUsed = 0;
+    
     // TODO: add error catching
-    const response = await api.get("slide/random", {
-      auth: { username: "matheus", password: "123123abc" },
-    });
-    slideImage = import.meta.env.VITE_API_URL + response.data.slide_image_path;
+
+    let response;
+    let currentRun = getCookie("runId");
+    if (currentRun) response = await api.get("slide/random/"+currentRun, {auth: { username: "matheus", password: "123123abc" }});
+    else response = await api.get("slide/random", {auth: { username: "matheus", password: "123123abc" }});
+
+    slideImage = import.meta.env.VITE_API_URL + '/' +response.data.slide_image_path;
     hintsAmount = response.data.hints_amount - 1;
     setCookie("runId", response.data.run_id);
+    slidesAmount = response.data.slides_left_amount
     loading = false;
   }
 
@@ -136,12 +143,35 @@
       }
     );
 
-    slideImage = import.meta.env.VITE_API_URL + response.data.slide_image_path;
+    slideImage = import.meta.env.VITE_API_URL + '/' +response.data.slide_image_path;
     loadingHint = false
   }
 
+  function clickOutside(element:any, callbackFunction:Function) {
+		function onClickBody(event:Event) {
+			if (!element.contains(event.target)) {
+				callbackFunction();
+			}
+		}
+		document.body.addEventListener('click', onClickBody);
+		return {
+			update(newCallbackFunction:Function) {callbackFunction = newCallbackFunction;},
+			destroy() {document.body.removeEventListener('click', onClickBody);}
+		}
+	}
+
   onMount(() => {
     fetchSlide();
+
+    // script to automatically scroll to the main content of the page
+    let d = document.getElementById('div-scroll-main')
+    if (d){
+      window.scrollTo({
+        top: d.offsetTop-25,
+        left: 0,
+        behavior: "smooth",
+      })
+    }
   });
 </script>
 
@@ -150,107 +180,122 @@
     <Logo small />
   </header>
 
-  <section class="my-8 py-12 pb-24 bg-purple w-fit px-32 m-auto rounded-xl shadow-medium text-center overflow-hidden flex flex-col items-center justify-center">
+  <section class="my-8 pt-12 pb-24 bg-purple w-fit px-32 m-auto rounded-xl shadow-medium text-center overflow-hidden flex flex-col items-center justify-center">
     <LineBackground variant={3} />
-    <div class="flex flex-col items-center justify-center">
-      <h5 class="mx-auto w-fit text-red font-bold text-sm mb-4">
+
+    <div id="div-scroll-main">
+      <h5 class="mx-auto w-fit text-red font-bold text-sm mb-0">
         NÍVEL DIFÍCIL
         <!-- TODO: get this from backend -->
       </h5>
       <h2 class="text-whitish text-3xl">De quem é esse slide?</h2>
-      <h3 class="mb-8 mt-4 text-whitish bg-terciary w-fit rounded-lg p-4">
-        {currentSlide}/{slidesAmount}
-      </h3>
     </div>
 
-    {#if slideImage == ""}
-      <Loading />
-    {:else}
-      <img class="w-[400px]" src={slideImage} alt="slide" />
-    {/if}
+    <div class="flex">
+      <aside class="w-[600px] flex flex-col justify-end">
+        {#if slideImage != ""}
+          <div class="flex w-[90%] mx-auto justify-start mb-[-10px]">
+            <h3 class="mt-4 text-whitish bg-terciary w-fit px-2 py-1 pb-3 rounded-lg text-sm">
+              {currentSlide}/{slidesAmount}
+            </h3>
+          </div>
+        {/if}
     
-    <!-- TODO: REFACTOR THIS PAGE, THE UX/UI IS TRASH!!! -->
-
-    <!-- <div class="grid grid-cols-2 gap-2 mt-16"> -->
-    <div class="flex gap-2 mt-16">
-      {#each options as item, i}
-        <div
-          on:click={() => handleSelection(i)}
-          role="button"
-          tabindex={2}
-          on:keypress={() => {}}
-          class="bg-secondary px-4 py-2 rounded-lg shadow-medium border-2 select-none
-          {answer == i
-            ? 'border-green'
-            : selected == i
-            ? hasAnswered
-              ? 'border-red'
-              : 'border-pink'
-            : 'border-secondary'}">
-          <h3 class="text-whitish font-bold text-sm">
-            {item.split("|")[0].trim()}
-          </h3>
-          <p class="text-gray text-sm">{item.split("|")[1].trim()}</p>
-        </div>
-      {/each}
-    </div>
-
-    <div class="flex justify-center mt-16">
-      <div class="flex flex-col items-center">
-        {#if loadingHint}
+        {#if slideImage == ""}
           <Loading />
         {:else}
-          {#if hintsUsed > 0}
-            <p class="absolute font-fredoka text-sm text-whitish w-32 mt-2">
-              {hintsUsed}/{hintsAmount}
-            </p>
-          {/if}
-          <div
-            on:click={hintsUsed != hintsAmount ? () => handleConfirm() : null}
-            role="button"
-            tabindex={1}
-            class="bg-secondary p-4 rounded-3xl shadow-medium scale-[.4] h-28 w-28 flex
-            justify-center items-center border-4 select-none
-            {confirm ? 'border-yellow' : 'border-secondary'}
-            {hintsUsed == hintsAmount
-              ? 'opacity-20 cursor-not-allowed'
-              : 'opacity-100 cursor-pointer'}"
-            on:keypress={() => {}}>
-            <img
-              src="icons/lamp.svg"
-              alt="icon lamp"
-              class={confirm ? "hidden" : "flex"}
-            />
-            <img
-              src="icons/tip.svg"
-              alt="confirm icon"
-              class={confirm ? "flex" : "hidden"}
-            />
-          </div>
-          {#if confirm}
-            <p class="absolute font-fredoka text-sm text-whitish mt-24 w-32 ml-[-10px]">
-              Clique novamente para confirmar a sua dica
-            </p>
-          {/if}
+          <img class="rounded-lg h-[400px]" src={slideImage} alt="slide" />
         {/if}
-
-      </div>
-
-      {#if loading}
-        <Loading />
-      {:else}
-        <button
-          class="px-4 py-2 my-8 bg-terciary font-bold text-sm rounded-lg border-2
-        {selected == null
-            ? 'border-terciary text-whitish'
-            : answer == null ? 'border-pink text-pink' 
-            : selected == answer ? 'border-green text-green' : 'border-red text-red'}"
-          on:click={loading ? null : () => handleNextSlide()}
-        >
-          {hasAnswered ? "AVANÇAR" : "VERIFICAR"}
-        </button>
-      {/if}
+        
+        <!-- TODO: REFACTOR THIS PAGE, THE UX/UI IS TRASH!!! -->
+        
+      </aside>
+  
+      <aside class="flex flex-col items-center justify-end px-6">
+        <div class="flex flex-col gap-4 justify-between pb-8 items-center h-[350px]">
+          {#each options as item, i}
+            <div
+              on:click={() => handleSelection(i)}
+              role="button"
+              tabindex={2}
+              on:keypress={() => {}}
+              class="bg-secondary px-4 py-2 rounded-lg shadow-medium border-2 select-none w-[200px]
+              {answer == i
+                ? 'border-green'
+                : selected == i
+                ? hasAnswered
+                  ? 'border-red'
+                  : 'border-pink'
+                : hasAnswered ? 'opacity-[.3] border-secondary cursor-not-allowed':'border-secondary'}">
+              <h3 class="text-whitish font-bold text-sm">
+                {item.split("|")[0].trim()}
+              </h3>
+              <p class="text-gray text-sm">{item.split("|")[1].trim()}</p>
+            </div>
+          {/each}
+        </div>
+    
+        <div class="flex justify-around w-full h-[50px]">
+          <div class="flex flex-col items-center">
+            {#if loadingHint}
+              <Loading />
+            {:else}
+              {#if hintsUsed > 0}
+                <p class="absolute font-fredoka text-sm text-whitish mt-[-25px]">
+                  {hintsUsed}/{hintsAmount}
+                </p>
+              {/if}
+              <div
+                use:clickOutside={() => confirm = false}
+                on:click={hintsUsed != hintsAmount ? () => handleConfirm() : null}
+                role="button"
+                tabindex={1}
+                class="bg-secondary rounded-3xl shadow-medium h-12 w-12 flex
+                justify-center items-center border-2 select-none
+                {confirm ? 'border-yellow' : 'border-secondary'}
+                {hintsUsed == hintsAmount || hasAnswered
+                  ? 'opacity-20 cursor-not-allowed'
+                  : 'opacity-100 cursor-pointer'}"
+                on:keypress={() => {}}>
+                <img
+                  src="icons/lamp.svg"
+                  alt="icon lamp"
+                  style="height:20px"
+                  class={confirm ? "hidden" : "flex"}
+                />
+                <img
+                  src="icons/tip.svg"
+                  alt="confirm icon"
+                  style="height:20px"
+                  class={confirm ? "flex" : "hidden"}
+                />
+              </div>
+              {#if confirm}
+                <p class="absolute font-fredoka text-sm text-whitish mt-16">
+                  Clique novamente para confirmar a sua dica
+                </p>
+              {/if}
+            {/if}
+          </div>
+    
+          {#if loading}
+            <Loading />
+          {:else}
+            <button
+              class="px-4 py-2 h-12 bg-terciary font-bold text-sm rounded-lg border-2
+            {selected == null
+                ? 'border-terciary text-whitish'
+                : answer == null ? 'border-pink text-pink' 
+                : selected == answer ? 'border-green text-green' : 'border-red text-red'}"
+              on:click={loading ? null : () => handleNextSlide()}
+            >
+              {hasAnswered ? "AVANÇAR" : "VERIFICAR"}
+            </button>
+          {/if}
+        </div>
+      </aside>
     </div>
+
   </section>
 
   <Footer />

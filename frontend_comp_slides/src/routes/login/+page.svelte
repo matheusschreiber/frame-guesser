@@ -9,6 +9,7 @@
   import Swal from "sweetalert2";
   import { onMount, setContext } from "svelte";
   import Loading from "../../components/loading.svelte";
+    import { setCookie } from "../../services/cookies";
 
   let username = "";
   let password = "";
@@ -39,12 +40,14 @@
           },
         }
       );
-      setContext("username", username);
-      // setContext("password", password); // TODO: retirar isso
-      setTimeout(() => goto("/logged"), 3000); //FIXME: remove this timeout (this is because the set context takes time to be executed)
+
+      setCookie("username", username);
+      goto("/logged");
+
     } catch (err: any) {
       Swal.fire("Vish", "Credenciais inválidas ", "warning");
       loading = false;
+      console.log(err)
     }
   }
 </script>

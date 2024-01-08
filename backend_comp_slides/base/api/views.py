@@ -1,19 +1,17 @@
-from rest_framework.decorators import api_view, authentication_classes, permission_classes
-from rest_framework import status
-from rest_framework.response import Response
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
-from rest_framework.permissions import IsAuthenticated
-
-from django.contrib.auth.hashers import make_password
-from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
-from django.contrib.auth import authenticate, login, logout
-
 from .serializers import FilteredUserSerializer, UserSerializer, SlideSerializer, RunSerializer, SlideRunSerializer
-from .models import User, Slide, SlideImage, Run, SlideRun
+from ..models import User, Slide, SlideImage, Run, SlideRun
+from django.contrib.auth.hashers import make_password
 from django.db.models import Q
-
 from random import choice
+
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework import permissions, status
+
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView
+
 
 
 # extra views
@@ -30,15 +28,19 @@ def getDisciplines(request):
 def getUsers(request):
     users = User.objects.all()
     users_serialized = FilteredUserSerializer(users, many=True)
+
     return Response(data=users_serialized.data, status=status.HTTP_200_OK)
 
-
-@api_view(['POST'])
-@authentication_classes([BasicAuthentication])
-@permission_classes([IsAuthenticated])
-def loginUser(request):
-    return Response(status=status.HTTP_202_ACCEPTED)
-
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+        token['username'] = user.username
+        return token
+    
+class MyTokenObtainPairView(TokenObtainPairView):
+    serializer_class = MyTokenObtainPairSerializer
+    
 
 @api_view(['POST'])
 def addUser(request):
@@ -65,7 +67,6 @@ def addUser(request):
 
 
 @api_view(['POST'])
-@authentication_classes([BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def addMessageToUser(request, pk):
 
@@ -92,77 +93,77 @@ def addMessageToUser(request, pk):
 # slide views
 
 @api_view(['GET'])
-@authentication_classes([BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def getRandomSlide(request, pk=None):
-    try:
-        # TODO: trocar isso para o certo
-        slide = Slide.objects.order_by('?').first()
-        first_hint = SlideImage.objects.get(
-            Q(slide__id=slide.id) & Q(hint_index=0))
 
-        response = {
-            "slide_image_path": first_hint.image.name,
-            "hints_amount": slide.hints_amount,
-            "difficulty_level": slide.difficulty_level
-        }
+    return Response(data={'teste':1}, status=status.HTTP_200_OK)
+    # try:
+    #     # TODO: trocar isso para o certo
+    #     slide = Slide.objects.order_by('?').first()
+    #     first_hint = SlideImage.objects.get(
+    #         Q(slide__id=slide.id) & Q(hint_index=0))
 
-        # if no run id is passed, then its the first slide
-        if not pk:
-            # creating run
-            run = RunSerializer(data={
-                "id_user": request.user.id,
-                "current_hint": first_hint.id
-            })
+    #     response = {
+    #         "slide_image_path": first_hint.image.name,
+    #         "hints_amount": slide.hints_amount,
+    #         "difficulty_level": slide.difficulty_level
+    #     }
 
-            if not run.is_valid():
-                return Response(data={'error': "Invalid run creation"}, status=status.HTTP_400_BAD_REQUEST)
+    #     # if no run id is passed, then its the first slide
+    #     if not pk:
+    #         # creating run
+    #         run = RunSerializer(data={
+    #             "id_user": request.user.id,
+    #             "current_hint": first_hint.id
+    #         })
 
-            run = run.save()
-            response['run_id'] = run.id
-            response['slides_left_amount'] = run.slides_left
+    #         if not run.is_valid():
+    #             return Response(data={'error': "Invalid run creation"}, status=status.HTTP_400_BAD_REQUEST)
 
-        # if there is a run id, then append the new slide to it
-        else:
-            run = Run.objects.get(id=pk)
+    #         run = run.save()
+    #         response['run_id'] = run.id
+    #         response['slides_left_amount'] = run.slides_left
 
-            if run.slides_left == 0:
-                return Response(data={'error': "Run finished"}, status=status.HTTP_400_BAD_REQUEST)
+    #     # if there is a run id, then append the new slide to it
+    #     else:
+    #         run = Run.objects.get(id=pk)
 
-            run.current_hint = first_hint
-            run.slides_left -= 1
-            run.save()
+    #         if run.slides_left == 0:
+    #             return Response(data={'error': "Run finished"}, status=status.HTTP_400_BAD_REQUEST)
 
-            response['run_id'] = run.id
-            response['slides_left_amount'] = run.slides_left
+    #         run.current_hint = first_hint
+    #         run.slides_left -= 1
+    #         run.save()
 
-        # creating slide run associated to the slide and the run
-        slide_run = SlideRunSerializer(data={
-            "original_slide": slide.id,
-            "run_id": run.id,
-            "has_hit": False,
-        })
+    #         response['run_id'] = run.id
+    #         response['slides_left_amount'] = run.slides_left
 
-        if not slide_run.is_valid():
-            return Response(data={'error': "Invalid slide_run creation"}, status=status.HTTP_400_BAD_REQUEST)
+    #     # creating slide run associated to the slide and the run
+    #     slide_run = SlideRunSerializer(data={
+    #         "original_slide": slide.id,
+    #         "run_id": run.id,
+    #         "has_hit": False,
+    #     })
 
-        slide_run = slide_run.save()
-        response['slide_run_id'] = slide_run.id
+    #     if not slide_run.is_valid():
+    #         return Response(data={'error': "Invalid slide_run creation"}, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response(data=response, status=status.HTTP_200_OK)
+    #     slide_run = slide_run.save()
+    #     response['slide_run_id'] = slide_run.id
 
-    except Run.DoesNotExist:
-        return Response(data={'error': "Invalid run"}, status=status.HTTP_400_BAD_REQUEST)
+    #     return Response(data=response, status=status.HTTP_200_OK)
 
-    except SlideImage.DoesNotExist:
-        return Response(data={'error': "Invalid hint"}, status=status.HTTP_400_BAD_REQUEST)
+    # except Run.DoesNotExist:
+    #     return Response(data={'error': "Invalid run"}, status=status.HTTP_400_BAD_REQUEST)
 
-    except Slide.DoesNotExist:
-        return Response(data={'error': "Invalid slide"}, status=status.HTTP_400_BAD_REQUEST)
+    # except SlideImage.DoesNotExist:
+    #     return Response(data={'error': "Invalid hint"}, status=status.HTTP_400_BAD_REQUEST)
+
+    # except Slide.DoesNotExist:
+    #     return Response(data={'error': "Invalid slide"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['POST'])
-@authentication_classes([BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def getHint(request, pk):
     try:
@@ -210,7 +211,6 @@ def getHint(request, pk):
 
 
 @api_view(['PUT'])
-@authentication_classes([BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def getAnswerSlide(request, pk):
     try:
@@ -264,7 +264,6 @@ def getAnswerSlide(request, pk):
 
 
 @api_view(['GET'])
-@authentication_classes([BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def getHistoryRun(request, pk=None):
     try:
@@ -279,7 +278,6 @@ def getHistoryRun(request, pk=None):
 
 
 @api_view(['GET'])
-@authentication_classes([BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def getAlternatives(request, pk):
     try:

@@ -16,7 +16,6 @@
     deleteCookie("runId");
     let isAuthenticated = authenticateUser()
     if (!isAuthenticated) goto('login')
-
     username = getCookie('username')
   })
 

@@ -95,72 +95,69 @@ def addMessageToUser(request, pk):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def getRandomSlide(request, pk=None):
+    try:
+        slide = Slide.objects.order_by('?').first()
+        first_hint = SlideImage.objects.get(
+            Q(slide__id=slide.id) & Q(hint_index=0))
 
-    return Response(data={'teste':1}, status=status.HTTP_200_OK)
-    # try:
-    #     # TODO: trocar isso para o certo
-    #     slide = Slide.objects.order_by('?').first()
-    #     first_hint = SlideImage.objects.get(
-    #         Q(slide__id=slide.id) & Q(hint_index=0))
+        response = {
+            "slide_image_path": first_hint.image.name,
+            "hints_amount": slide.hints_amount,
+            "difficulty_level": slide.difficulty_level
+        }
 
-    #     response = {
-    #         "slide_image_path": first_hint.image.name,
-    #         "hints_amount": slide.hints_amount,
-    #         "difficulty_level": slide.difficulty_level
-    #     }
+        # if no run id is passed, then its the first slide
+        if not pk:
+            # creating run
+            run = RunSerializer(data={
+                "id_user": request.user.id,
+                "current_hint": first_hint.id
+            })
 
-    #     # if no run id is passed, then its the first slide
-    #     if not pk:
-    #         # creating run
-    #         run = RunSerializer(data={
-    #             "id_user": request.user.id,
-    #             "current_hint": first_hint.id
-    #         })
+            if not run.is_valid():
+                return Response(data={'error': "Invalid run creation"}, status=status.HTTP_400_BAD_REQUEST)
 
-    #         if not run.is_valid():
-    #             return Response(data={'error': "Invalid run creation"}, status=status.HTTP_400_BAD_REQUEST)
+            run = run.save()
+            response['run_id'] = run.id
+            response['slides_left_amount'] = run.slides_left
 
-    #         run = run.save()
-    #         response['run_id'] = run.id
-    #         response['slides_left_amount'] = run.slides_left
+        # if there is a run id, then append the new slide to it
+        else:
+            run = Run.objects.get(id=pk)
 
-    #     # if there is a run id, then append the new slide to it
-    #     else:
-    #         run = Run.objects.get(id=pk)
+            if run.slides_left == 0:
+                return Response(data={'error': "Run finished"}, status=status.HTTP_400_BAD_REQUEST)
 
-    #         if run.slides_left == 0:
-    #             return Response(data={'error': "Run finished"}, status=status.HTTP_400_BAD_REQUEST)
+            run.current_hint = first_hint
+            run.slides_left -= 1
+            run.save()
 
-    #         run.current_hint = first_hint
-    #         run.slides_left -= 1
-    #         run.save()
+            response['run_id'] = run.id
+            response['slides_left_amount'] = run.slides_left
 
-    #         response['run_id'] = run.id
-    #         response['slides_left_amount'] = run.slides_left
+        # creating slide run associated to the slide and the run
+        slide_run = SlideRunSerializer(data={
+            "original_slide": slide.id,
+            "run_id": run.id,
+            "has_hit": False,
+        })
 
-    #     # creating slide run associated to the slide and the run
-    #     slide_run = SlideRunSerializer(data={
-    #         "original_slide": slide.id,
-    #         "run_id": run.id,
-    #         "has_hit": False,
-    #     })
+        if not slide_run.is_valid():
+            return Response(data={'error': "Invalid slide_run creation"}, status=status.HTTP_400_BAD_REQUEST)
 
-    #     if not slide_run.is_valid():
-    #         return Response(data={'error': "Invalid slide_run creation"}, status=status.HTTP_400_BAD_REQUEST)
+        slide_run = slide_run.save()
+        response['slide_run_id'] = slide_run.id
 
-    #     slide_run = slide_run.save()
-    #     response['slide_run_id'] = slide_run.id
+        return Response(data=response, status=status.HTTP_200_OK)
 
-    #     return Response(data=response, status=status.HTTP_200_OK)
+    except Run.DoesNotExist:
+        return Response(data={'error': "Invalid run"}, status=status.HTTP_400_BAD_REQUEST)
 
-    # except Run.DoesNotExist:
-    #     return Response(data={'error': "Invalid run"}, status=status.HTTP_400_BAD_REQUEST)
+    except SlideImage.DoesNotExist:
+        return Response(data={'error': "Invalid hint"}, status=status.HTTP_400_BAD_REQUEST)
 
-    # except SlideImage.DoesNotExist:
-    #     return Response(data={'error': "Invalid hint"}, status=status.HTTP_400_BAD_REQUEST)
-
-    # except Slide.DoesNotExist:
-    #     return Response(data={'error': "Invalid slide"}, status=status.HTTP_400_BAD_REQUEST)
+    except Slide.DoesNotExist:
+        return Response(data={'error': "Invalid slide"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['POST'])

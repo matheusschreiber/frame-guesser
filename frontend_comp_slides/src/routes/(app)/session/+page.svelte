@@ -21,8 +21,6 @@
   var answer: number | null = null; 
   var loadingHint = false;
 
-  var username = getCookie("username");
-
   var options = [
     "Nome Professor | Estrutura de Dados I",
     "Nome Professor | Estrutura de Dados II",
@@ -51,15 +49,7 @@
   async function handleAnswerSlide() {
     let runId = getCookie("runId");
     if (!runId) return;
-    const response = await api.put(
-      "slide/answer/" + runId,
-      {
-        answer: options[selected ? selected : 0],
-      },
-      {
-        auth: { username: "matheus", password: "2341" }, //TODO: check auth
-      }
-    );
+    const response = await api.put("slide/answer/" + runId, { answer: options[selected ? selected : 0], });
 
     if (response.data.answer == true) {
       Swal.fire({
@@ -115,14 +105,14 @@
     
     // TODO: add error catching
 
-    let token = authenticateUser() //FIXME: problem with SSR
-    
     let response;
     let currentRun = getCookie("runId");
 
-    if (currentRun) response = await api.get("slide/random/"+currentRun, {auth: { username: "matheus", password: "123123abc" }});
-    else response = await api.get("slide/random", {headers: { Authorization: `Bearer ${token}` }});
-
+    if (currentRun && currentRun!="undefined"){
+      response = await api.get("slide/random/"+currentRun);
+    } else {
+      response = await api.get("slide/random");
+    }
 
     slideImage = import.meta.env.VITE_API_URL + '/' +response.data.slide_image_path;
     hintsAmount = response.data.hints_amount - 1;
@@ -136,13 +126,7 @@
     let runId = getCookie("runId");
     if (!runId) return; // TODO: add better error catching...
 
-    const response = await api.post(
-      "slide/hint/" + runId,
-      {},
-      {
-        auth: { username: "matheus", password: "123123abc" },
-      }
-    );
+    const response = await api.post("slide/hint/" + runId);
 
     slideImage = import.meta.env.VITE_API_URL + '/' +response.data.slide_image_path;
     loadingHint = false

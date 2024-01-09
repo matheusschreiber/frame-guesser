@@ -29,6 +29,7 @@ class Slide(models.Model):
     misses = models.IntegerField(default=0)
     hints_used = models.IntegerField(default=0)
     difficulty_level = models.IntegerField()
+    # wrong_options = models.ForeignKey()
 
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)

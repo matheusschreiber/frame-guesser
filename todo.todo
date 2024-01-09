@@ -1,10 +1,11 @@
 urgentes
-- [ ] terminar session page
-- [ ] trocar auth basic do axios para auth2
+- [x] terminar session page
+- [x] trocar auth basic do axios para auth2
 - [ ] adicionar activity indicators no lugar dos "Carregando..."
 - [ ] mensagem de 'username already in use' deve ser traduzida
-- [ ] veerificar por que nao ta tendo cache e nao ta salvando o user logged
-- [ ] resolver bug com get random slide
+- [x] veerificar por que nao ta tendo cache e nao ta salvando o user logged
+- [x] resolver bug com get random slide
+- [ ] buscar travar uma run quando um slide é pego (evitar ficar dando f5 para pegar outro slide)
 
 futuros
 - [ ] trocar sweet alerts por alertas na propria interface (um h4 com cor diferente por exemplo)

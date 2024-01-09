@@ -1,5 +1,7 @@
 */**/__pycache__
 */**/db.sqlite3
+backend_comp_slides/static
+slides
 venv
 .vscode
 */**/*.jpg

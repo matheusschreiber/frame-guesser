@@ -6,7 +6,6 @@
   import { api } from "../../../services/api";
   import Loading from "../../../components/loading.svelte";
   import { getCookie, setCookie } from "../../../services/cookies";
-    import { authenticateUser } from "$lib";
 
   let confirm = false;
   let selected: number | null = null;
@@ -15,6 +14,7 @@
 
   let currentSlide = 1;
   let slidesAmount = 5;
+  let difficultyLevel: number;
 
   var loading = true;
   var hasAnswered = false;
@@ -66,7 +66,7 @@
         showConfirmButton: false,
       });
     } else {
-      Swal.fire("uai", "Houve algum problema com os servidores", "error").then(
+      Swal.fire("Uai", "Houve algum problema com os servidores", "error").then(
         () => {
           selected = null;
         }
@@ -103,15 +103,18 @@
     selected = null;
     hintsUsed = 0;
     
-    // TODO: add error catching
-
     let response;
     let currentRun = getCookie("runId");
 
-    if (currentRun && currentRun!="undefined"){
-      response = await api.get("slide/random/"+currentRun);
-    } else {
-      response = await api.get("slide/random");
+    try {
+      if (currentRun && currentRun!="undefined"){
+        response = await api.get("slide/random/"+currentRun);
+      } else {
+        response = await api.get("slide/random");
+      }
+    } catch(err) {
+      Swal.fire("Uai", "Houve algum problema com os servidores", "error")
+      return;
     }
 
     slideImage = import.meta.env.VITE_API_URL + '/' +response.data.slide_image_path;
@@ -119,12 +122,16 @@
     setCookie("runId", response.data.run_id);
     slidesAmount = response.data.slides_left_amount
     loading = false;
+    difficultyLevel = response.data.difficulty_level
   }
 
   async function fetchNewHint() {
     loadingHint = true
     let runId = getCookie("runId");
-    if (!runId) return; // TODO: add better error catching...
+    if (!runId) {
+      Swal.fire("Uai", "Houve algum problema com a sua sessão, redirecionando...", "error")
+      return;
+    }
 
     const response = await api.post("slide/hint/" + runId);
 
@@ -165,9 +172,18 @@
     <LineBackground variant={3} />
 
     <div id="div-scroll-main">
-      <h5 class="mx-auto w-fit text-red font-bold text-sm mb-0">
-        NÍVEL DIFÍCIL
-        <!-- TODO: get this from backend -->
+      <h5 class="mx-auto w-fit font-bold text-sm mb-0">
+        {#if difficultyLevel === 5}
+          <span class="text-red">NÍVEL DIFÍCIL</span>
+        {:else if difficultyLevel === 4}
+          <span class="text-orange">NÍVEL QUASE DIFÍCIL</span>
+        {:else if difficultyLevel === 3}
+          <span class="text-yellow">NÍVEL NORMAL</span>
+        {:else if difficultyLevel === 2}
+          <span class="text-green">NÍVEL FÁCIL</span>
+        {:else if difficultyLevel === 1}
+          <span class="text-blue">NÍVEL MUITO FÁCIL</span>
+        {/if}
       </h5>
       <h2 class="text-whitish text-3xl">De quem é esse slide?</h2>
     </div>
@@ -187,8 +203,6 @@
         {:else}
           <img class="rounded-lg h-[400px]" src={slideImage} alt="slide" />
         {/if}
-        
-        <!-- TODO: REFACTOR THIS PAGE, THE UX/UI IS TRASH!!! -->
         
       </aside>
   

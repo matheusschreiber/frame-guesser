@@ -47,6 +47,7 @@ export default {
       pink: '#DD58D6',
       blue: '#4369EF',
       cyan: '#00DEEC',
+      orange: '#ffb224',
     },
   },
   plugins: [],

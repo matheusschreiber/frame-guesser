@@ -8,15 +8,13 @@
   import { getContext, onMount } from "svelte";
 
   import { deleteCookie, getCookie } from "../../../services/cookies";
-    import { authenticateUser } from "$lib";
 
   let username:string|undefined=undefined;
 
   onMount(()=>{
     deleteCookie("runId");
-    let isAuthenticated = authenticateUser()
-    if (!isAuthenticated) goto('login')
     username = getCookie('username')
+    if (!username) goto('/login')
   })
 
 </script>

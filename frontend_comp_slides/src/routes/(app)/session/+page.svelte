@@ -22,12 +22,12 @@
   var loadingHint = false;
 
   var options = [
-    "Nome Professor | Estrutura de Dados I",
-    "Nome Professor | Estrutura de Dados II",
-    "Nome Professor | Estrutura de Dados III",
-    "Nome Professor | Estrutura de Dados IV",
+    "Carregando... | Carregando...",
+    "Carregando... | Carregando...",
+    "Carregando... | Carregando...",
+    "Carregando... | Carregando...",
   ];
-  var slideImage = "";
+  var slideImage:string  | undefined;
 
   function handleConfirm() {
     if (hasAnswered) return;

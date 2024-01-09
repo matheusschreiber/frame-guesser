@@ -6,16 +6,17 @@
   import Swal from "sweetalert2";
   import { onMount, setContext } from "svelte";
   import Loading from "../../../components/loading.svelte";
-  import { setCookie } from "../../../services/cookies";
+  import { getCookie, setCookie } from "../../../services/cookies";
   import { jwtDecode, type JwtPayload } from "jwt-decode";
 
-  let username:string;
-  let password:string;
+  let username:string|undefined;
+  let password:string|undefined;
 
   let loading = false;
 
-  // adding 'form' submition with 'enter'
   onMount(() => {
+    
+    // adding 'form' submition with 'enter'
     let inputPassword = document.getElementsByName("password")[0];
     inputPassword.addEventListener("keypress", function (event) {
       if (event.key === "Enter") {
@@ -23,6 +24,11 @@
         handleLogin();
       }
     });
+
+    const rawTokens = getCookie('auth')
+    username = getCookie('username')
+    if (rawTokens && username) goto('/logged')
+
   });
 
   async function handleLogin() {

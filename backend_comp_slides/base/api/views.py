@@ -96,7 +96,8 @@ def addMessageToUser(request, pk):
 @permission_classes([IsAuthenticated])
 def getRandomSlide(request, pk=None):
     try:
-        slide = Slide.objects.order_by('?').first()
+        all_slides = Slide.objects.order_by('?')
+        slide = all_slides.first()
         first_hint = SlideImage.objects.get(
             Q(slide__id=slide.id) & Q(hint_index=0))
 
@@ -105,6 +106,18 @@ def getRandomSlide(request, pk=None):
             "hints_amount": slide.hints_amount,
             "difficulty_level": slide.difficulty_level
         }
+
+        # fetching three slides to append as possible answers
+        alternatives = [slide.prof_discipline]
+        for option in all_slides:
+            if option.id==slide.id:
+                continue
+                
+            if len(alternatives)==4:
+                break
+            
+            alternatives.append(option.prof_discipline)
+        response['alternatives'] = alternatives
 
         # if no run id is passed, then its the first slide
         if not pk:
@@ -127,10 +140,6 @@ def getRandomSlide(request, pk=None):
 
             if run.slides_left == 0:
                 return Response(data={'error': "Run finished"}, status=status.HTTP_400_BAD_REQUEST)
-
-            run.current_hint = first_hint
-            run.slides_left -= 1
-            run.save()
 
             response['run_id'] = run.id
             response['slides_left_amount'] = run.slides_left
@@ -272,31 +281,3 @@ def getHistoryRun(request, pk=None):
 
     except Run.DoesNotExist:
         return Response(data={'error': "Invalid run"}, status=status.HTTP_400_BAD_REQUEST)
-
-
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def getAlternatives(request, pk):
-    try:
-        run = Run.objects.get(id=pk)
-        user = User.objects.get(username=run.id_user)
-
-        if not user or user.username != request.user.username:
-            raise User.DoesNotExist
-
-    # TODO: finish this later
-
-    # this function selects the alternatives to display in with the slide during the game
-    # it has to make sure that one of them is the right one and the others vary...
-
-    except User.DoesNotExist:
-        return Response(data={'error': "Invalid user"}, status=status.HTTP_400_BAD_REQUEST)
-
-    except Run.DoesNotExist:
-        return Response(data={'error': "Invalid run"}, status=status.HTTP_400_BAD_REQUEST)
-
-    except SlideImage.DoesNotExist:
-        return Response(data={'error': "Invalid hint"}, status=status.HTTP_400_BAD_REQUEST)
-
-    except Slide.DoesNotExist:
-        return Response(data={'error': "Invalid slide"}, status=status.HTTP_400_BAD_REQUEST)

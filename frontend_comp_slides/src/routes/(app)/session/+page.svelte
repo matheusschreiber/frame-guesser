@@ -123,6 +123,7 @@
     slidesAmount = response.data.slides_left_amount
     loading = false;
     difficultyLevel = response.data.difficulty_level
+    options = response.data.alternatives
   }
 
   async function fetchNewHint() {

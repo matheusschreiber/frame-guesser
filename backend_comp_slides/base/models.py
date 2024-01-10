@@ -50,7 +50,8 @@ class SlideImage(models.Model):
 class Run(models.Model):
     id_user = models.ForeignKey(User, on_delete=models.CASCADE)
     current_hint = models.ForeignKey(SlideImage, on_delete=models.CASCADE)
-    slides_left = models.IntegerField(default=10)
+    slides_left = models.IntegerField()
+    total_points = models.IntegerField(default=0)
 
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
@@ -72,3 +73,7 @@ class SlideRun(models.Model):
 
     def __str__(self):
         return str(self.id) + " | " + str(self.run_id.id) + " | " + self.original_slide.prof_discipline
+    
+class Config(models.Model):
+    max_points_per_slide_run = models.IntegerField(default=5)
+    max_slides_per_run = models.IntegerField(default=10)

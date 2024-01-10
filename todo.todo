@@ -6,6 +6,7 @@ urgentes
 - [x] veerificar por que nao ta tendo cache e nao ta salvando o user logged
 - [x] resolver bug com get random slide
 - [ ] buscar travar uma run quando um slide é pego (evitar ficar dando f5 para pegar outro slide)
+- [ ] adicionar diferentes pontuações para diferentes dificuldades de slide
 
 futuros
 - [ ] trocar sweet alerts por alertas na propria interface (um h4 com cor diferente por exemplo)

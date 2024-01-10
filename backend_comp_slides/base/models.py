@@ -1,22 +1,20 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
-# Create your models here.
-
 
 class User(AbstractUser):
     username = models.CharField(max_length=25, unique=True)
     message = models.TextField(null=True)
-    hits = models.IntegerField(default=0)
-    misses = models.IntegerField(default=0)
-    hints_used = models.IntegerField(default=0)
-    points = models.IntegerField(default=0)
+    total_hits = models.IntegerField(default=0)
+    total_misses = models.IntegerField(default=0)
+    total_hints_used = models.IntegerField(default=0)
+    total_points = models.IntegerField(default=0)
 
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        ordering = ['-points']  # decrescent order
+        ordering = ['-total_points']  # decrescent order
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = []
@@ -25,11 +23,10 @@ class User(AbstractUser):
 class Slide(models.Model):
     prof_discipline = models.CharField(max_length=300)
     hints_amount = models.IntegerField()
-    hits = models.IntegerField(default=0)
-    misses = models.IntegerField(default=0)
-    hints_used = models.IntegerField(default=0)
+    total_hits = models.IntegerField(default=0)
+    total_misses = models.IntegerField(default=0)
+    total_hints_used = models.IntegerField(default=0)
     difficulty_level = models.IntegerField()
-    # wrong_options = models.ForeignKey()
 
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
@@ -54,10 +51,6 @@ class Run(models.Model):
     id_user = models.ForeignKey(User, on_delete=models.CASCADE)
     current_hint = models.ForeignKey(SlideImage, on_delete=models.CASCADE)
     slides_left = models.IntegerField(default=10)
-    hits = models.IntegerField(default=0)
-    misses = models.IntegerField(default=0)
-    hints_used = models.IntegerField(default=0)
-    points = models.IntegerField(default=0)
 
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
@@ -66,9 +59,13 @@ class Run(models.Model):
         return str(self.id) + " | " + str(self.id_user)
 
 class SlideRun(models.Model):
-    original_slide = models.ForeignKey(Slide, null=True, on_delete=models.SET_NULL)
-    run_id = models.ForeignKey(Run, null=True,  on_delete=models.SET_NULL)
+    original_slide = models.ForeignKey(Slide, null=True, on_delete=models.CASCADE)
+    run_id = models.ForeignKey(Run, null=True,  on_delete=models.CASCADE)
     has_hit = models.BooleanField(default=False)
+    has_missed = models.BooleanField(default=False)
+    hints_used = models.IntegerField(default=0)
+    points = models.IntegerField(default=0)
+    slide_alternatives = models.ManyToManyField(Slide, related_name='alternatives')
 
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)

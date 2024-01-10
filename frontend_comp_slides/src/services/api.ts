@@ -6,9 +6,16 @@ export const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL + "/api/",
 });
 
+const nonProtectedUrls = [
+  'user/list',
+  'disciplines'
+]
 
 // This is to use the acess token on each request
 api.interceptors.request.use((request) => {
+  if (request.url && nonProtectedUrls.includes(request.url)) return request
+  
+
   const rawTokens = getCookie('auth');
   if (!rawTokens) {
     goto('/login');

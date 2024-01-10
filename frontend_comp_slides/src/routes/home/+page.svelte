@@ -10,7 +10,7 @@
 
   type User = {
     username?: string;
-    points?: number;
+    total_points?: number;
     message?: string;
   };
 
@@ -185,8 +185,8 @@
               <td class="font-bold text-terciary text-left pl-2 w-64"
                 >{user.username}</td
               >
-              <td class="font-bold text-terciary">{user.points} pts</td>
-              <td class="{user.points != 0 ? 'invisible' : 'visible'} w-8"
+              <td class="font-bold text-terciary">{user.total_points} pts</td>
+              <td class="{user.total_points != 0 ? 'invisible' : 'visible'} w-8"
                 ><img
                   class="mx-auto"
                   src="icons/crown.svg"

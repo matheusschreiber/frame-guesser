@@ -9,13 +9,13 @@ export const api = axios.create({
 const nonProtectedUrls = [
   'user/list/',
   'disciplines/',
-  'user/create/'
+  'user/create/',
+  'user/token/'
 ]
 
 // This is to use the acess token on each request
 api.interceptors.request.use((request) => {
   if (request.url && nonProtectedUrls.includes(request.url)) return request
-  
 
   const rawTokens = getCookie('auth');
   if (!rawTokens) {

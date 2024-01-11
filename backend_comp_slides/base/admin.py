@@ -5,6 +5,7 @@ from .models import *
 class SlidedRunCustomAdmin(admin.ModelAdmin):
     list_display = [
         'id',
+        'run_id',
         'user',
         'original_slide',
         'has_hit',

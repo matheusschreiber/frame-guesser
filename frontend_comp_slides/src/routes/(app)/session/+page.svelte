@@ -49,6 +49,8 @@
   async function handleAnswerSlide() {
     let runId = getCookie("runId");
     if (!runId) return;
+
+    
     const response = await api.put("slide/answer/" + runId, {
       answer: options[selected ? selected : 0],
     });
@@ -95,6 +97,8 @@
     } else {
       await fetchSlide();
     }
+
+    loading = false;
   }
 
   async function fetchSlide() {

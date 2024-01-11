@@ -444,7 +444,7 @@ def getHistoryRun(request, pk=None):
             
             if slide_run.has_hit:
                 slides_hits_count+=1
-        
+
         all_users_points = 0
         all_users_runs = Run.objects.all()
         for run in all_users_runs:

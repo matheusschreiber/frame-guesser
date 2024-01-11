@@ -32,6 +32,11 @@
   });
 
   async function handleLogin() {
+    if (!username || !password) {
+      Swal.fire("Uai", "Ainda tem campos não preenchidos ", "warning");
+      return;
+    }
+
     try {
       loading = true;
       const response = await api.post(
@@ -50,11 +55,16 @@
         goto("/logged");
 
       } else {
-        Swal.fire("Vish", "Credenciais inválidas ", "warning");
+        await Swal.fire("Vish", "Credenciais inválidas ", "warning");
       }
 
     } catch (err: any) {
-      Swal.fire("Vish", "Problema inesperado!", "warning");
+      
+      if (err.response.status === 401) {
+        await Swal.fire("Uai", "Credenciais inválidas!", "warning");
+      } else {
+        await Swal.fire("Vish", "Problema inesperado!", "warning");
+      }
     }
 
     loading = false;

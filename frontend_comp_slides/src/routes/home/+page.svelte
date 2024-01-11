@@ -186,7 +186,7 @@
                 >{user.username}</td
               >
               <td class="font-bold text-terciary">{user.total_points} pts</td>
-              <td class="{user.total_points != 0 ? 'invisible' : 'visible'} w-8"
+              <td class="{i != 0 ? 'invisible' : 'visible'} w-8"
                 ><img
                   class="mx-auto"
                   src="icons/crown.svg"

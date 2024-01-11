@@ -1,12 +1,13 @@
 urgentes
 - [x] terminar session page
 - [x] trocar auth basic do axios para auth2
-- [ ] adicionar activity indicators no lugar dos "Carregando..."
+- [x] adicionar activity indicators no lugar dos "Carregando..."
 - [x] mensagem de 'username already in use' deve ser traduzida
 - [x] veerificar por que nao ta tendo cache e nao ta salvando o user logged
 - [x] resolver bug com get random slide
 - [x] buscar travar uma run quando um slide é pego (evitar ficar dando f5 para pegar outro slide)
 - [ ] adicionar diferentes pontuações para diferentes dificuldades de slide
+- [ ] bugs na tela de results (estatisticas estao estranhas)
 
 futuros
 - [ ] trocar sweet alerts por alertas na propria interface (um h4 com cor diferente por exemplo)
@@ -14,7 +15,7 @@ futuros
 - [ ] frases aleatórias nos popups de acerto/erro
 - [ ] testes de integração
 - [ ] na tela que mostra as mensageens dos players, fazer uma seleção aleatória das mensagens para nao ficar repetidno sempre
-- [ ] adicionar texto 'logado como fulano' na tela de logged 
+- [x] adicionar texto 'logado como fulano' na tela de logged 
 - [x] funcionalidade de cancelar a opção de dicas (caso clique fora do botao na hora de confirmar)
 - [ ] adicionar transição bonitinha ao clicar no icone de tips
 - [ ] trocar sweet alert por outra coisa mais personalizada

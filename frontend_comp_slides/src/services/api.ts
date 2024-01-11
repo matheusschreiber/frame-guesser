@@ -7,8 +7,9 @@ export const api = axios.create({
 });
 
 const nonProtectedUrls = [
-  'user/list',
-  'disciplines'
+  'user/list/',
+  'disciplines/',
+  'user/create/'
 ]
 
 // This is to use the acess token on each request
@@ -37,18 +38,22 @@ api.interceptors.response.use((response) => {
 }, async (error) => {
   const originalRequest = error.config;
 
+  if (originalRequest.url && nonProtectedUrls.includes(originalRequest.url)) {
+    return Promise.reject(error);
+  }
+
   if (originalRequest.url == '/user/token/refresh/') {
     deleteCookie('auth')
     window.location.href = "/login";
     return Promise.reject(error);
   }
-  
+
   if (
     error?.response?.status === 401 &&
     !originalRequest?.__isRetryRequest
   ) {
       originalRequest.retry = true;
-      
+
       const rawTokens = getCookie('auth');
       if (!rawTokens) {
         deleteCookie('auth')

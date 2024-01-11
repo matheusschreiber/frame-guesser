@@ -69,7 +69,7 @@
   }
 
   async function fetchUsers() {
-    const response = await api.get("user/list");
+    const response = await api.get("user/list/");
     users = response.data;
   }
 

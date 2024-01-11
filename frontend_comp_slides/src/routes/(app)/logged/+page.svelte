@@ -36,10 +36,10 @@
       
     </div>
     <a
-      href="/"
+      href="/login"
       class="mb-16 mt-2"
       on:click={() => {
-        localStorage.clear();
+        deleteCookie('auth');
       }}
       role="button"
       tabindex={1}

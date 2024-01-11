@@ -31,7 +31,7 @@
   }
 
   async function fetchDisciplines() {
-    const response = await api.get("disciplines");
+    const response = await api.get("disciplines/");
     response.data.map((discipline: string) =>
       disciplines.push(discipline.split("|")[1])
     );

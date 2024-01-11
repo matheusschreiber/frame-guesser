@@ -4,6 +4,9 @@
   import { goto } from "$app/navigation";
   import { api } from "../../../services/api";
   import Swal from "sweetalert2";
+  import { jwtDecode, type JwtPayload } from "jwt-decode";
+  import { deleteCookie, setCookie } from "../../../services/cookies";
+    import { onMount } from "svelte";
 
   let username:string;
   let password:string;
@@ -13,16 +16,34 @@
     if (confirmPassword != password) return;
 
     try {
-      const response = await api.post("user/create/", {
+      const responseFromUserCreation = await api.post("user/create/", {
         username,
         password,
       });
-      
+
+      const responseFromTokenAcquisition = await api.post(
+        "user/token/",
+        {
+          username,
+          password
+        },
+      );
+
+      let userAccessData:JwtPayload & {username:string} = jwtDecode(responseFromTokenAcquisition.data.access)
+      username = userAccessData.username
+      setCookie("auth", JSON.stringify(responseFromTokenAcquisition.data));
+      setCookie("username", username);
       goto("/logged");
+
     } catch (err: any) {
       Swal.fire("Vish", err.response.data.error, "warning");
     }
   }
+
+  onMount(()=>{
+    deleteCookie('auth')
+    deleteCookie('username')
+  })
 </script>
 
 <main>

@@ -2,10 +2,10 @@ urgentes
 - [x] terminar session page
 - [x] trocar auth basic do axios para auth2
 - [ ] adicionar activity indicators no lugar dos "Carregando..."
-- [ ] mensagem de 'username already in use' deve ser traduzida
+- [x] mensagem de 'username already in use' deve ser traduzida
 - [x] veerificar por que nao ta tendo cache e nao ta salvando o user logged
 - [x] resolver bug com get random slide
-- [ ] buscar travar uma run quando um slide é pego (evitar ficar dando f5 para pegar outro slide)
+- [x] buscar travar uma run quando um slide é pego (evitar ficar dando f5 para pegar outro slide)
 - [ ] adicionar diferentes pontuações para diferentes dificuldades de slide
 
 futuros

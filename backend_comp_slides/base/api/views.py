@@ -56,21 +56,21 @@ class MyTokenObtainPairView(TokenObtainPairView):
 
 
 @api_view(["POST"])
-def addUser(request):
+def createUser(request):
     if not request.data["username"] or not request.data["password"]:
         return Response(
-            data={"error": "Empty fields detected"}, status=status.HTTP_400_BAD_REQUEST
+            data={"error": "Ainda existem campos para preencher"}, status=status.HTTP_400_BAD_REQUEST
         )
 
     if User.objects.filter(username=request.data["username"]).exists():
         return Response(
-            data={"error": "Username already in use"},
+            data={"error": "Nome de usuário em uso!"},
             status=status.HTTP_400_BAD_REQUEST,
         )
 
     if len(request.data["password"]) < 8:
         return Response(
-            data={"error": "Password is too short"}, status=status.HTTP_400_BAD_REQUEST
+            data={"error": "A senha deve ter mais de 8 caracteres"}, status=status.HTTP_400_BAD_REQUEST
         )
 
     hashed_password = make_password(request.data["password"])
@@ -80,7 +80,7 @@ def addUser(request):
 
     if user.is_valid():
         user.save()
-        return Response(user.data, status=status.HTTP_201_CREATED)
+        return Response(status=status.HTTP_201_CREATED)
     else:
         return Response(
             data={"error": "Invalid user fields"}, status=status.HTTP_400_BAD_REQUEST

@@ -67,6 +67,11 @@ def createUser(request):
             data={"error": "Nome de usuário em uso!"},
             status=status.HTTP_400_BAD_REQUEST,
         )
+    
+    if len(request.data["username"]) >=25:
+        return Response(
+            data={"error": "O nome de usuário deve possuir até 25 characteres"}, status=status.HTTP_400_BAD_REQUEST
+        )
 
     if len(request.data["password"]) < 8:
         return Response(
@@ -77,7 +82,7 @@ def createUser(request):
     request.data["password"] = hashed_password
 
     user = UserSerializer(data=request.data)
-
+    
     if user.is_valid():
         user.save()
         return Response(status=status.HTTP_201_CREATED)

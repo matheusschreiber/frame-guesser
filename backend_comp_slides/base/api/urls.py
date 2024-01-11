@@ -15,8 +15,7 @@ urlpatterns = [
     path("slide/random/<str:pk>", getRandomSlide, name="random_slide"),
     path("slide/hint/<str:pk>", getHint, name="hint_slide"),
     path("slide/answer/<str:pk>", getAnswerSlide, name="answer_slide"),
-    
+
     path("disciplines/", getDisciplines, name="get_disciplines"),
     path("history/<str:pk>", getHistoryRun, name='get_history')
-
 ]

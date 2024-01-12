@@ -1,14 +1,12 @@
-from .serializers import (
-    FilteredUserSerializer,
-    UserSerializer,
-    SlideSerializer,
-    RunSerializer,
-    SlideRunSerializer,
-)
-from ..models import User, Slide, SlideImage, Run, SlideRun, Config
+from .serializers import *
+from ..models import *
+
 from django.contrib.auth.hashers import make_password
 from django.db.models import Q
 from random import choice
+
+import re
+import json
 
 from rest_framework.decorators import (
     api_view,
@@ -92,33 +90,81 @@ def createUser(request):
         )
 
 
+def profanity_filter(text:str):
+    
+    with open('profanity_words.txt') as f:
+        profanity_words = f.read().splitlines()
+
+    pattern = re.compile(r'\b(?:' + '|'.join(profanity_words) + r')\b', flags=re.IGNORECASE)
+    filtered_text = pattern.sub(lambda x: '*' * len(x.group()), text)
+
+    return filtered_text
+
+
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
-def addMessageToUser(request, pk):
+def addMessageToUser(request):
     try:
-        user = User.objects.get(id=pk)
-    except:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+        message_text = request.data["message"].strip()
 
-    message = request.data["message"].strip()
+        if len(message_text) > 200:
+            return Response(
+                data={"error": "Mensagem é muito longa (>200 caracteres)"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+    
+        if len(message_text) == 0:
+            return Response(
+                data={"error": "Mensagem em branco?? Sério??"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
-    if len(message) > 200:
-        return Response(
-            data={"error": "Message is too long (>200 caracters)"},
-            status=status.HTTP_403_FORBIDDEN,
+        logged_user = User.objects.get(username=request.user.username)
+
+        user_messages_amount = Message.objects.filter(user=logged_user).count()
+        user_runs_amount = Run.objects.filter(user=logged_user).count()
+
+        if user_messages_amount>=user_runs_amount:
+            return Response(data={"error": "É permitida apenas uma mensagem por sessão"}, status=status.HTTP_400_BAD_REQUEST)
+
+        new_message = MessageSerializer(
+            data={
+                "text": profanity_filter(message_text),
+                "user": logged_user.id
+            }
         )
 
-    logged_user = User.objects.get(username=request.user.username)
-    if int(pk) != int(logged_user.id):
+        if new_message.is_valid():
+            new_message.save()
+            return Response(status=status.HTTP_200_OK)
+        else:
+            return Response(data={"error": "Erro ao salvar a mensagem"}, status=status.HTTP_400_BAD_REQUEST)
+
+    except User.DoesNotExist:
         return Response(
-            data={"error": "User not allowed"}, status=status.HTTP_403_FORBIDDEN
+            data={"error": "Usuário não encontrado"}, status=status.HTTP_400_BAD_REQUEST
+        )
+    except Exception as erro:
+        print(erro)
+
+
+        return Response(
+            data={"error": "Problema inesperado"}, status=status.HTTP_400_BAD_REQUEST
         )
 
-    user.message = message
-    user.save()
 
-    return Response(data=message)
+@api_view(["GET"])
+def getMessages(request):
+    messages = list()
 
+    for message in Message.objects.all():
+        messages.append({
+            "username": message.user.username,
+            "text": message.text
+        })
+    
+
+    return Response(data=messages, status=status.HTTP_200_OK)
 
 # slide views
 
@@ -181,7 +227,7 @@ def getRandomSlide(request, pk=None):
 
             new_run = RunSerializer(
                 data={
-                    "id_user": request.user.id,
+                    "user": request.user.id,
                     "current_hint": first_hint.id,
                     "slides_left": Config.objects.all().first().max_slides_per_run
                 }
@@ -285,7 +331,7 @@ def getRandomSlide(request, pk=None):
 def getHint(request, pk):
     try:
         current_run = Run.objects.get(id=pk)
-        user = User.objects.get(username=current_run.id_user)
+        user = User.objects.get(username=current_run.user)
 
         if not user or user.username != request.user.username:
             raise User.DoesNotExist
@@ -350,7 +396,7 @@ def calculate_points_on_win(current_run):
 def getAnswerSlide(request, pk):
     try:
         current_run = Run.objects.get(id=pk)
-        user = User.objects.get(username=current_run.id_user)
+        user = User.objects.get(username=current_run.user)
 
         if not user or user.username != request.user.username:
             raise User.DoesNotExist

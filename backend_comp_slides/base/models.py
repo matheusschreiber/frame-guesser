@@ -4,7 +4,6 @@ from django.contrib.auth.models import AbstractUser
 
 class User(AbstractUser):
     username = models.CharField(max_length=25, unique=True)
-    message = models.TextField(null=True)
     total_hits = models.IntegerField(default=0)
     total_misses = models.IntegerField(default=0)
     total_hints_used = models.IntegerField(default=0)
@@ -18,6 +17,17 @@ class User(AbstractUser):
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = []
+
+
+class Message(models.Model):
+    text = models.TextField(max_length=200)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    updated = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return (str(self.user) + " | " + self.text[:20])
 
 
 class Slide(models.Model):
@@ -48,7 +58,7 @@ class SlideImage(models.Model):
 
 
 class Run(models.Model):
-    id_user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     current_hint = models.ForeignKey(SlideImage, on_delete=models.CASCADE)
     slides_left = models.IntegerField()
     total_points = models.IntegerField(default=0)
@@ -57,7 +67,7 @@ class Run(models.Model):
     created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return str(self.id) + " | " + str(self.id_user)
+        return str(self.id) + " | " + str(self.user)
 
 class SlideRun(models.Model):
     original_slide = models.ForeignKey(Slide, null=True, on_delete=models.CASCADE)

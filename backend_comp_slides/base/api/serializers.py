@@ -1,5 +1,5 @@
 from rest_framework.serializers import ModelSerializer
-from base.models import User, Slide, SlideImage, Run, SlideRun
+from base.models import *
 
 
 class UserSerializer(ModelSerializer):
@@ -12,7 +12,6 @@ class FilteredUserSerializer(UserSerializer):
     class Meta(UserSerializer.Meta):
         fields = [
             "username",
-            "message",
             "total_points",
             "total_hits",
             "total_misses",
@@ -35,4 +34,10 @@ class RunSerializer(ModelSerializer):
 class SlideRunSerializer(ModelSerializer):
     class Meta:
         model = SlideRun
+        fields = "__all__"
+
+
+class MessageSerializer(ModelSerializer):
+    class Meta:
+        model = Message
         fields = "__all__"

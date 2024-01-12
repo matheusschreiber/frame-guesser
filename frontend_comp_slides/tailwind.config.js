@@ -27,10 +27,20 @@ export default {
         colorWarp: {
           '0%, 100%': { color: '#40128B' },
           '50%': { color: '#1F0C3E' },
+        },
+        skeletonEffectCard:{
+          '0%': { color: '#D9D9D9' },
+          '100%': { backgroundColor : '#e8e3e3'}
+        },
+        skeletonEffectItem:{
+          '0%': { color: '#e8e3e3' },
+          '100%': { backgroundColor : '#D9D9D9'}
         }
       },
       animation: {
         colorWarp: 'colorWarp 10s ease-in-out infinite',
+        skeletonEffectCard: 'skeletonEffectCard 1s linear infinite alternate',
+        skeletonEffectItem: 'skeletonEffectItem 1s linear infinite alternate'
       }
     },
     colors: {

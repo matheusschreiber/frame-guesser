@@ -7,7 +7,11 @@
   import Swal from "sweetalert2";
   import { goto } from "$app/navigation";
   import Difficulty from "../../../components/difficulty.svelte";
+    import Loading from "../../../components/loading.svelte";
+
   let messageSent = false;
+  let messageText = "";
+  let loading = false;
 
   type SlideReportType = {
     has_hit: number;
@@ -25,6 +29,7 @@
 
   onMount(() => {
     runId = getCookie("runId");
+
     if (runId) {
       fetchResults();
     } else {
@@ -38,15 +43,44 @@
       if (response.data) {
         totalPoints = response.data.total_points;
         slidesReportsList = response.data.slides_reports_list;
-        aboveAveragePercentage = (response.data.above_average_percentage * 100).toFixed(2)
-        belowAveragePercentage = (response.data.below_average_percentage * 100).toFixed(2)
+        aboveAveragePercentage = (
+          response.data.above_average_percentage * 100
+        ).toFixed(2);
+        belowAveragePercentage = (
+          response.data.below_average_percentage * 100
+        ).toFixed(2);
         slidesHitsCount = response.data.slides_hits_count;
       } else {
-        throw Error()
+        throw Error();
       }
-
     } catch (err) {
       Swal.fire("Vish", "Problema inesperado!", "warning");
+    }
+  }
+
+  async function handleMessage() {
+    loading = true
+    try {
+      const response = await api.post("user/message/", {
+        "message": messageText
+      });
+
+      messageSent = true;
+    } catch (err:any) {
+      await Swal.fire("Vish", err.response.data.error, "warning");
+    }
+
+    loading = false
+  }
+
+  function handleInputMessage(event:Event) {
+    if (!event) return;
+    let target = event.target as HTMLTextAreaElement
+    let textArea = document.getElementById('message-textarea')
+    if (target?.value?.length <= 200) {
+      messageText = target?.value;
+    } else {
+      if (textArea) (textArea as any).value=messageText
     }
   }
 </script>
@@ -98,10 +132,14 @@
           class="flex flex-col items-center justify-center bg-terciary rounded-xl"
         >
           <!-- <h5 class="mx-auto w-fit text-green font-bold text-sm mb-4">FÁCIL</h5> -->
-          <span class="font-bold my-2"><Difficulty difficultyLevel={slide.difficulty_level} /></span>
+          <span class="font-bold my-2"
+            ><Difficulty difficultyLevel={slide.difficulty_level} /></span
+          >
 
           <div
-            style="background-image: url({import.meta.env.VITE_API_URL + "/" + slide.slide_image_path})"
+            style="background-image: url({import.meta.env.VITE_API_URL +
+              '/' +
+              slide.slide_image_path})"
             class="w-[150px] h-[50px] bg-cover bg-top"
           />
           <div
@@ -109,8 +147,12 @@
               ? 'border-green'
               : 'border-red'}"
           >
-            <h3 class="text-whitish font-bold text-sm">{slide.prof_discipline.split('|')[0].trim().toUpperCase()}</h3>
-            <p class="text-gray text-sm">{slide.prof_discipline.split('|')[1].trim().toUpperCase()}</p>
+            <h3 class="text-whitish font-bold text-sm">
+              {slide.prof_discipline.split("|")[0].trim().toUpperCase()}
+            </h3>
+            <p class="text-gray text-sm">
+              {slide.prof_discipline.split("|")[1].trim().toUpperCase()}
+            </p>
           </div>
         </div>
       {/each}
@@ -121,35 +163,46 @@
         Deixe seu recado pela vitória, ou seu choro pela derrota :D
       </p>
 
-      {#if !messageSent}
-        <textarea
-          class="p-8 h-[200px] w-[500px] rounded-lg placeholder:text-opacity-30"
-          placeholder="Escreva uma mensagem"
-        />
-        <div class="flex mt-[-100px] justify-end items-center">
-          <p class="text-gray font-bold text-sm">200 caracteres restantes</p>
-          <div
-            class="bg-terciary p-4 scale-50 rounded-xl border-4 border-terciary hover:border-cyan cursor-pointer hover:scale-[.55] transition-transform"
-            on:click={() => (messageSent = true)}
-            role="button"
-            tabindex={1}
-            on:keypress={() => {}}
-          >
-            <img src="icons/send.svg" alt="send icon" class="" />
-          </div>
-        </div>
+      {#if loading}
+        <Loading />
       {:else}
-        <textarea
-          class="p-8 h-[200px] w-[500px] rounded-lg placeholder:text-opacity-30"
-          placeholder=""
-        />
-        <div class="mt-[-150px] flex justify-center items-center flex-col">
-          <p class="text-terciary font-bold text-sm">Mensagem registrada!</p>
-          <img src="icons/check.svg" alt="check icon" />
-        </div>
+        {#if !messageSent }
+          <textarea
+            id="message-textarea"
+            class="p-8 h-[200px] w-[500px] rounded-lg placeholder:text-opacity-30"
+            on:input={handleInputMessage}
+            placeholder="Escreva uma mensagem"
+          />
+          <div class="flex mt-[-100px] justify-end items-center">
+            <p class="text-gray font-bold text-sm">{200-messageText.length} caracteres restantes</p>
+            <div
+              class="bg-terciary p-4 scale-50 rounded-xl border-4 border-terciary hover:border-cyan cursor-pointer hover:scale-[.55] transition-transform"
+              on:click={() => handleMessage()}
+              role="button"
+              tabindex={1}
+              on:keypress={() => {}}
+            >
+              <img src="icons/send.svg" alt="send icon" class="" />
+            </div>
+          </div>
+        {:else}
+          <textarea
+            class="p-8 h-[200px] w-[500px] rounded-lg placeholder:text-opacity-30"
+            placeholder=""
+          />
+          <div class="mt-[-150px] flex justify-center items-center flex-col">
+            <p class="text-terciary font-bold text-sm">Mensagem registrada!</p>
+            <img src="icons/check.svg" alt="check icon" />
+          </div>
+        {/if}
       {/if}
     </div>
 
-    <Button text="INICIO" func={() => {goto('/')}} />
+    <Button
+      text="INICIO"
+      func={() => {
+        goto("/");
+      }}
+    />
   </section>
 </main>

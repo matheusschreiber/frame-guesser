@@ -11,12 +11,18 @@
   type User = {
     username?: string;
     total_points?: number;
-    message?: string;
+  };
+
+  type Message = {
+    username?: string;
+    text?: string;
   };
 
   let users: User[] = [{}];
+  let messages: Message[] = [{}];
+  let fetchingMessages = true;
 
-  function loadHorizontlDrag(id: number) {
+  function loadHorizontalCarousel(id: number) {
     const slider = document.getElementById(`horizontal-scroll-${id}`) as any;
     let isDown = false;
     let startX = 0;
@@ -43,28 +49,39 @@
 
     let speed = 0;
     let acceleration = 0.05;
+    let direction = 1; // 1=left -1=right
     let speedLimit = 1;
-    let offset = slider.clientWidth * 0.05;
     let framerate = 20;
+
+    let diffTotaSizeAndActualSize = 0;
 
     if (id == 1) speedLimit = 2;
 
-    setInterval(() => {
-      if (slider.scrollLeft < offset && speed < speedLimit)
-        speed += acceleration;
-      else if (
-        (slider.scrollLeft > slider.clientWidth - offset * 10 || speed < 0) &&
-        speed > -speedLimit
-      )
-        speed -= acceleration;
+    slider.scrollLeft += 10;
 
+
+    setInterval(() => {
+      diffTotaSizeAndActualSize = ((messages.length+1) * document.getElementsByClassName('message-card')[0].clientWidth) - slider.clientWidth
+
+      // finds the limit at the right border
+      if (Math.abs(slider.scrollLeft - diffTotaSizeAndActualSize) < 130) {
+        speed = 0;
+        direction = -1;
+      }
+      
+      // finds the limit at the left border
+      if (slider.scrollLeft == 0 && speed < 0) {
+        speed = 0.95;
+        direction = 1;
+      }
+
+      // motor direction control
+      if (Math.abs(speed)<speedLimit) speed += (direction * acceleration);
+      else speed = speedLimit * direction
+      
+      // motor
       slider.scrollLeft += speed;
 
-      // console.log({
-      //   width: slider.clientWidth,
-      //   scroll: slider.scrollLeft,
-      //   speed: speed,
-      // });
     }, framerate);
   }
 
@@ -73,11 +90,19 @@
     users = response.data;
   }
 
+  async function fetchMessages() {
+    const response = await api.get("user/message/list/");
+    messages = response.data;
+    fetchingMessages = false;
+  }
+
   onMount(() => {
     fetchUsers();
 
-    loadHorizontlDrag(1);
-    loadHorizontlDrag(2);
+    fetchMessages();
+
+    loadHorizontalCarousel(1);
+    loadHorizontalCarousel(2);
   });
 </script>
 
@@ -209,28 +234,47 @@
         id="horizontal-scroll-{row}"
         class="flex overflow-scroll overflow-x-scroll overflow-y-hidden gap-8 cursor-move"
       >
-        {#each row == 1 ? users : users.reverse() as user}
+        {#if fetchingMessages}
+          {#each [1, 2, 3, 4, 5, 6, 7] as message}
           <div
-            class="px-8 py-4 bg-[#FFF] shadow-medium rounded-xl gap-4 my-4 {user.message ==
-            null
-              ? 'hidden'
-              : 'flex'}"
+            class="animate-skeletonEffectCard px-8 py-4 bg-whitish shadow-medium rounded-xl gap-4 my-4 flex message-card"
           >
-            <img src="icons/user.svg" alt="user icon" />
+            <div
+              class="h-16 w-16 animate-skeletonEffectItem rounded-full"
+            ></div>
             <div class="w-[300px]">
-              <h3 class="w-full text-sm font-bold text-terciary">
-                {user.username}
-              </h3>
-              <p class="w-full font-fredoka text-gray">
-                {user.message}
-              </p>
+              <h3
+                class="animate-skeletonEffectItem w-full text-sm font-bold text-terciary h-4 w-32 rounded-lg"
+              ></h3>
+              <p
+                class="animate-skeletonEffectItem w-full font-fredoka text-gray h-8 w-32 mt-3 rounded-lg"
+              ></p>
             </div>
           </div>
-        {/each}
+          {/each}
+        {:else}
+          {#each row == 1 ? messages : messages.reverse() as message}
+            <div
+              class="px-8 py-4 bg-[#FFF] shadow-medium rounded-xl gap-4 my-4 message-card {message ==
+              null
+                ? 'hidden'
+                : 'flex'}"
+            >
+              <img src="icons/user.svg" alt="user icon" />
+              <div class="w-[300px]">
+                <h3 class="w-full text-sm font-bold text-terciary">
+                  {message.username}
+                </h3>
+                <p class="w-full font-fredoka text-gray">
+                  {message.text}
+                </p>
+              </div>
+            </div>
+          {/each}
+        {/if}
       </div>
     {/each}
   </section>
 
   <Footer />
-
 </main>

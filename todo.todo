@@ -7,11 +7,11 @@ urgentes
 - [x] resolver bug com get random slide
 - [x] buscar travar uma run quando um slide é pego (evitar ficar dando f5 para pegar outro slide)
 - [ ] adicionar diferentes pontuações para diferentes dificuldades de slide
-- [ ] bugs na tela de results (estatisticas estao estranhas)
+- [x] bugs na tela de results (estatisticas estao estranhas)
+- [ ] responsividade (muito importante!!!)
 
 futuros
 - [ ] trocar sweet alerts por alertas na propria interface (um h4 com cor diferente por exemplo)
-- [ ] responsividade (muito importante!!!)
 - [ ] frases aleatórias nos popups de acerto/erro
 - [ ] testes de integração
 - [ ] na tela que mostra as mensageens dos players, fazer uma seleção aleatória das mensagens para nao ficar repetidno sempre
@@ -19,7 +19,4 @@ futuros
 - [x] funcionalidade de cancelar a opção de dicas (caso clique fora do botao na hora de confirmar)
 - [ ] adicionar transição bonitinha ao clicar no icone de tips
 - [ ] trocar sweet alert por outra coisa mais personalizada
-- [ ] analisar por que nao fiz o campo de professor e disciplina separado no model do slide
 - [ ] repaginar pagina de 404 ta muito feia
-
-definir datas

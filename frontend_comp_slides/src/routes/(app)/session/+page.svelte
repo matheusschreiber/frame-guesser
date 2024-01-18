@@ -102,8 +102,6 @@
   }
 
   async function fetchSlide() {
-    if (slidesLeftAmount = 0) goto(`/results`, { replaceState: false });
-
     hasAnswered = false;
     loading = true;
     answer = null;
@@ -223,7 +221,7 @@
             <h3
               class="mt-4 text-whitish bg-terciary w-fit px-2 py-1 pb-3 rounded-lg text-sm"
             >
-              {10-slidesLeftAmount}/{10}
+              {10-slidesLeftAmount+1}/{10}
             </h3>
           </div>
         {/if}

@@ -7,7 +7,7 @@
   import Swal from "sweetalert2";
   import { goto } from "$app/navigation";
   import Difficulty from "../../../components/difficulty.svelte";
-    import Loading from "../../../components/loading.svelte";
+  import Loading from "../../../components/loading.svelte";
 
   let messageSent = false;
   let messageText = "";
@@ -18,13 +18,15 @@
     prof_discipline: string;
     slide_image_path: string;
     difficulty_level: number;
+    points: number;
+    hints_used: number;
   };
 
   let runId: string | undefined;
   let totalPoints: number;
   let slidesReportsList: SlideReportType[] = [];
-  let aboveAveragePercentage: string;
-  let belowAveragePercentage: string;
+  let aboveAveragePercentage: number;
+  let belowAveragePercentage: number;
   let slidesHitsCount: number;
 
   onMount(() => {
@@ -43,12 +45,8 @@
       if (response.data) {
         totalPoints = response.data.total_points;
         slidesReportsList = response.data.slides_reports_list;
-        aboveAveragePercentage = (
-          response.data.above_average_percentage * 100
-        ).toFixed(2);
-        belowAveragePercentage = (
-          response.data.below_average_percentage * 100
-        ).toFixed(2);
+        aboveAveragePercentage = parseFloat(response.data.above_average_percentage)
+        belowAveragePercentage = parseFloat(response.data.below_average_percentage)
         slidesHitsCount = response.data.slides_hits_count;
       } else {
         throw Error();
@@ -59,28 +57,28 @@
   }
 
   async function handleMessage() {
-    loading = true
+    loading = true;
     try {
       const response = await api.post("user/message/", {
-        "message": messageText
+        message: messageText,
       });
 
       messageSent = true;
-    } catch (err:any) {
+    } catch (err: any) {
       await Swal.fire("Vish", err.response.data.error, "warning");
     }
 
-    loading = false
+    loading = false;
   }
 
-  function handleInputMessage(event:Event) {
+  function handleInputMessage(event: Event) {
     if (!event) return;
-    let target = event.target as HTMLTextAreaElement
-    let textArea = document.getElementById('message-textarea')
+    let target = event.target as HTMLTextAreaElement;
+    let textArea = document.getElementById("message-textarea");
     if (target?.value?.length <= 200) {
       messageText = target?.value;
     } else {
-      if (textArea) (textArea as any).value=messageText
+      if (textArea) (textArea as any).value = messageText;
     }
   }
 </script>
@@ -107,10 +105,10 @@
 
     <h2 class="text-3xl text-whitish mt-16">
       {#if aboveAveragePercentage}
-        Você está <u class="text-yellow font-bold">{aboveAveragePercentage}%</u>
+        Você está <u class="text-yellow font-bold">{(aboveAveragePercentage*100).toFixed(2)}%</u>
         acima da média dos usuários
       {:else}
-        Você está <u class="text-yellow font-bold">{belowAveragePercentage}%</u>
+        Você está <u class="text-yellow font-bold">{(belowAveragePercentage*100).toFixed(2)}%</u>
         abaixo da média dos usuários
       {/if}
     </h2>
@@ -128,22 +126,21 @@
 
     <div class="flex flex-wrap justify-center gap-8">
       {#each slidesReportsList as slide}
-        <div
-          class="flex flex-col items-center justify-center bg-terciary rounded-xl"
-        >
-          <!-- <h5 class="mx-auto w-fit text-green font-bold text-sm mb-4">FÁCIL</h5> -->
-          <span class="font-bold my-2"
-            ><Difficulty difficultyLevel={slide.difficulty_level} /></span
-          >
+        <div class="flex flex-col items-center justify-center bg-terciary rounded-xl">
+          
+
+          <span class="font-bold my-2">
+            <Difficulty difficultyLevel={slide.difficulty_level} />
+          </span>
 
           <div
             style="background-image: url({import.meta.env.VITE_API_URL +
               '/' +
               slide.slide_image_path})"
-            class="w-[150px] h-[50px] bg-cover bg-top"
+            class="w-[150px] h-[50px] bg-cover bg-top mx-4"
           />
           <div
-            class="bg-secondary px-4 py-2 rounded-lg shadow-medium border-2 {slide.has_hit
+            class="bg-secondary px-4 py-2 rounded-lg w-full shadow-medium border-2 {slide.has_hit
               ? 'border-green'
               : 'border-red'}"
           >
@@ -153,6 +150,18 @@
             <p class="text-gray text-sm">
               {slide.prof_discipline.split("|")[1].trim().toUpperCase()}
             </p>
+
+            <div class="w-full flex justify-center my-2 gap-2">
+              <div class="flex justify-center text-sm gap-1 rounded-xl items-center w-12 h-7">
+                <img src="icons/lamp.svg" alt="lamp icon" style="width: 10px"/>
+                <span class="font-bold text-green">{slide.hints_used}</span>
+              </div>
+
+              <div class="flex justify-center text-sm gap-1 rounded-xl border border-yellow items-center w-12 h-7">
+                <img src="icons/star.svg" alt="star icon" style="width: 10px"/>
+                <span class="font-bold text-yellow">{slide.points}</span>
+              </div>
+            </div>
           </div>
         </div>
       {/each}
@@ -165,36 +174,36 @@
 
       {#if loading}
         <Loading />
+      {:else if !messageSent}
+        <textarea
+          id="message-textarea"
+          class="p-8 h-[200px] w-[500px] rounded-lg placeholder:text-opacity-30"
+          on:input={handleInputMessage}
+          placeholder="Escreva uma mensagem"
+        />
+        <div class="flex mt-[-100px] justify-end items-center">
+          <p class="text-gray font-bold text-sm">
+            {200 - messageText.length} caracteres restantes
+          </p>
+          <div
+            class="bg-terciary p-4 scale-50 rounded-xl border-4 border-terciary hover:border-cyan cursor-pointer hover:scale-[.55] transition-transform"
+            on:click={() => handleMessage()}
+            role="button"
+            tabindex={1}
+            on:keypress={() => {}}
+          >
+            <img src="icons/send.svg" alt="send icon" class="" />
+          </div>
+        </div>
       {:else}
-        {#if !messageSent }
-          <textarea
-            id="message-textarea"
-            class="p-8 h-[200px] w-[500px] rounded-lg placeholder:text-opacity-30"
-            on:input={handleInputMessage}
-            placeholder="Escreva uma mensagem"
-          />
-          <div class="flex mt-[-100px] justify-end items-center">
-            <p class="text-gray font-bold text-sm">{200-messageText.length} caracteres restantes</p>
-            <div
-              class="bg-terciary p-4 scale-50 rounded-xl border-4 border-terciary hover:border-cyan cursor-pointer hover:scale-[.55] transition-transform"
-              on:click={() => handleMessage()}
-              role="button"
-              tabindex={1}
-              on:keypress={() => {}}
-            >
-              <img src="icons/send.svg" alt="send icon" class="" />
-            </div>
-          </div>
-        {:else}
-          <textarea
-            class="p-8 h-[200px] w-[500px] rounded-lg placeholder:text-opacity-30"
-            placeholder=""
-          />
-          <div class="mt-[-150px] flex justify-center items-center flex-col">
-            <p class="text-terciary font-bold text-sm">Mensagem registrada!</p>
-            <img src="icons/check.svg" alt="check icon" />
-          </div>
-        {/if}
+        <textarea
+          class="p-8 h-[200px] w-[500px] rounded-lg placeholder:text-opacity-30"
+          placeholder=""
+        />
+        <div class="mt-[-150px] flex justify-center items-center flex-col">
+          <p class="text-terciary font-bold text-sm">Mensagem registrada!</p>
+          <img src="icons/check.svg" alt="check icon" />
+        </div>
       {/if}
     </div>
 

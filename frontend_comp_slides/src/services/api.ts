@@ -10,7 +10,8 @@ const nonProtectedUrls = [
   'user/list/',
   'disciplines/',
   'user/create/',
-  'user/token/'
+  'user/token/',
+  'user/message/list/'
 ]
 
 // This is to use the acess token on each request
@@ -39,7 +40,7 @@ api.interceptors.response.use((response) => {
   const originalRequest = error.config;
 
   if (originalRequest.url && nonProtectedUrls.includes(originalRequest.url)) {
-    return Promise.reject(error);
+    return Promise.resolve();
   }
 
   if (originalRequest.url == '/user/token/refresh/') {

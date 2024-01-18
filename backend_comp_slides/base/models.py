@@ -7,7 +7,7 @@ class User(AbstractUser):
     total_hits = models.IntegerField(default=0)
     total_misses = models.IntegerField(default=0)
     total_hints_used = models.IntegerField(default=0)
-    total_points = models.IntegerField(default=0)
+    total_points = models.FloatField(default=0.0)
 
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
@@ -61,7 +61,7 @@ class Run(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     current_hint = models.ForeignKey(SlideImage, on_delete=models.CASCADE)
     slides_left = models.IntegerField()
-    total_points = models.IntegerField(default=0)
+    total_points = models.FloatField(default=0.0)
 
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
@@ -75,7 +75,7 @@ class SlideRun(models.Model):
     has_hit = models.BooleanField(default=False)
     has_missed = models.BooleanField(default=False)
     hints_used = models.IntegerField(default=0)
-    points = models.IntegerField(default=0)
+    points = models.FloatField(default=0.0)
     slide_alternatives = models.ManyToManyField(Slide, related_name='alternatives')
 
     updated = models.DateTimeField(auto_now=True)
@@ -85,5 +85,5 @@ class SlideRun(models.Model):
         return str(self.id) + " | " + str(self.run_id.id) + " | " + self.original_slide.prof_discipline
     
 class Config(models.Model):
-    max_points_per_slide_run = models.IntegerField(default=5)
-    max_slides_per_run = models.IntegerField(default=10)
+    name = models.CharField(max_length=200, unique=True)
+    value = models.CharField(max_length=200)

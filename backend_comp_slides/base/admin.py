@@ -10,16 +10,22 @@ class SlidedRunCustomAdmin(admin.ModelAdmin):
         'original_slide',
         'has_hit',
         'has_missed',
+        'points',
+        'difficulty'
     ]
 
     @admin.display()
     def user(self, obj):
-        return obj.run_id.id_user
+        return obj.run_id.user
+
+    @admin.display()
+    def difficulty(self, obj):
+        return obj.original_slide.difficulty_level
     
 class ConfigCustomAdmin(admin.ModelAdmin):
     list_display = [
-        'max_points_per_slide_run',
-        'max_slides_per_run'
+        'name',
+        'value'
     ]
 
 admin.site.register(Slide)

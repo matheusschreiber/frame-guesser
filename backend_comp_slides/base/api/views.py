@@ -5,8 +5,8 @@ from django.contrib.auth.hashers import make_password
 from django.db.models import Q
 from random import choice
 
-import re
 import json
+import re
 
 from rest_framework.decorators import (
     api_view,
@@ -57,7 +57,8 @@ class MyTokenObtainPairView(TokenObtainPairView):
 def createUser(request):
     if not request.data["username"] or not request.data["password"]:
         return Response(
-            data={"error": "Ainda existem campos para preencher"}, status=status.HTTP_400_BAD_REQUEST
+            data={"error": "Ainda existem campos para preencher"},
+            status=status.HTTP_400_BAD_REQUEST,
         )
 
     if User.objects.filter(username=request.data["username"]).exists():
@@ -65,22 +66,24 @@ def createUser(request):
             data={"error": "Nome de usuário em uso!"},
             status=status.HTTP_400_BAD_REQUEST,
         )
-    
-    if len(request.data["username"]) >=25:
+
+    if len(request.data["username"]) >= 25:
         return Response(
-            data={"error": "O nome de usuário deve possuir até 25 characteres"}, status=status.HTTP_400_BAD_REQUEST
+            data={"error": "O nome de usuário deve possuir até 25 characteres"},
+            status=status.HTTP_400_BAD_REQUEST,
         )
 
     if len(request.data["password"]) < 8:
         return Response(
-            data={"error": "A senha deve ter mais de 8 caracteres"}, status=status.HTTP_400_BAD_REQUEST
+            data={"error": "A senha deve ter mais de 8 caracteres"},
+            status=status.HTTP_400_BAD_REQUEST,
         )
 
     hashed_password = make_password(request.data["password"])
     request.data["password"] = hashed_password
 
     user = UserSerializer(data=request.data)
-    
+
     if user.is_valid():
         user.save()
         return Response(status=status.HTTP_201_CREATED)
@@ -90,13 +93,14 @@ def createUser(request):
         )
 
 
-def profanity_filter(text:str):
-    
-    with open('profanity_words.txt') as f:
+def profanity_filter(text: str):
+    with open("profanity_words.txt") as f:
         profanity_words = f.read().splitlines()
 
-    pattern = re.compile(r'\b(?:' + '|'.join(profanity_words) + r')\b', flags=re.IGNORECASE)
-    filtered_text = pattern.sub(lambda x: '*' * len(x.group()), text)
+    pattern = re.compile(
+        r"\b(?:" + "|".join(profanity_words) + r")\b", flags=re.IGNORECASE
+    )
+    filtered_text = pattern.sub(lambda x: "*" * len(x.group()), text)
 
     return filtered_text
 
@@ -112,7 +116,7 @@ def addMessageToUser(request):
                 data={"error": "Mensagem é muito longa (>200 caracteres)"},
                 status=status.HTTP_403_FORBIDDEN,
             )
-    
+
         if len(message_text) == 0:
             return Response(
                 data={"error": "Mensagem em branco?? Sério??"},
@@ -124,21 +128,24 @@ def addMessageToUser(request):
         user_messages_amount = Message.objects.filter(user=logged_user).count()
         user_runs_amount = Run.objects.filter(user=logged_user).count()
 
-        if user_messages_amount>=user_runs_amount:
-            return Response(data={"error": "É permitida apenas uma mensagem por sessão"}, status=status.HTTP_400_BAD_REQUEST)
+        if user_messages_amount >= user_runs_amount:
+            return Response(
+                data={"error": "É permitida apenas uma mensagem por sessão"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         new_message = MessageSerializer(
-            data={
-                "text": profanity_filter(message_text),
-                "user": logged_user.id
-            }
+            data={"text": profanity_filter(message_text), "user": logged_user.id}
         )
 
         if new_message.is_valid():
             new_message.save()
             return Response(status=status.HTTP_200_OK)
         else:
-            return Response(data={"error": "Erro ao salvar a mensagem"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                data={"error": "Erro ao salvar a mensagem"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
     except User.DoesNotExist:
         return Response(
@@ -146,7 +153,6 @@ def addMessageToUser(request):
         )
     except Exception as erro:
         print(erro)
-
 
         return Response(
             data={"error": "Problema inesperado"}, status=status.HTTP_400_BAD_REQUEST
@@ -158,13 +164,10 @@ def getMessages(request):
     messages = list()
 
     for message in Message.objects.all():
-        messages.append({
-            "username": message.user.username,
-            "text": message.text
-        })
-    
+        messages.append({"username": message.user.username, "text": message.text})
 
     return Response(data=messages, status=status.HTTP_200_OK)
+
 
 # slide views
 
@@ -225,11 +228,22 @@ def getRandomSlide(request, pk=None):
 
             slide_alternatives = create_slide_alternatives(random_slide)
 
+            max_slides_per_run = 0
+            try:
+                max_slides_per_run = int(
+                    Config.objects.get(name="max_slides_per_run").value
+                )
+            except:
+                return Response(
+                    data={"error": "Config not present: max_slides_per_run"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
             new_run = RunSerializer(
                 data={
                     "user": request.user.id,
                     "current_hint": first_hint.id,
-                    "slides_left": Config.objects.all().first().max_slides_per_run
+                    "slides_left": max_slides_per_run,
                 }
             )
 
@@ -349,7 +363,7 @@ def getHint(request, pk):
 
         current_slide = Slide.objects.get(id=current_hint.slide.id)
         current_slide_run = SlideRun.objects.filter(
-            Q(has_hit=False) & Q(has_missed=False) & Q(original_slide=current_slide)
+            Q(has_hit=False) & Q(has_missed=False) & Q(original_slide=current_slide) & Q(run_id=current_run)
         ).first()
         current_slide_run.hints_used += 1
         current_slide_run.save()
@@ -382,13 +396,26 @@ def getHint(request, pk):
         )
 
 
-def calculate_points_on_win(current_run):
-    total_hints_available = current_run.original_slide.hints_amount
-    hints_usage = total_hints_available - current_run.hints_used
-    hints_factor = hints_usage / total_hints_available
-    max_points = Config.objects.all().first().max_points_per_slide_run
+def calculate_points_on_win(current_slide_run):
+    try:
+        total_hints_available = current_slide_run.original_slide.hints_amount
+        hints_left = total_hints_available - current_slide_run.hints_used
+        hints_factor = hints_left / total_hints_available
+        config_max_points = Config.objects.get(name="max_points_per_slide_run")
+        max_points = float(config_max_points.value)
+        config_diff_bonus = Config.objects.get(
+            name=f"difficulty_{current_slide_run.original_slide.difficulty_level}_bonus"
+        )
+        difficulty_bonus = float(config_diff_bonus.value)
+        final_score = (hints_factor*.3 + difficulty_bonus*.7 ) * max_points
+        final_score = (round(final_score * 1000))/1000
 
-    return hints_factor * max_points
+        return final_score
+
+    except Exception as e:
+        raise Exception(
+            "Config not present: max_points_per_slide_run/difficulty_x_bonus"+e
+        )
 
 
 @api_view(["PUT"])
@@ -418,14 +445,15 @@ def getAnswerSlide(request, pk):
             current_run.slides_left -= 1
             answer = True
             current_slide_run.has_hit = True
-            current_slide_run.points += calculate_points_on_win(current_slide_run)
+
+            current_slide_run.points = calculate_points_on_win(current_slide_run)
             user.total_points += current_slide_run.points
             current_run.total_points += current_slide_run.points
         else:
             slide.total_misses += 1
             user.total_misses += 1
             current_run.slides_left -= 1
-            current_slide_run.has_missed = False
+            current_slide_run.has_missed = True
 
         slide.save()
         user.save()
@@ -461,6 +489,8 @@ def getAnswerSlide(request, pk):
             data={"error": "Invalid slide"}, status=status.HTTP_400_BAD_REQUEST
         )
 
+    # TODO: create the exception for config not setted up
+
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
@@ -474,53 +504,72 @@ def getHistoryRun(request, pk=None):
         total_points = 0
 
         for slide_run in slides_run:
+            final_slide_image = (
+                SlideImage.objects.filter(Q(slide=slide_run.original_slide))
+                .order_by("-hint_index")
+                .first()
+            )
 
-            final_slide_image = SlideImage.objects\
-                .filter(Q(slide=slide_run.original_slide))\
-                .order_by('-hint_index').first()
+            slides_reports_list.append(
+                {
+                    "has_hit": slide_run.has_hit,
+                    "prof_discipline": slide_run.original_slide.prof_discipline,
+                    "slide_image_path": final_slide_image.image.name,
+                    "difficulty_level": slide_run.original_slide.difficulty_level,
+                    "points": slide_run.points,
+                    "hints_used": slide_run.hints_used
+                }
+            )
 
-            slides_reports_list.append({
-                "has_hit" : slide_run.has_hit,
-                "prof_discipline": slide_run.original_slide.prof_discipline,
-                "slide_image_path": final_slide_image.image.name,
-                "difficulty_level": slide_run.original_slide.difficulty_level,
-            })
+            total_points += slide_run.points
 
-            total_points+=slide_run.points
-            
             if slide_run.has_hit:
-                slides_hits_count+=1
+                slides_hits_count += 1
 
         all_users_points = 0
         all_users_runs = Run.objects.all()
         for run in all_users_runs:
-            all_users_points+=run.total_points
-        
-        max_slides_per_run = Config.objects.all().first().max_slides_per_run
-        max_points_per_slide_run = Config.objects.all().first().max_points_per_slide_run
-        max_points_per_run = (max_slides_per_run * max_points_per_slide_run)
+            all_users_points += run.total_points
 
-        all_users_average = all_users_points / (max_points_per_run * len(all_users_runs))
+        try:
+            max_slides_per_run = int(
+                Config.objects.get(name="max_slides_per_run").value
+            )
+            max_points_per_slide_run = int(
+                Config.objects.get(name="max_points_per_slide_run").value
+            )
+        except:
+            return Response(
+                data={
+                    "error": "Config not present: max_slides_per_run, max_points_per_slide_run"
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        max_points_per_run = max_slides_per_run * max_points_per_slide_run
+
+        all_users_average = all_users_points / (
+            max_points_per_run * len(all_users_runs)
+        )
         this_user_average = total_points / max_points_per_run
-        
-        above_average_percentage = False
-        below_average_percentage = True
 
-        this_user_percentage = (this_user_average / all_users_average)
+        above_average_percentage = 0
+        below_average_percentage = 0
+
+        this_user_percentage = this_user_average / all_users_average
 
         if this_user_percentage > 1:
-            above_average_percentage = this_user_percentage-1
+            above_average_percentage = this_user_percentage - 1
         else:
-            below_average_percentage = 1/this_user_percentage
+            below_average_percentage =  1 - this_user_percentage
 
         response = {
-            "total_points" : total_points,
+            "total_points": f'{total_points:.2f}',
             "slides_reports_list": slides_reports_list,
             "above_average_percentage": above_average_percentage,
             "below_average_percentage": below_average_percentage,
-            "slides_hits_count": slides_hits_count
+            "slides_hits_count": slides_hits_count,
         }
-        
 
         return Response(data=response, status=status.HTTP_200_OK)
 
@@ -528,6 +577,3 @@ def getHistoryRun(request, pk=None):
         return Response(
             data={"error": "Invalid run"}, status=status.HTTP_400_BAD_REQUEST
         )
-
-
-

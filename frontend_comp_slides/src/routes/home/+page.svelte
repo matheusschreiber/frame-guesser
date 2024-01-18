@@ -59,28 +59,39 @@
 
     slider.scrollLeft += 10;
 
+    function loop(){
+      setTimeout(()=>{
+        let messageCard = document.getElementsByClassName('message-card')[0]
+        if (!messageCard) return
+        
+        diffTotaSizeAndActualSize = ((messages.length+1) * messageCard.clientWidth) - slider.clientWidth
 
+        // finds the limit at the right border
+        if (Math.abs(slider.scrollLeft - diffTotaSizeAndActualSize) < 130) {
+          speed = 0;
+          direction = -1;
+        }
+
+        // finds the limit at the left border
+        if (slider.scrollLeft == 0 && speed < 0) {
+          speed = 0.95;
+          direction = 1;
+        }
+
+        // motor direction control
+        if (Math.abs(speed)<speedLimit) speed += (direction * acceleration);
+        else speed = speedLimit * direction
+
+        // motor
+        slider.scrollLeft += speed;
+
+
+        loop()
+      }, framerate)
+    }
     setInterval(() => {
-      diffTotaSizeAndActualSize = ((messages.length+1) * document.getElementsByClassName('message-card')[0].clientWidth) - slider.clientWidth
 
-      // finds the limit at the right border
-      if (Math.abs(slider.scrollLeft - diffTotaSizeAndActualSize) < 130) {
-        speed = 0;
-        direction = -1;
-      }
       
-      // finds the limit at the left border
-      if (slider.scrollLeft == 0 && speed < 0) {
-        speed = 0.95;
-        direction = 1;
-      }
-
-      // motor direction control
-      if (Math.abs(speed)<speedLimit) speed += (direction * acceleration);
-      else speed = speedLimit * direction
-      
-      // motor
-      slider.scrollLeft += speed;
 
     }, framerate);
   }

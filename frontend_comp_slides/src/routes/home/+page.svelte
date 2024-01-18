@@ -89,11 +89,9 @@
         loop()
       }, framerate)
     }
-    setInterval(() => {
 
-      
-
-    }, framerate);
+    loop()
+    
   }
 
   async function fetchUsers() {
@@ -118,41 +116,43 @@
 </script>
 
 <main>
-  <header class="flex w-full justify-around items-center my-32">
+  <header class="flex w-full justify-center items-center flex-col-reverse lg:flex-row lg:justify-around my-32 ">
     <FancyDisciplines />
     <Logo />
   </header>
-  <p class="text-gray font-fredoka w-fit mx-auto text-lg">
+  <p class="text-gray font-fredoka w-fit mx-auto text-lg text-center">
     Você conhece mesmo os slides dos seus professores?
   </p>
   <section
-    class="my-8 p-16 pt-32 bg-purple m-32 rounded-xl shadow-medium text-center overflow-hidden"
+    class="my-8 py-10 lg:p-16 lg:pt-32 bg-purple mx-[10%] my-32 lg:m-32 rounded-xl shadow-medium text-center overflow-hidden"
   >
-    <LineBackground />
+    <div class="hidden lg:flex">
+      <LineBackground />
+    </div>
     <h5 class="mx-auto w-fit text-cyan font-bold text-sm mb-4">COMO JOGAR</h5>
-    <h1 class="mb-16 text-whitish text-3xl">
+    <h1 class="mb-16 text-whitish text-3xl mx-16">
       Adivinhe apenas olhando um slide
     </h1>
-    <div class="flex justify-around mb-16">
+    <div class="flex justify-center items-center mb-16 flex-col lg:justify-around lg:flex-row gap-12 lg:gap-1">
       <div
-        class="flex flex-col items-center gap-4 w-[150px] hover:scale-105 transition-all"
+        class="flex flex-col items-center gap-4 hover:scale-105 lg:w-[150px] transition-all"
       >
         <div
-          class="bg-quaternary h-[150px] w-full text-whitish rounded-lg p-4 flex flex-col items-center justify-center shadow-heavy"
+          class="bg-quaternary h-[150px] w-[150px] lg:w-full text-whitish rounded-lg p-4 flex flex-col items-center justify-center shadow-heavy"
         >
           <h1 class="bg-terciary rounded-full px-3 py-1 mb-4 text-sm font-bold">
             1
           </h1>
           <img src="icons/slide.svg" alt="icon slide" />
         </div>
-        <p class="text-whitish">Olhe para todos os detalhes de um slide</p>
+        <p class="text-whitish">Olhe para <span class="font-handwriting text-cyan">todos</span> os detalhes de um slide</p>
       </div>
 
       <div
-        class="flex flex-col items-center gap-4 w-[150px] hover:scale-105 transition-all"
+        class="flex flex-col items-center gap-4 hover:scale-105 lg:w-[150px] transition-all"
       >
         <div
-          class="bg-quaternary h-[150px] w-full text-whitish rounded-lg p-4 flex flex-col items-center justify-center shadow-heavy"
+          class="bg-quaternary h-[150px] w-[150px] lg:w-full text-whitish rounded-lg p-4 flex flex-col items-center justify-center shadow-heavy"
         >
           <h1 class="bg-terciary rounded-full px-3 py-1 mb-4 text-sm font-bold">
             2
@@ -160,22 +160,22 @@
           <img src="icons/lamp.svg" alt="icon lamp" />
         </div>
         <p class="text-whitish">
-          Use as dicas para ter mais chances de acertar
+          Use as <span class="font-handwriting text-green">dicas</span> para ter mais chances de <span class="font-handwriting text-green">acertar</span>
         </p>
       </div>
 
       <div
-        class="flex flex-col items-center gap-4 w-[150px] hover:scale-105 transition-all"
+        class="flex flex-col items-center gap-4 hover:scale-105 lg:w-[150px] transition-all"
       >
         <div
-          class="bg-quaternary h-[150px] w-full text-whitish rounded-lg p-4 flex flex-col items-center justify-center shadow-heavy"
+          class="bg-quaternary h-[150px] w-[150px] lg:w-full text-whitish rounded-lg p-4 flex flex-col items-center justify-center shadow-heavy"
         >
           <h1 class="bg-terciary rounded-full px-3 py-1 mb-4 text-sm font-bold">
             3
           </h1>
           <img src="icons/trophy.svg" alt="icon trophy" />
         </div>
-        <p class="text-whitish">Quanto menos dicas, maior a sua pontuação</p>
+        <p class="text-whitish">Quanto menos dicas, <span class="font-handwriting text-red">maior</span> a sua pontuação</p>
       </div>
     </div>
 
@@ -189,7 +189,7 @@
     </div>
   </section>
 
-  <section class="my-8 flex items-center py-10 px-32 w-full justify-around">
+  <!-- <section class="my-8 flex items-center py-10 px-32 w-full justify-around">
     <div>
       <h5 class="w-fit text-blue font-bold text-sm">DESTAQUE-SE</h5>
       <h1 class="font-bold text-terciary text-5xl mb-4">Ranking</h1>
@@ -234,7 +234,7 @@
         </tbody>
       </table>
     </div>
-  </section>
+  </section> -->
 
   <section class="my-8">
     <h5 class="mx-auto w-fit text-red font-bold text-sm mb-4">

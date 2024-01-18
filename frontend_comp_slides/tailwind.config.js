@@ -11,6 +11,9 @@ export default {
       fredoka: [
         'Fredoka',
         'Roboto'
+      ],
+      handwriting: [
+        'Pacifico'
       ]
     },
     extend: {

@@ -59,6 +59,7 @@
   }, 200);
 </script>
 
-<h1 id="title-typing-effect" class="text-5xl font-bold text-terciary w-[400px]">
+<h1 id="title-typing-effect" class="text-5xl font-bold text-terciary lg:w-[400px] 
+  text-center md:text-left">
   {text}<span class="text-green {blink ? 'invisible' : 'visible'}">_</span>
 </h1>

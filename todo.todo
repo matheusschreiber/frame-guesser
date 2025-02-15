@@ -1,9 +1,31 @@
+BUGS
 - [ ] responsividade (muito importante!!!)
-- [ ] shuffle nas alternativas de slides para o usuario escolher para nao ficar repetindo a mesma sempre
 - [ ] ao sair e entrar denovo o usuario deveria voltar para a run de onde parou...
+- [ ] loading infinito ao tentar criar conta sem preencher os campos
+- [ ] erros na api nao sao transmitidos para o frontend (requests de login)
+
+MELHORIAS
+- [ ] shuffle nas alternativas de slides para o usuario escolher para nao ficar repetindo a mesma sempre
 - [ ] centralizar mensagens de erro em um unico modulo (facil de alterar e adicionar)
 - [ ] testes de integração
 - [ ] na tela que mostra as mensageens dos players, fazer uma seleção aleatória das mensagens para nao ficar repetidno sempre
 - [ ] frases aleatórias nos popups de acerto/erro
 - [ ] repaginar pagina de 404 ta muito feia
 - [ ] trocar sweet alerts por alertas na propria interface (um h4 com cor diferente por exemplo)
+- [ ] adicionar microsoft clarity
+
+
+IDEIAS FEATURES ADICIONAIS
+- [ ] adicionar IA generativa para "sabotar" slide. A ideia aqui é que aleatóriamente, pode ter uma IA, tipo um bot em forma de algum inimgo caricato (como um duende ou um elfo) que sabota a imagem do slide da rodada. Ela faz isso gerando algum texto falso ou de outro slide, para te confundir. O jogador tem conhecimento que o slide está sabotado (fica algum indicador visual na página, como um mini duendizinho espionando atrás de algum modal) mas não sabe como a IA sabotou o slide. Acertar esse slides gera mais pontos. Pode-se ter diferentes dificuldades de IA, desde mudanças simples como frases ou ícones, como slides inteiros falsos, em que a própria IA é a dona e o usuário não tem outra opção a não ser errar.
+
+- [ ] adicionar a possibilidade de usuarios enviarem slides para análise, a fim de aumentar a pool de slides para serem usados. Talvez criar no futuro uma sessão de "Comunidade". É possível também inserir IA nisso para poder fazer as etapas de oclusão do slide (apagar/borrar as informações do slide para ser usado no jogo).
+
+- [ ] adicionar avatares dos professores gerados por IA para deixar o jogo mais bonitinho e casual. A princípio poderia ser apenas o busto.
+
+- [ ] adicionar MODO REVERSO, onde o usuario recebe o nome de uma materia/professor e vários slides para tentar achar qual slide pertence àquela materia. Os slides "fake" podem ser gerados por IA. Para selecionar o professor para começar, pode-se ter uma roleta com animaçãozinha e tal.
+
+- [ ] adicionar MODO MIMIC, onde o usuario recebe dois slides, um real e outro feito pela IA baseado no slide real. O jogador tem que adivinhar qual dos dois é o verdadeiro.
+
+- [ ] adicionar reações aos slides, principalmente na tela final onde o jogador recebe a resposta se acertou/errou. Isso ajudaria a ver quais slides sao mais amados e quais sao mais odiados.
+
+- [ ] adicionar leaderboard de professores/materias, pra ver quais tem os slides mais dificeis de acertar

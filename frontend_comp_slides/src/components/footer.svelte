@@ -1,20 +1,26 @@
-<script>
+<script lang="ts">
   import { onMount } from "svelte";
 
   
   onMount(()=>{
-    let yearContainer = document.getElementById('year')
-    if (yearContainer) {
-      yearContainer.textContent = (new Date().getFullYear()).toString()
-    }
+    Array.from(document.getElementsByClassName('year-dynamic')).forEach((element: Element) => {
+      if (element) {
+        element.textContent = (new Date().getFullYear()).toString()
+      }
+    });
   })
 </script>
 
-<div class="lg:h-[200px] pt-20 w-full bg-lightgray flex items-end pb-8 justify-center">
-  <div class="flex w-full justify-center lg:gap-2 items-center text-gray text-sm lg:flex-row flex-col gap-10">
-    <a href="https://github.com/matheusschreiber" target="_blank"><img class="lg:w-8 lg:h-8 w-24 h-24 hover:scale-105 transition-transform" src="icons/git.svg" alt="git icon"/></a>
-    <a href="https://www.linkedin.com/in/matheus-schreiber-49472321a/" target="_blank"><img class="lg:w-8 lg:h-8 w-24 h-24 hover:scale-105 transition-transform" src="icons/linkedin.svg" alt="linkedin icon"/></a>
-    <a href="https://matheus-schreiber.com.br" target="_blank"><img class="lg:w-8 lg:h-8 w-24 h-24 hover:scale-105 transition-transform" src="icons/globe.svg" alt="globe icon"/></a>
-    <p class="w-64 text-center text-lg lg:w-fit lg:text-left lg:text-sm"><span id="year"></span>・<span class="font-bold">Comp Slides</span>・Engenharia da Computação・UFES</p>
+<div class="lg:flex hidden h-[200px] pt-20 w-full bg-lightgray items-end pb-8 justify-center">
+  <div class="flex w-full justify-center items-center text-gray text-sm">
+    <p class="text-center w-fit text-sm"><span class="year-dynamic"></span>・<span class="font-bold">Comp Slides</span>・Engenharia da Computação・UFES</p>
+  </div>
+</div>
+
+<div class="flex lg:hidden pt-20 w-full bg-lightgray pb-8">
+  <div class="flex w-full items-start px-5 text-gray text-sm lg:flex-row flex-col">
+    <span class="font-bold mb-4">CompSlides</span>
+    <span>UFES・<span class="year-dynamic"></span></span>
+    <span>Engenharia da Computação</span>
   </div>
 </div>

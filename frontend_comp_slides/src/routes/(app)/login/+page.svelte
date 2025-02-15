@@ -107,7 +107,9 @@
             Ainda não tenho uma conta
           </h4>
         </a>
-        <Button text="LOGIN" func={handleLogin} />
+        <div class="flex justify-center">
+          <Button text="LOGIN" func={handleLogin} />
+        </div>
       {/if}
     </div>
   </section>

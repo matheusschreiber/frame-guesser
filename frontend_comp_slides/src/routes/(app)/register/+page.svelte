@@ -106,7 +106,9 @@
             Já tenho uma conta
           </h4></a
         >
-        <Button text="REGISTRAR" func={handleRegister} />
+        <div class="flex justify-center">
+          <Button text="REGISTRAR" func={handleRegister} />
+        </div>
       </div>
     {/if}
   </section>

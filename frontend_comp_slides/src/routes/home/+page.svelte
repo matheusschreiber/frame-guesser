@@ -124,7 +124,7 @@
     Você conhece mesmo os slides dos seus professores?
   </p>
   <section
-    class="my-8 py-10 lg:p-16 lg:pt-32 bg-purple mx-[10%] my-32 lg:m-32 rounded-xl shadow-medium text-center overflow-hidden"
+    class="my-8 py-10 lg:p-16 lg:pt-32 bg-purple mx-[10%] lg:m-32 rounded-xl shadow-medium text-center overflow-hidden"
   >
     <div class="hidden lg:flex">
       <LineBackground />
@@ -188,8 +188,9 @@
       />
     </div>
   </section>
-
-  <!-- <section class="my-8 flex items-center py-10 px-32 w-full justify-around">
+  
+  <!-- TODO: responsividade desse negocio aqui -->
+  <section class="my-8 flex lg:flex-row flex-col items-center lg:py-10 lg:px-32 w-full justify-around">
     <div>
       <h5 class="w-fit text-blue font-bold text-sm">DESTAQUE-SE</h5>
       <h1 class="font-bold text-terciary text-5xl mb-4">Ranking</h1>
@@ -199,11 +200,11 @@
       </p>
     </div>
     <div
-      class="bg-rankings bg-center bg-contain bg-no-repeat py-12 px-8 w-[600px] h-[450px] flex justify-center items-center"
+      class="lg:bg-rankings bg-center bg-contain bg-no-repeat lg:py-12 mt-6 lg:mt-0 lg:px-8 lg:w-[600px] lg:h-[450px] flex justify-center items-center"
     >
       <table
         id="new-scroll"
-        class="w-[80%] text-center ml-8 h-[200px] table-cell overflow-scroll overflow-x-hidden"
+        class="lg:w-[80%] text-center lg:ml-8 max-h-[200px] table-cell overflow-scroll overflow-x-hidden bg-[white] lg:bg-none rounded-lg p-6 lg:p-0"
       >
         <tbody>
           {#each users as user, i}
@@ -216,12 +217,12 @@
                 /></td
               >
               <td class="font-bold text-gray text-[8pt]"
-                >{(i + "").padStart(2, "0")}</td
+                >{(i + 1 + "").padStart(2, "0")}</td
               >
-              <td class="font-bold text-terciary text-left pl-2 w-64"
+              <td class="font-bold text-terciary text-left pl-2 lg:w-64"
                 >{user.username}</td
               >
-              <td class="font-bold text-terciary">{user.total_points} pts</td>
+              <td class="font-bold text-terciary whitespace-nowrap">{user.total_points?.toFixed(2)} pts</td>
               <td class="{i != 0 ? 'invisible' : 'visible'} w-8"
                 ><img
                   class="mx-auto"
@@ -234,7 +235,7 @@
         </tbody>
       </table>
     </div>
-  </section> -->
+  </section>
 
   <section class="my-8">
     <h5 class="mx-auto w-fit text-red font-bold text-sm mb-4">
@@ -246,7 +247,7 @@
         class="flex overflow-scroll overflow-x-scroll overflow-y-hidden gap-8 cursor-move"
       >
         {#if fetchingMessages}
-          {#each [1, 2, 3, 4, 5, 6, 7] as message}
+          {#each [1, 2, 3, 4, 5, 6, 7] as _}
           <div
             class="animate-skeletonEffectCard px-8 py-4 bg-whitish shadow-medium rounded-xl gap-4 my-4 flex message-card"
           >
@@ -255,10 +256,10 @@
             ></div>
             <div class="w-[300px]">
               <h3
-                class="animate-skeletonEffectItem w-full text-sm font-bold text-terciary h-4 w-32 rounded-lg"
-              ></h3>
+                class="animate-skeletonEffectItem w-full text-sm font-bold text-terciary h-4 rounded-lg"
+              >.</h3>
               <p
-                class="animate-skeletonEffectItem w-full font-fredoka text-gray h-8 w-32 mt-3 rounded-lg"
+                class="animate-skeletonEffectItem w-full font-fredoka text-gray h-8 mt-3 rounded-lg"
               ></p>
             </div>
           </div>

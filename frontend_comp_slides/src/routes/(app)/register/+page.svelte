@@ -52,7 +52,7 @@
 </script>
 
 <main>
-  <section class="my-8 py-12 pt-0 bg-purple m-64 mb-32 rounded-xl shadow-medium text-center overflow-hidden flex flex-col items-center justify-center">
+  <section class="my-8 py-12 pt-0 bg-purple lg:m-64 mx-5 mb-32 rounded-xl shadow-medium text-center overflow-hidden flex flex-col items-center justify-center">
     <LineBackground variant={2} />
     <div>
       <h5 class="mx-auto w-fit text-green font-bold text-sm mb-4">
@@ -64,8 +64,8 @@
     {#if loading}
       <Loading />
     {:else}
-      <div class="flex flex-col w-[350px] gap-4">
-        <p class="text-gray font-fredoka">
+      <div class="flex flex-col w-[350px] gap-4 px-5 lg:px-0">
+        <p class="text-lightgray font-fredoka">
           Use seu nome mesmo, ou aproveite para esbanjar a criatividade
         </p>
         <input
@@ -77,8 +77,8 @@
           bind:value={username}
         />
 
-        <p class="text-gray font-fredoka mt-4">
-          Use sua senha mais segura (ex.: senha123)
+        <p class="text-lightgray font-fredoka mt-4">
+          Use sua senha mais segura
         </p>
         <input
           class="bg-terciary h-12 px-4 rounded-lg text-whitish placeholder:font-bold placeholder:text-gray"

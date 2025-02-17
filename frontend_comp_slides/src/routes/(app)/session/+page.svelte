@@ -6,7 +6,35 @@
   import { api } from "../../../services/api";
   import Loading from "../../../components/loading.svelte";
   import { getCookie, setCookie } from "../../../services/cookies";
-    import Error from "../../+error.svelte";
+  
+  let correctAnswerCatchPhrases = [
+    "Se continuar assim vai até parecer que presta atenção nas aulas!",
+    "Uau, será que temos um gênio aqui ou foi pura sorte?",
+    "Ótimo trabalho! Só falta manter esse ritmo por mais de 5 minutos.",
+    "Impressionante! Estou quase acreditando que você estudou!",,
+    "Parabéns! Se continuar assim, talvez um dia nem precise chutar.",
+    "Você é incrível! Mas não se acostuma, ainda tem muito pela frente.",
+    "Continue com o bom trabalho! Ou pelo menos continue enganando bem.",
+    "Se continuar assim, talvez até sua mãe comece a se orgulhar.",
+    "Muito bem! Continue assim e talvez eu pare de duvidar de você.",
+    "Inacreditável! Estou começando a desconfiar que você está trapaceando.",
+  ]
+
+  let wrongAnswerCatchPhrases = [
+    "Alguém andou faltando algumas aulas",
+    "Eita! Se errar fosse um esporte, você já estaria nas Olimpíadas.",
+    "Bom, pelo menos você foi consistente... em errar.",
+    "Interessante abordagem! Errada, mas interessante.",
+    "Quase! Só faltou acertar.",
+    "A resposta certa estava logo ali... Mas você escolheu ignorá-la.",
+    "Se o objetivo era errar, parabéns, missão cumprida!",
+    "Talvez a resposta certa estivesse se escondendo de você dessa vez.",
+    "Pelo menos você está mantendo a média... lá embaixo.",
+    "Eu poderia fingir que essa resposta está certa... Mas nem eu sou tão generoso.",
+    "Você não errou, apenas encontrou um jeito diferente (e incorreto) de responder.",
+    "A resposta certa estava a um neurônio de distância. Pena que ele estava de folga.",
+    "Você errou com tanta confiança que até me fez duvidar da resposta certa.",
+  ]
 
   let confirm = false;
   let selected: number | null = null;
@@ -59,15 +87,17 @@
       Swal.fire({
         title: "<strong>BOA! RESOSTA CERTA!</strong>",
         icon: "success",
-        html: "Sabe muito!",
+        html: correctAnswerCatchPhrases[Math.floor(Math.random() * correctAnswerCatchPhrases.length)],
         showConfirmButton: false,
+        showCloseButton: true,
       });
     } else if (response.data.answer == false) {
       Swal.fire({
         title: "<strong>OPS! MAIS SORTE NA PRÓXIMA</strong>",
         icon: "error",
-        html: "Alguém andou faltando algumas aulas",
+        html: wrongAnswerCatchPhrases[Math.floor(Math.random() * wrongAnswerCatchPhrases.length)],
         showConfirmButton: false,
+        showCloseButton: true,
       });
     } else {
       Swal.fire("Uai", "Houve algum problema com os servidores", "error").then(
@@ -192,9 +222,7 @@
 </script>
 
 <main>
-  <section
-    class="my-8 pt-12 pb-24 bg-purple w-fit px-32 m-auto rounded-xl shadow-medium text-center overflow-hidden flex flex-col items-center justify-center"
-  >
+  <section class="my-8 pt-12 pb-24 bg-purple lg:w-fit w-full lg:px-32 px-3 m-auto rounded-xl shadow-medium text-center overflow-hidden flex flex-col items-center justify-center">
     <LineBackground variant={3} />
 
     <div id="div-scroll-main">
@@ -214,13 +242,11 @@
       <h2 class="text-whitish text-3xl">De quem é esse slide?</h2>
     </div>
 
-    <div class="flex">
-      <aside class="w-[600px] flex flex-col justify-end">
+    <div class="flex lg:flex-row flex-col">
+      <aside class="lg:w-[600px] flex flex-col justify-end">
         {#if slideImage != ""}
           <div class="flex w-[90%] mx-auto justify-start mb-[-10px]">
-            <h3
-              class="mt-4 text-whitish bg-terciary w-fit px-2 py-1 pb-3 rounded-lg text-sm"
-            >
+            <h3 class="mt-4 text-whitish bg-terciary w-fit px-2 py-1 pb-3 rounded-lg text-sm">
               {10-slidesLeftAmount+1}/{10}
             </h3>
           </div>
@@ -234,9 +260,7 @@
       </aside>
 
       <aside class="flex flex-col items-center justify-end px-6">
-        <div
-          class="flex flex-col gap-4 justify-between pb-8 items-center h-[350px]"
-        >
+        <div class="flex lg:flex-col flex-wrap mt-4 lg:mt-0 gap-4 justify-center lg:justify-between pb-8 items-center lg:h-[350px]">
           {#each options as item, i}
             <div
               on:click={() => handleSelection(i)}
@@ -268,9 +292,7 @@
               <Loading />
             {:else}
               {#if hintsUsed > 0}
-                <p
-                  class="absolute font-fredoka text-sm text-whitish mt-[-25px]"
-                >
+                <p class="absolute font-fredoka text-sm text-whitish mt-[-25px]">
                   {hintsUsed}/{totalHintsAmount}
                 </p>
               {/if}

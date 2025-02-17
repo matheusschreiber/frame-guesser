@@ -116,7 +116,7 @@
 </script>
 
 <main>
-  <header class="flex w-full justify-center items-center flex-col-reverse lg:flex-row lg:justify-around my-32 ">
+  <header class="flex w-full justify-center items-center flex-col-reverse lg:flex-row lg:justify-around my-32 px-10 lg:px-0 h-[400px] lg:h-auto gap-6 lg:gap-0">
     <FancyDisciplines />
     <Logo />
   </header>
@@ -124,7 +124,7 @@
     Você conhece mesmo os slides dos seus professores?
   </p>
   <section
-    class="my-8 py-10 lg:p-16 lg:pt-32 bg-purple mx-[10%] lg:m-32 rounded-xl shadow-medium text-center overflow-hidden"
+    class="my-8 py-10 px-6 lg:p-16 lg:pt-32 bg-purple mx-5 lg:mx-[10%] lg:m-32 rounded-xl shadow-medium text-center overflow-hidden"
   >
     <div class="hidden lg:flex">
       <LineBackground />

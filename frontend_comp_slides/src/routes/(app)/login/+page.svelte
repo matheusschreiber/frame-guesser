@@ -72,9 +72,9 @@
 </script>
 
 <main>
-  <section class="my-8 py-12 pt-0 bg-purple m-64 mb-32 rounded-xl shadow-medium text-center overflow-hidden flex flex-col items-center justify-center">
+  <section class="my-8 py-12 pt-0 bg-purple lg:m-64 mx-5 mb-32 rounded-xl shadow-medium text-center overflow-hidden flex flex-col items-center justify-center">
     <LineBackground variant={2} />
-    <div>
+    <div class="px-2 lg:px-0">
       <h5 class="mx-auto w-fit text-green font-bold text-sm mb-4">
         VAMOS COMEÇAR
       </h5>
@@ -83,7 +83,7 @@
       </h1>
     </div>
 
-    <div class="flex flex-col w-[350px] gap-4">
+    <div class="flex flex-col w-[350px] gap-4 px-5 lg:px-0">
       {#if loading}
         <Loading />
       {:else}

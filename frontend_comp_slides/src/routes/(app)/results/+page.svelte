@@ -84,9 +84,7 @@
 </script>
 
 <main>
-  <section
-    class="my-8 py-12 bg-purple m-16 mb-32 rounded-xl shadow-medium text-center overflow-hidden flex flex-col items-center justify-center"
-  >
+  <section class="my-8 py-12 bg-purple lg:px-32 px-5 m-16 mb-32 rounded-xl shadow-medium text-center overflow-hidden flex flex-col items-center justify-center">
     <LineBackground variant={4} />
     <h5 class="mx-auto w-fit text-pink font-bold text-sm mb-4">RESULTADOS</h5>
     <p class="text-whitish text-2xl">Sua pontuação</p>
@@ -96,9 +94,9 @@
       <img src="icons/star.svg" alt="star icon" />
     </div>
     {#if totalPoints > 25}
-      <p class="text-gray font-fredoka text-sm">Wow! Isso tudo?</p>
+      <p class="text-lightgray font-fredoka text-sm">Wow! Isso tudo?</p>
     {:else}
-      <p class="text-gray font-fredoka text-sm">
+      <p class="text-lightgray font-fredoka text-sm">
         Alguém tá há muito tempo longe do classroom...
       </p>
     {/if}
@@ -113,7 +111,7 @@
       {/if}
     </h2>
 
-    <p class="text-gray text-lg my-16 font-fredoka">
+    <p class="text-lightgray text-lg my-16 font-fredoka">
       Você acertou {slidesHitsCount} de {slidesReportsList.length} slides,
       {#if slidesHitsCount / slidesReportsList.length > 0.7}
         parabéns!
@@ -168,8 +166,8 @@
     </div>
 
     <div class="flex mt-32 flex-col gap-4 mb-32">
-      <p class="font-fredoka text-gray text-sm">
-        Deixe seu recado pela vitória, ou seu choro pela derrota :D
+      <p class="font-fredoka text-lightgray text-sm">
+        Deixe sua comemoração pela vitória, ou seu choro pela derrota
       </p>
 
       {#if loading}
@@ -208,7 +206,7 @@
     </div>
 
     <Button
-      text="INICIO"
+      text="DENOVO!"
       func={() => {
         goto("/");
       }}

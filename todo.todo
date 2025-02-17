@@ -1,8 +1,8 @@
+OBS
+- [ ] modo django
+
 BUGS
-- [ ] responsividade (muito importante!!!)
 - [ ] ao sair e entrar denovo o usuario deveria voltar para a run de onde parou...
-- [ ] loading infinito ao tentar criar conta sem preencher os campos
-- [ ] erros na api nao sao transmitidos para o frontend (requests de login)
 
 MELHORIAS
 - [ ] shuffle nas alternativas de slides para o usuario escolher para nao ficar repetindo a mesma sempre

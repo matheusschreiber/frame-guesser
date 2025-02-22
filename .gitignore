@@ -1,6 +1,6 @@
 */**/__pycache__
 */**/db.sqlite3
-backend_comp_slides/static
+backend/static
 slides
 venv
 .vscode

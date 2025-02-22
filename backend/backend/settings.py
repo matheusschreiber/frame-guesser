@@ -89,7 +89,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = "backend_comp_slides.urls"
+ROOT_URLCONF = "backend.urls"
 
 TEMPLATES = [
     {
@@ -107,7 +107,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "backend_comp_slides.wsgi.application"
+WSGI_APPLICATION = "backend.wsgi.application"
 
 
 # Database

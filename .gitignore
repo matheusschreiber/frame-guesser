@@ -5,3 +5,4 @@ slides
 venv
 .vscode
 */**/*.jpg
+*/**/.env

@@ -1,6 +1,6 @@
 {
   "deploy": {
     "branch": "main",
-    "rootDirectory": "backend"
+    "rootDirectory": "backend/"
   }
 }

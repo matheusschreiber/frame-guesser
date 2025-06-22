@@ -113,36 +113,43 @@ WSGI_APPLICATION = "backend.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+MYSQL_NAME = os.getenv('MYSQL_NAME')
+MYSQL_USER = os.getenv('MYSQL_USER')
+MYSQL_PASSWORD = os.getenv('MYSQL_PASSWORD')
+MYSQL_HOST = os.getenv('MYSQL_HOST')
+MYSQL_PORT = os.getenv('MYSQL_PORT', '3306')
+MYSQL_TEST_NAME = os.getenv('MYSQL_TEST_NAME')
+
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    },
+    # "default": {
+    #     "ENGINE": "django.db.backends.sqlite3",
+    #     "NAME": BASE_DIR / "db.sqlite3",
+    # },
     
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.mysql',
-    #     'NAME': MYSQL_NAME,
-    #     'USER': MYSQL_USER,
-    #     'PASSWORD': MYSQL_PASSWORD,
-    #     'HOST': MYSQL_HOST,
-    #     'PORT': MYSQL_PORT,
-    #     'TIME_ZONE': 'America/Sao_Paulo',
-    #     'OPTIONS': {
-    #         'charset': 'utf8mb4',
-    #     },
-    #     'TEST': {
-    #         'ENGINE': 'django.db.backends.mysql',
-    #         'NAME': MYSQL_TEST_NAME,
-    #         'USER': MYSQL_USER,
-    #         'PASSWORD': MYSQL_PASSWORD,
-    #         'HOST': MYSQL_HOST,
-    #         'PORT': MYSQL_PORT,
-    #         'TIME_ZONE': 'America/Sao_Paulo',
-    #         'OPTIONS': {
-    #             'charset': 'utf8mb4',
-    #         },
-    #     }
-    # }
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': MYSQL_NAME,
+        'USER': MYSQL_USER,
+        'PASSWORD': MYSQL_PASSWORD,
+        'HOST': MYSQL_HOST,
+        'PORT': MYSQL_PORT,
+        'TIME_ZONE': 'America/Sao_Paulo',
+        'OPTIONS': {
+            'charset': 'utf8mb4',
+        },
+        'TEST': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': MYSQL_TEST_NAME,
+            'USER': MYSQL_USER,
+            'PASSWORD': MYSQL_PASSWORD,
+            'HOST': MYSQL_HOST,
+            'PORT': MYSQL_PORT,
+            'TIME_ZONE': 'America/Sao_Paulo',
+            'OPTIONS': {
+                'charset': 'utf8mb4',
+            },
+        }
+    }
 }
 
 

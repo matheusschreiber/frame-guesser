@@ -1,15 +1,17 @@
 from pathlib import Path
 from datetime import timedelta
 
-from dotenv import load_dotenv
-load_dotenv()
-
 import os
+
+DEBUG = os.getenv("DJANGO_DEBUG_MODE") == "True"
+
+if DEBUG:
+    from dotenv import load_dotenv
+    load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
-DEBUG = os.getenv("DJANGO_DEBUG_MODE") == "True"
 
 ALLOWED_HOSTS = [os.getenv("DJANGO_ALLOWED_HOST"), 'localhost', '127.0.0.1']
 

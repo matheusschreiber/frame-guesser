@@ -3,12 +3,13 @@ FROM python:3.11-slim
 ENV PYTHONUNBUFFERED=1
 
 RUN apt-get update && apt-get install -y \
+    default-libmysqlclient-dev \
+    libmariadb-dev-compat \
+    libmariadb3 \
     gcc \
     build-essential \
-    default-libmysqlclient-dev \
     pkg-config \
-    libssl-dev \
-    && apt-get clean
+    libssl-dev
 
 WORKDIR /app
 

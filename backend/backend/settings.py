@@ -117,7 +117,32 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR / "db.sqlite3",
-    }
+    },
+    
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.mysql',
+    #     'NAME': MYSQL_NAME,
+    #     'USER': MYSQL_USER,
+    #     'PASSWORD': MYSQL_PASSWORD,
+    #     'HOST': MYSQL_HOST,
+    #     'PORT': MYSQL_PORT,
+    #     'TIME_ZONE': 'America/Sao_Paulo',
+    #     'OPTIONS': {
+    #         'charset': 'utf8mb4',
+    #     },
+    #     'TEST': {
+    #         'ENGINE': 'django.db.backends.mysql',
+    #         'NAME': MYSQL_TEST_NAME,
+    #         'USER': MYSQL_USER,
+    #         'PASSWORD': MYSQL_PASSWORD,
+    #         'HOST': MYSQL_HOST,
+    #         'PORT': MYSQL_PORT,
+    #         'TIME_ZONE': 'America/Sao_Paulo',
+    #         'OPTIONS': {
+    #             'charset': 'utf8mb4',
+    #         },
+    #     }
+    # }
 }
 
 

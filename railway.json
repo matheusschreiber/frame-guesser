@@ -1,13 +1,4 @@
 {
-  "build": {
-    "env": {
-      "PYTHONUNBUFFERED": "1",
-      "DJANGO_SETTINGS_MODULE": "backend.settings",
-      "PYTHONPATH": "backend"
-    },
-    "buildCommand": "python3 -m pip install -r backend/requirements.txt",
-    "startCommand": "python3 backend/manage.py migrate && python backend/manage.py collectstatic --noinput && gunicorn backend.wsgi:application"
-  },
   "deploy": {
     "branch": "main",
     "rootDirectory": "backend",

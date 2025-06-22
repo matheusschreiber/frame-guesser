@@ -3,17 +3,16 @@ from datetime import timedelta
 
 import os
 
-DEBUG = os.getenv("DJANGO_DEBUG_MODE") == "True"
+from dotenv import load_dotenv
+load_dotenv()
 
-if DEBUG:
-    from dotenv import load_dotenv
-    load_dotenv()
+DEBUG = os.environ["DJANGO_DEBUG_MODE"] == "True"
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
+SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
 
-ALLOWED_HOSTS = [os.getenv("DJANGO_ALLOWED_HOST"), 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = [os.environ["DJANGO_ALLOWED_HOST"], 'localhost', '127.0.0.1']
 
 # Application definition
 INSTALLED_APPS = [
@@ -115,12 +114,12 @@ WSGI_APPLICATION = "backend.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-MYSQL_NAME = os.getenv('MYSQL_NAME')
-MYSQL_USER = os.getenv('MYSQL_USER')
-MYSQL_PASSWORD = os.getenv('MYSQL_PASSWORD')
-MYSQL_HOST = os.getenv('MYSQL_HOST')
-MYSQL_PORT = os.getenv('MYSQL_PORT', '3306')
-MYSQL_TEST_NAME = os.getenv('MYSQL_TEST_NAME')
+MYSQL_NAME = os.environ["MYSQL_NAME"]
+MYSQL_USER = os.environ["MYSQL_USER"]
+MYSQL_PASSWORD = os.environ["MYSQL_PASSWORD"]
+MYSQL_HOST = os.environ["MYSQL_HOST"]
+MYSQL_PORT = os.environ["MYSQL_PORT"]
+MYSQL_TEST_NAME = os.environ["MYSQL_TEST_NAME"]
 
 DATABASES = {
     # "default": {

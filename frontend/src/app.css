@@ -19,7 +19,7 @@
 
 
 body {
-  background-image: url('backgrounds/page_background.svg');
+  background-image: url("/backgrounds/page_background.svg");
   background-size: cover;
 }
 

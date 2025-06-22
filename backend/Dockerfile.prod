@@ -23,6 +23,4 @@ COPY . /app/
 RUN mkdir -p /app/public
 RUN chmod -R 755 /app/public
 
-RUN python manage.py shell < backend/create_admin.py
-
-CMD ["sh", "-c", "python manage.py migrate && python manage.py collectstatic --noinput && python3 -m gunicorn backend.wsgi:application --bind 0.0.0.0:8000"]
+CMD ["sh", "-c", "python manage.py migrate && python manage.py collectstatic --noinput && python3 -m gunicorn backend.wsgi:application --bind 0.0.0.0:8000 && python manage.py shell < backend/create_admin.py"]

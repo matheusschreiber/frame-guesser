@@ -20,4 +20,4 @@ RUN pip install -r requirements.txt
 
 COPY . /app/
 
-CMD ["sh", "-c", "python manage.py migrate && python manage.py collectstatic --noinput && python3 -m gunicorn backend.wsgi"]
+CMD ["sh", "-c", "python manage.py migrate && python manage.py collectstatic --noinput && python3 -m gunicorn backend.wsgi:application --bind 0.0.0.0:8000"]

@@ -18,9 +18,9 @@
     text?: string;
   };
 
-  let users: User[] = [{}];
-  let messages: Message[] = [{}];
-  let fetchingMessages = true;
+  let users: User[] = $state([{}]);
+  let messages: Message[] = $state([{}]);
+  let fetchingMessages = $state(true);
 
   function loadHorizontalCarousel(id: number) {
     const slider = document.getElementById(`horizontal-scroll-${id}`) as any;

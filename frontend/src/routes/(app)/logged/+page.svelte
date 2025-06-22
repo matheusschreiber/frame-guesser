@@ -7,7 +7,7 @@
 
   import { deleteCookie, getCookie } from "../../../services/cookies";
 
-  let username:string|undefined=undefined;
+  let username:string|undefined=$state(undefined);
 
   onMount(()=>{
     deleteCookie("runId");
@@ -34,12 +34,12 @@
     <a
       href="/login"
       class="mb-16 mt-2"
-      on:click={() => {
+      onclick={() => {
         deleteCookie('auth');
       }}
       role="button"
       tabindex={1}
-      on:keypress={() => {}}
+      onkeypress={() => {}}
     >
       <h4 class="text-pink text-[10pt] font-bold underline">Deslogar</h4>
     </a>

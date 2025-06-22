@@ -9,9 +9,9 @@
   import Difficulty from "../../../components/difficulty.svelte";
   import Loading from "../../../components/loading.svelte";
 
-  let messageSent = false;
-  let messageText = "";
-  let loading = false;
+  let messageSent = $state(false);
+  let messageText = $state("");
+  let loading = $state(false);
 
   type SlideReportType = {
     has_hit: number;
@@ -23,11 +23,11 @@
   };
 
   let runId: string | undefined;
-  let totalPoints: number;
-  let slidesReportsList: SlideReportType[] = [];
-  let aboveAveragePercentage: number;
-  let belowAveragePercentage: number;
-  let slidesHitsCount: number;
+  let totalPoints: number = $state();
+  let slidesReportsList: SlideReportType[] = $state([]);
+  let aboveAveragePercentage: number = $state();
+  let belowAveragePercentage: number = $state();
+  let slidesHitsCount: number = $state();
 
   onMount(() => {
     runId = getCookie("runId");
@@ -136,7 +136,7 @@
               '/' +
               slide.slide_image_path})"
             class="w-[150px] h-[50px] bg-cover bg-top mx-4"
-          />
+></div>
           <div
             class="bg-secondary px-4 py-2 rounded-lg w-full shadow-medium border-2 {slide.has_hit
               ? 'border-green'
@@ -176,19 +176,19 @@
         <textarea
           id="message-textarea"
           class="p-8 h-[200px] w-[500px] rounded-lg placeholder:text-opacity-30"
-          on:input={handleInputMessage}
+          oninput={handleInputMessage}
           placeholder="Escreva uma mensagem"
-        />
+></textarea>
         <div class="flex mt-[-100px] justify-end items-center">
           <p class="text-gray font-bold text-sm">
             {200 - messageText.length} caracteres restantes
           </p>
           <div
             class="bg-terciary p-4 scale-50 rounded-xl border-4 border-terciary hover:border-cyan cursor-pointer hover:scale-[.55] transition-transform"
-            on:click={() => handleMessage()}
+            onclick={() => handleMessage()}
             role="button"
             tabindex={1}
-            on:keypress={() => {}}
+            onkeypress={() => {}}
           >
             <img src="icons/send.svg" alt="send icon" class="" />
           </div>
@@ -197,7 +197,7 @@
         <textarea
           class="p-8 h-[200px] w-[500px] rounded-lg placeholder:text-opacity-30"
           placeholder=""
-        />
+></textarea>
         <div class="mt-[-150px] flex justify-center items-center flex-col">
           <p class="text-terciary font-bold text-sm">Mensagem registrada!</p>
           <img src="icons/check.svg" alt="check icon" />

@@ -9,10 +9,10 @@
   import { getCookie, setCookie } from "../../../services/cookies";
   import { jwtDecode, type JwtPayload } from "jwt-decode";
 
-  let username:string|undefined;
-  let password:string|undefined;
+  let username:string|undefined = $state();
+  let password:string|undefined = $state();
 
-  let loading = false;
+  let loading = $state(false);
 
   onMount(() => {
     

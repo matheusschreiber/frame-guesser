@@ -4,7 +4,7 @@
 
   let disciplines: string[] = [];
 
-  let text = "";
+  let text = $state("");
 
   let duration = 3000;
 
@@ -53,7 +53,7 @@
     }
   });
 
-  let blink = true;
+  let blink = $state(true);
   setInterval(() => {
     blink = !blink;
   }, 200);

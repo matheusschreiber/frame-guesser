@@ -1,5 +1,9 @@
 <script lang='ts'>
-    export let difficultyLevel: number;
+    interface Props {
+        difficultyLevel: number;
+    }
+
+    let { difficultyLevel }: Props = $props();
 </script>
 
 {#if difficultyLevel === 5}

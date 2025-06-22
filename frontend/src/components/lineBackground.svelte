@@ -1,5 +1,9 @@
 <script lang='ts'>
-  export let variant:number = 1
+  interface Props {
+    variant?: number;
+  }
+
+  let { variant = 1 }: Props = $props();
 </script>
 
 {#if variant==1}

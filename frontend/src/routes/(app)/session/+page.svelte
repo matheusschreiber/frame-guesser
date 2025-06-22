@@ -36,26 +36,26 @@
     "Você errou com tanta confiança que até me fez duvidar da resposta certa.",
   ]
 
-  let confirm = false;
-  let selected: number | null = null;
-  let hintsUsed = 0;
-  let totalHintsAmount = 0;
+  let confirm = $state(false);
+  let selected: number | null = $state(null);
+  let hintsUsed = $state(0);
+  let totalHintsAmount = $state(0);
 
-  let slidesLeftAmount: number;
-  let difficultyLevel: number;
+  let slidesLeftAmount: number = $state();
+  let difficultyLevel: number = $state();
 
-  var loading = true;
-  var hasAnswered = false;
-  var answer: number | null = null;
-  var loadingHint = false;
+  var loading = $state(true);
+  var hasAnswered = $state(false);
+  var answer: number | null = $state(null);
+  var loadingHint = $state(false);
 
-  var options = [
+  var options = $state([
     "Carregando... | Carregando...",
     "Carregando... | Carregando...",
     "Carregando... | Carregando...",
     "Carregando... | Carregando...",
-  ];
-  var slideImage: string | undefined;
+  ]);
+  var slideImage: string | undefined = $state();
 
   function handleConfirm() {
     if (hasAnswered) return;
@@ -263,10 +263,10 @@
         <div class="flex lg:flex-col flex-wrap mt-4 lg:mt-0 gap-4 justify-center lg:justify-between pb-8 items-center lg:h-[350px]">
           {#each options as item, i}
             <div
-              on:click={() => handleSelection(i)}
+              onclick={() => handleSelection(i)}
               role="button"
               tabindex={2}
-              on:keypress={() => {}}
+              onkeypress={() => {}}
               class="bg-secondary px-4 py-2 rounded-lg shadow-medium border-2 select-none w-[200px]
               {answer == i
                 ? 'border-green'
@@ -298,7 +298,7 @@
               {/if}
               <div
                 use:clickOutside={() => (confirm = false)}
-                on:click={hintsUsed != totalHintsAmount
+                onclick={hintsUsed != totalHintsAmount
                   ? () => handleConfirm()
                   : null}
                 role="button"
@@ -309,7 +309,7 @@
                 {hintsUsed == totalHintsAmount || hasAnswered
                   ? 'opacity-20 cursor-not-allowed'
                   : 'opacity-100 cursor-pointer'}"
-                on:keypress={() => {}}
+                onkeypress={() => {}}
               >
                 <img
                   src="icons/lamp.svg"
@@ -344,7 +344,7 @@
                   : selected == answer
                     ? 'border-green text-green'
                     : 'border-red text-red'}"
-              on:click={loading ? null : () => handleNextSlide()}
+              onclick={loading ? null : () => handleNextSlide()}
             >
               {hasAnswered ? "AVANÇAR" : "VERIFICAR"}
             </button>

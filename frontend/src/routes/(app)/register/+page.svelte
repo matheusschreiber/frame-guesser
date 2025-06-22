@@ -9,10 +9,10 @@
     import { onMount } from "svelte";
     import Loading from "../../../components/loading.svelte";
 
-  let username:string;
-  let password:string;
-  let confirmPassword:string;
-  let loading:boolean = false;
+  let username:string = $state();
+  let password:string = $state();
+  let confirmPassword:string = $state();
+  let loading:boolean = $state(false);
 
   async function handleRegister() {
     loading = true

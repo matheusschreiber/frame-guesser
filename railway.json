@@ -5,8 +5,8 @@
       "DJANGO_SETTINGS_MODULE": "backend.settings",
       "PYTHONPATH": "backend"
     },
-    "buildCommand": "python -m pip install -r backend/requirements.txt",
-    "startCommand": "python backend/manage.py migrate && python backend/manage.py collectstatic --noinput && gunicorn backend.wsgi:application"
+    "buildCommand": "python3 -m pip install -r backend/requirements.txt",
+    "startCommand": "python3 backend/manage.py migrate && python backend/manage.py collectstatic --noinput && gunicorn backend.wsgi:application"
   },
   "deploy": {
     "branch": "main",

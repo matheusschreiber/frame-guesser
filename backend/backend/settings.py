@@ -14,6 +14,12 @@ SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
 
 ALLOWED_HOSTS = [os.environ["DJANGO_ALLOWED_HOST"], 'localhost', '127.0.0.1']
 
+CSRF_TRUSTED_ORIGINS = [
+    f"https://{os.environ['DJANGO_ALLOWED_HOST']}",
+    "http://localhost",
+    "http://127.0.0.1",
+]
+
 # Application definition
 INSTALLED_APPS = [
     "django.contrib.admin",

@@ -3,19 +3,16 @@ from ..models import *
 
 from django.contrib.auth.hashers import make_password
 from django.db.models import Q
-from random import choice
 
-import json
 import re
 
 from rest_framework.decorators import (
     api_view,
-    authentication_classes,
     permission_classes,
 )
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework import permissions, status
+from rest_framework import status
 
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView

@@ -1,7 +1,5 @@
-from django.contrib import admin
-from django.urls import path, include
-from .views import *
-
+from django.urls import path
+from base.api.views import *
 from rest_framework_simplejwt.views import (TokenRefreshView,)
 
 urlpatterns = [
@@ -18,5 +16,5 @@ urlpatterns = [
     path("slide/answer/<str:pk>", getAnswerSlide, name="answer_slide"),
 
     path("disciplines/", getDisciplines, name="get_disciplines"),
-    path("history/<str:pk>", getHistoryRun, name='get_history')
+    path("history/<str:pk>", getHistoryRun, name='get_history'),
 ]

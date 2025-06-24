@@ -1,0 +1,123 @@
+{% extends "admin/base_site.html" %}
+{% block content %}
+
+<form method="post" enctype="multipart/form-data" id="slides-form">
+    {% csrf_token %}
+
+    <fieldset class="module aligned">
+        <h2>Discipline</h2>
+    
+        <table>
+            <tr>
+                <td>{{ form.prof_discipline.label_tag }}</td>
+                <td>{{ form.prof_discipline }}</td>
+            </tr>
+            <tr>
+                <td>{{ form.hints_amount.label_tag }}</td>
+                <td>{{ form.hints_amount }}</td>
+            </tr>
+            <tr>
+                <td>{{ form.difficulty_level.label_tag }}</td>
+                <td>{{ form.difficulty_level }}</td>
+            </tr>
+        </table>
+        <style>
+            
+        </style>
+    </fieldset>
+
+    <fieldset class="module aligned">
+        <h2>Slides</h2>
+    
+        <table>
+            <tr>
+                <td>
+                    <div id="file-inputs">
+                        <div class="file-input-wrapper">
+                            <input type="file" name="images" />
+                            <button type="button" class="remove-btn">Remove</button>
+                        </div>
+                    </div>
+                    <button type="button" id="add-file-btn">Add another image</button>
+                </td>
+            </tr>
+        </table>
+    </fieldset>
+
+    <div class="submit-row">
+        <input type="submit" value="SAVE" class="default">
+    </div>
+</form>
+
+<script>
+    const fileInputsContainer = document.getElementById('file-inputs');
+    const addFileBtn = document.getElementById('add-file-btn');
+
+    // Function to update hint labels
+    function updateHintLabels() {
+        const wrappers = fileInputsContainer.querySelectorAll('.file-input-wrapper');
+        wrappers.forEach((wrapper, idx) => {
+            let label = wrapper.querySelector('.hint-label');
+            if (!label) {
+                label = document.createElement('span');
+                label.className = 'hint-label';
+                wrapper.insertBefore(label, wrapper.firstChild);
+            }
+            label.textContent = `Hint ${idx + 1}: `;
+        });
+    }
+
+    addFileBtn.addEventListener('click', function () {
+        const wrapper = document.createElement('div');
+        wrapper.classList.add('file-input-wrapper');
+
+        const label = document.createElement('span');
+        label.className = 'hint-label';
+
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.name = 'images';
+
+        const removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.classList.add('remove-btn');
+        removeBtn.textContent = 'Remove';
+
+        removeBtn.addEventListener('click', function () {
+            fileInputsContainer.removeChild(wrapper);
+            updateHintLabels();
+        });
+
+        wrapper.appendChild(label);
+        wrapper.appendChild(input);
+        wrapper.appendChild(removeBtn);
+        fileInputsContainer.appendChild(wrapper);
+
+        updateHintLabels();
+    });
+
+    // Attach remove event to existing remove buttons on page load
+    document.querySelectorAll('.remove-btn').forEach(button => {
+        button.addEventListener('click', function () {
+            const wrapper = button.parentElement;
+            fileInputsContainer.removeChild(wrapper);
+            updateHintLabels();
+        });
+    });
+
+    // On page load, wrap the initial input with a label and update
+    window.addEventListener('DOMContentLoaded', function () {
+        updateHintLabels();
+    });
+</script>
+
+<style>
+    .file-input-wrapper {
+        margin-bottom: 8px;
+    }
+
+    .remove-btn {
+        margin-left: 8px;
+    }
+</style>
+{% endblock %}

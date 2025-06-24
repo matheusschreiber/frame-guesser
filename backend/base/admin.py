@@ -1,6 +1,6 @@
 from django.contrib import admin
-
-from .models import *
+from base.models import *
+from django.db import models
 
 class RunCustomAdmin(admin.ModelAdmin):
     list_display = [
@@ -58,6 +58,21 @@ class MessagesCustomAdmin(admin.ModelAdmin):
         'user__username',
         'text'
     ]
+    
+class MultipleSlides(models.Model):
+    name = models.CharField(max_length=100, blank=True, null=True)
+
+    def __str__(self):
+        return self.name or "MultipleSlides"
+    
+    class Meta:
+        verbose_name_plural = "Add Multiple Slides at once"
+
+@admin.register(MultipleSlides)
+class MultipleSlidesAdmin(admin.ModelAdmin):
+    list_display = ['name']
+    def has_add_permission(self, request):
+        return False
 
 admin.site.register(Slide)
 admin.site.register(User, UserCustomAdmin)

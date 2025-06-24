@@ -9,6 +9,9 @@ services:
     ports:
       - "8000:8000"
     restart: always
+    depends_on:
+      db:
+        condition: service_healthy
     networks:
       compslidesnetwork:
         ipv4_address: 172.28.2.1
@@ -28,6 +31,23 @@ services:
     networks:
       compslidesnetwork:
         ipv4_address: 172.28.2.2
+
+  db:
+    image: mysql:8.0
+    env_file: ./backend/backend/.env
+    volumes:
+      - ./db_data:/var/lib/mysql
+    ports:
+      - "3307:3306"
+    restart: always
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      compslidesnetwork:
+        ipv4_address: 172.28.2.3
 
 networks:
   compslidesnetwork:

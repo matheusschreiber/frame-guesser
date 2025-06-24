@@ -1,4 +1,7 @@
 BUGS
+- [x] iniciar sem conexao com API da alguns problemas
+- [ ] iniciar com banco vazio da alguns problemas
+- [ ] imagem na pagina 404 esta quebrada
 - [ ] ao sair e entrar denovo o usuario deveria voltar para a run de onde parou...
 
 MELHORIAS
@@ -10,6 +13,7 @@ MELHORIAS
 - [ ] repaginar pagina de 404 ta muito feia
 - [ ] trocar sweet alerts por alertas na propria interface (um h4 com cor diferente por exemplo)
 - [ ] adicionar microsoft clarity
+- [ ] adicionar rota para subir zip com slides facilmente
 
 
 IDEIAS FEATURES ADICIONAIS

@@ -14,6 +14,7 @@
   }
 
   async function addTyping(string: string) {
+    if (!string || string.length == 0) return;
     let i = 0;
     let timePerLetter = (duration * 0.45) / string.length; // this is to ensure 2sec for all words
     while (i < string.length) {
@@ -23,6 +24,7 @@
   }
 
   async function eraseTyping(string: string) {
+    if (!string || string.length == 0) return;
     let i = string.length;
     let timePerLetter = (duration * 0.1) / string.length; // this is to ensure 2sec for all words
     while (i-- > 0) {

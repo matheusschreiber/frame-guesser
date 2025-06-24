@@ -6,3 +6,5 @@ venv
 */**/*.jpg
 */**/.env
 nginx.conf
+db_data
+backend/static

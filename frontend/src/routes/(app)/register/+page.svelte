@@ -39,7 +39,7 @@
       goto("/logged");
 
     } catch (err: any) {
-      Swal.fire("Vish", err.response.data.error, "warning");
+      await Swal.fire("Vish", err.response.data.error, "warning");
     }
 
     loading = false

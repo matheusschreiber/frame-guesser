@@ -7,6 +7,7 @@
   import FancyDisciplines from "../../components/fancyDisciplines.svelte";
   import { goto } from "$app/navigation";
   import { api } from "../../services/api";
+  import Swal from "sweetalert2";
 
   type User = {
     username?: string;
@@ -21,6 +22,7 @@
   let users: User[] = $state([{}]);
   let messages: Message[] = $state([{}]);
   let fetchingMessages = $state(true);
+  let apiError: boolean = $state(false);
 
   function loadHorizontalCarousel(id: number) {
     const slider = document.getElementById(`horizontal-scroll-${id}`) as any;
@@ -95,27 +97,44 @@
   }
 
   async function fetchUsers() {
-    const response = await api.get("user/list/");
-    users = response.data;
+    try{
+      const response = await api.get("user/list/");
+      users = response.data;
+    } catch (error) {
+      apiError = true;
+    }
   }
 
   async function fetchMessages() {
-    const response = await api.get("user/message/list/");
-    messages = response.data;
-    fetchingMessages = false;
+    try{
+      const response = await api.get("user/message/list/");
+      messages = response.data;
+      fetchingMessages = false;
+    } catch (error) {
+      apiError = true;  
+    }
   }
 
   onMount(() => {
     fetchUsers();
-
     fetchMessages();
-
     loadHorizontalCarousel(1);
     loadHorizontalCarousel(2);
   });
 </script>
 
 <main>
+  {#if apiError}
+    <div class="w-full flex justify-center">
+      <div class="border border-2-gray rounded-lg py-4 w-80 mt-5 absolute animate-pulse px-8 bg-red text-whitish">
+        <div class="flex items-center gap-1 mb-4">
+          <img src="icons/tip.svg" alt="error icon" class="inline-block mr-2 h-6" />
+          <p class="text-xl font-bold">Erro</p>
+        </div>
+        <p class="text-sm">Houve um problema ao se conectar com os servidores. Tente novamente mais tarde.</p>
+      </div>
+    </div>
+  {/if}
   <header class="flex w-full justify-center items-center flex-col-reverse lg:flex-row lg:justify-around my-32 px-10 lg:px-0 h-[400px] lg:h-auto gap-6 lg:gap-0">
     <FancyDisciplines />
     <Logo />
@@ -179,12 +198,10 @@
       </div>
     </div>
 
-    <div class="animate-bounce hover:animate-none w-fit m-auto">
+    <div class="hover:animate-none w-fit m-auto" class:opacity-50={apiError} class:animate-bounce={!apiError}>
       <Button
         text="JOGAR"
-        func={() => {
-          goto("/login");
-        }}
+        func={() => {!apiError?goto("/login"):()=>{}}}
       />
     </div>
   </section>

@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { api } from "../services/api";
+  import Swal from "sweetalert2";
 
   let disciplines: string[] = [];
 
@@ -31,10 +32,14 @@
   }
 
   async function fetchDisciplines() {
-    const response = await api.get("disciplines/");
-    response.data.map((discipline: string) =>
-      disciplines.push(discipline.split("|")[1])
-    );
+    try{
+      const response = await api.get("disciplines/");
+      response.data.map((discipline: string) =>
+        disciplines.push(discipline.split("|")[1])
+      );
+    } catch (err) {
+      console.error("Error fetching disciplines:", err);
+    }
   }
 
   onMount(async () => {

@@ -78,10 +78,15 @@
     let runId = getCookie("runId");
     if (!runId) return;
 
-    
-    const response = await api.put("slide/answer/" + runId, {
-      answer: options[selected ? selected : 0],
-    });
+    let response;
+    try {
+      response = await api.put("slide/answer/" + runId, {
+        answer: options[selected ? selected : 0],
+      });
+    } catch (err:any) {
+      await Swal.fire("Vish", "Problema inesperado! Tente novamente mais tarde.", "warning");
+      return
+    }
 
     if (response.data.answer == true) {
       Swal.fire({
@@ -151,7 +156,7 @@
       if (err.response.status === 301) {
         goto(`/results`);
       } else {
-        Swal.fire("Uai", "Houve algum problema com os servidores", "error");
+        await Swal.fire("Uai", "Houve algum problema com os servidores", "error");
       }
       
       return;
@@ -182,11 +187,13 @@
       return;
     }
 
-    const response = await api.post("slide/hint/" + runId);
-
-    slideImage =
-      import.meta.env.VITE_API_URL + "/" + response.data.slide_image_path;
-    loadingHint = false;
+    try {
+      const response = await api.post("slide/hint/" + runId);
+      slideImage = import.meta.env.VITE_API_URL + "/" + response.data.slide_image_path;
+      loadingHint = false;
+    } catch (err:any) {
+      await Swal.fire("Vish", "Problema inesperado! Tente novamente mais tarde.", "warning");
+    }
   }
 
   function clickOutside(element: any, callbackFunction: Function) {

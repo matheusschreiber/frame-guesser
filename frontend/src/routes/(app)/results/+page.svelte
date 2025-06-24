@@ -51,8 +51,8 @@
       } else {
         throw Error();
       }
-    } catch (err) {
-      Swal.fire("Vish", "Problema inesperado!", "warning");
+    } catch (err:any) {
+      await Swal.fire("Vish", "Problema inesperado! Tente novamente mais tarde.", "warning");
     }
   }
 

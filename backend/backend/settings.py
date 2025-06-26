@@ -95,6 +95,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "base.middlewares.CreateAdminMiddleware",
+    "base.middlewares.ConfigsMiddleware",
 ]
 
 ROOT_URLCONF = "backend.urls"

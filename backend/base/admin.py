@@ -1,7 +1,9 @@
 from django.contrib import admin
-from base.models import *
-from django.db import models
 
+from base.fake_models import *
+from base.models import *
+
+@admin.register(Run)
 class RunCustomAdmin(admin.ModelAdmin):
     list_display = [
         'user',
@@ -14,7 +16,40 @@ class RunCustomAdmin(admin.ModelAdmin):
         'user__username',
         'user__email',
     ]
+    
+@admin.register(Slide)
+class SlideCustomAdmin(admin.ModelAdmin):
+    list_display = [
+        'id',
+        'prof_discipline',
+        'hints_amount',
+        'total_hits',
+        'total_misses',
+        'total_hints_used',
+        'difficulty_level'
+    ]
 
+    search_fields = [
+        'prof_discipline',
+        'difficulty_level'
+    ]
+
+@admin.register(SlideImage)
+class SlideImageCustomAdmin(admin.ModelAdmin):
+    list_display = [
+        'id',
+        'slide',
+        'hint_index',
+        'image'
+    ]
+
+    search_fields = [
+        'slide__prof_discipline',
+        'slide__difficulty_level',
+        'hint_index'
+    ]
+
+@admin.register(SlideRun)
 class SlidedRunCustomAdmin(admin.ModelAdmin):
     list_display = [
         'id',
@@ -41,43 +76,23 @@ class SlidedRunCustomAdmin(admin.ModelAdmin):
         'original_slide__difficulty_level'
     ]
     
+@admin.register(Config)
 class ConfigCustomAdmin(admin.ModelAdmin):
     list_display = [
         'name',
         'value'
     ]
 
+@admin.register(User)
 class UserCustomAdmin(admin.ModelAdmin):
     search_fields = [
         'username',
         'email'
     ]
 
+@admin.register(Message)
 class MessagesCustomAdmin(admin.ModelAdmin):
     search_fields = [
         'user__username',
         'text'
     ]
-    
-class MultipleSlides(models.Model):
-    name = models.CharField(max_length=100, blank=True, null=True)
-
-    def __str__(self):
-        return self.name or "MultipleSlides"
-    
-    class Meta:
-        verbose_name_plural = "Add Multiple Slides at once"
-
-@admin.register(MultipleSlides)
-class MultipleSlidesAdmin(admin.ModelAdmin):
-    list_display = ['name']
-    def has_add_permission(self, request):
-        return False
-
-admin.site.register(Slide)
-admin.site.register(User, UserCustomAdmin)
-admin.site.register(SlideImage)
-admin.site.register(Run, RunCustomAdmin)
-admin.site.register(Message, MessagesCustomAdmin)
-admin.site.register(Config, ConfigCustomAdmin)
-admin.site.register(SlideRun, SlidedRunCustomAdmin)

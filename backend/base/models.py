@@ -1,6 +1,18 @@
-from django.db import models
+from django.utils.deconstruct import deconstructible
 from django.contrib.auth.models import AbstractUser
+from django.db import models
 
+import uuid
+
+@deconstructible
+class HashedDirectory():
+    def __init__(self, diretorio):
+        self.diretorio = f"{diretorio}/"
+
+    def __call__(self, instance, filename):
+        extension = filename.split('.')[-1]
+        new_filename = f"{uuid.uuid4()}.{extension}"
+        return f"{self.diretorio}/{new_filename}"
 
 class User(AbstractUser):
     username = models.CharField(max_length=25, unique=True)
@@ -13,7 +25,7 @@ class User(AbstractUser):
     created = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        ordering = ['-total_points']  # decrescent order
+        ordering = ['-total_points']
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = []
@@ -46,9 +58,9 @@ class Slide(models.Model):
 
 
 class SlideImage(models.Model):
-    hint_index = models.IntegerField()
+    hint_index = models.IntegerField(help_text="Index of the hint, starting from 0")
     slide = models.ForeignKey(Slide, on_delete=models.CASCADE)
-    image = models.ImageField(default="default_slide.jpg", upload_to='static/')
+    image = models.ImageField(default="default_slide.jpg", upload_to=HashedDirectory('static/'))
 
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)

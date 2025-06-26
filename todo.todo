@@ -2,7 +2,10 @@ BUGS
 - [x] iniciar sem conexao com API da alguns problemas
 - [ ] iniciar com banco vazio da alguns problemas
 - [ ] imagem na pagina 404 esta quebrada
-- [ ] ao sair e entrar denovo o usuario deveria voltar para a run de onde parou...
+- [x] ao sair e entrar denovo o usuario deveria voltar para a run de onde parou...
+- [ ] o path da imagem precisa ser uma string uuid pois senao é facil de hackear
+- [ ] cache para as hints usadas em uma sliderun
+- [ ] ao usar a hint o cache da sliderun atual (ao recarregar manteria a sliderun) não funciona mais
 
 MELHORIAS
 - [ ] shuffle nas alternativas de slides para o usuario escolher para nao ficar repetindo a mesma sempre

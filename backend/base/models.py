@@ -71,7 +71,7 @@ class SlideImage(models.Model):
 
 class Run(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    current_hint = models.ForeignKey(SlideImage, on_delete=models.CASCADE)
+    current_hint = models.ForeignKey(SlideImage, on_delete=models.CASCADE, null=True, blank=True)
     slides_left = models.IntegerField()
     total_points = models.FloatField(default=0.0)
 

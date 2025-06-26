@@ -84,7 +84,10 @@ def add_zip_view(request):
                         parsed_file = ContentFile(file.read(), name=filename)
                         SlideImage.objects.create(hint_index=idx, slide=slide, image=parsed_file)
 
-            return redirect('admin:index')
+            if '_addanother' in request.POST:
+                return redirect('add_zip_view')
+            else:
+                return redirect('admin:index')
     else:
         form = AddZipForm()
     

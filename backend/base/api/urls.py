@@ -10,8 +10,7 @@ urlpatterns = [
     path("user/message/", addMessageToUser, name='add_message_user'),
     path("user/message/list/", getMessages, name="list_messages"),
 
-    path("slide/random", getRandomSlide, name="no_run_random_slide"),
-    path("slide/random/<str:pk>", getRandomSlide, name="random_slide"),
+    path("slide/<str:pk>", getNextSlide, name="get_next_slide"),
     path("slide/hint/<str:pk>", getHint, name="hint_slide"),
     path("slide/answer/<str:pk>", getAnswerSlide, name="answer_slide"),
 

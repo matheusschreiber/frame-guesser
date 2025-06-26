@@ -9,23 +9,6 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 
-def create_slide_alternatives(slide):
-    
-    # fetching three slides to append as possible answers
-    all_slides_randomly_sorted = Slide.objects.order_by("?")
-    slide_alternatives = [slide]
-    for option in all_slides_randomly_sorted:
-        if option.id == slide.id:
-            continue
-
-        if len(slide_alternatives) >= 4:
-            break
-
-        slide_alternatives.append(option)
-
-    return slide_alternatives
-
-
 def create_new_slide_run(slide, run, slide_alternatives):
     new_slide_run = SlideRunSerializer(
         data={
@@ -54,145 +37,47 @@ def slide_run_has_ended(slide_run):
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
-def getRandomSlide(request, pk=None):
+def getNextSlide(request, pk=None):
     
-    # run_processor = RunProcessor(pk)
-    # current_run = run_processor.get_or_create_run(
-    #     id_user= request.user.id,
-    #     current_hint= first_hint.id,
-    #     slides_left= max_slides_per_run
-    # )
+    max_slides_per_run = Config.objects.filter(name="max_slides_per_run").first()
+    max_slides_per_run = int(max_slides_per_run.value) if max_slides_per_run else 5
+    max_points_per_slide_run = Config.objects.filter(name="max_points_per_slide_run").first()
+    max_points_per_slide_run = int(max_points_per_slide_run.value) if max_points_per_slide_run else 10
+    amount_slide_alternatives = Config.objects.filter(name="amount_slide_alternatives").first()
+    amount_slide_alternatives = int(amount_slide_alternatives.value) if amount_slide_alternatives else 4
     
-    # next_slide = run_processor.get_next_slide()
-    # new_slide_run = run_processor.create_slide_run(
-    #     random_slide=random_slide,
-    #     current_run=current_run,
-    #     slide_alternatives=create_slide_alternatives(random_slide)
-    # )
+    run_processor = RunProcessor(
+        pk, request.user.id, 
+        max_slides_per_run, 
+        max_points_per_slide_run, 
+        amount_slide_alternatives
+    )
     
-    # response = run_processor.generate_response()
-    
-    try:
-        # if no run id is passed, then its the first slide
-        if not pk:
-            all_slides_randomly_sorted = Slide.objects.order_by("?")
-            random_slide = all_slides_randomly_sorted.first()
-            first_hint = SlideImage.objects.get(
-                Q(slide__id=random_slide.id) & Q(hint_index=0)
-            )
-
-            slide_alternatives = create_slide_alternatives(random_slide)
-
-            max_slides_per_run = 0
-            try:
-                max_slides_per_run = int(
-                    Config.objects.get(name="max_slides_per_run").value
-                )
-            except:
-                return Response(
-                    data={"error": "Config not present: max_slides_per_run"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-            new_run = RunSerializer(
-                data={
-                    "user": request.user.id,
-                    "current_hint": first_hint.id,
-                    "slides_left": max_slides_per_run,
-                }
-            )
-
-            if not new_run.is_valid():
-                return Response(
-                    data={"error": "Invalid run creation"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-            else:
-                new_run = new_run.save()
-
-            new_slide_run = create_new_slide_run(
-                random_slide, new_run, slide_alternatives
-            )
-
-            response = {
-                "run_id": new_run.id,
-                "slides_left_amount": new_run.slides_left,
-                "slide_image_path": first_hint.image.name,
-                "hints_used": 0,
-                "hints_total": random_slide.hints_amount,
-                "difficulty_level": random_slide.difficulty_level,
-                "slide_alternatives": [
-                    alternative.prof_discipline
-                    for alternative in new_slide_run.slide_alternatives.all()
-                ],
-                "slide_run_id": new_slide_run.id,
-            }
-
-        # if there is a run id, then append the new slide_run to it
-        else:
-            current_run = Run.objects.get(id=pk)
-
-            if current_run.slides_left == 0:
-                return Response(
-                    data={"error": "Run finished"},
-                    status=status.HTTP_301_MOVED_PERMANENTLY,
-                )
-
-            current_slide_run = None
-            slide_runs_of_specifique_run = SlideRun.objects.filter(
-                Q(run_id=current_run.id)
-            )
-            for slide_run in slide_runs_of_specifique_run:
-                if not slide_run.has_hit and not slide_run.has_missed:
-                    current_slide_run = slide_run
-
-            if current_slide_run == None or slide_run_has_ended(current_slide_run):
-                all_slides_randomly_sorted = Slide.objects.order_by("?")
-                random_slide = all_slides_randomly_sorted.first()
-                first_hint = SlideImage.objects.get(
-                    Q(slide__id=random_slide.id) & Q(hint_index=0)
-                )
-
-                slide_alternatives = slide_alternatives = create_slide_alternatives(
-                    random_slide
-                )
-                current_slide_run = create_new_slide_run(
-                    random_slide, current_run, slide_alternatives
-                )
-
-                current_run.current_hint = first_hint
-                current_run.save()
-
-            response = {
-                "run_id": current_run.id,
-                "slides_left_amount": current_run.slides_left,
-                "slide_image_path": current_run.current_hint.image.name,
-                "hints_used": current_slide_run.hints_used,
-                "hints_total": current_slide_run.original_slide.hints_amount,
-                "difficulty_level": current_slide_run.original_slide.difficulty_level,
-                "slide_alternatives": [
-                    slide.prof_discipline
-                    for slide in current_slide_run.slide_alternatives.all()
-                ],
-                "slide_run_id": current_slide_run.id,
-            }
-
-        return Response(data=response, status=status.HTTP_200_OK)
-
-    except Run.DoesNotExist:
+    if not run_processor.is_valid_run():
         return Response(
-            data={"error": "Invalid run"}, status=status.HTTP_400_BAD_REQUEST
+            data={"error": "Invalid Run"},
+            status=status.HTTP_400_BAD_REQUEST,
         )
-
-    except SlideImage.DoesNotExist:
+        
+    if run_processor.is_finished_run():
         return Response(
-            data={"error": "Invalid hint"}, status=status.HTTP_400_BAD_REQUEST
+            data={"error": "Run has finished"},
+            status=status.HTTP_301_MOVED_PERMANENTLY,
         )
-
-    except Slide.DoesNotExist:
+    
+    slide_run = run_processor.get_or_create_slide_run()
+    if not slide_run:
         return Response(
-            data={"error": "Invalid slide"}, status=status.HTTP_400_BAD_REQUEST
+            data={"error": "Error on SlideRun"},
+            status=status.HTTP_400_BAD_REQUEST,
         )
+    
+    response = run_processor.generate_response()
+    
+    return Response(
+        data=response, 
+        status=status.HTTP_200_OK
+    )
 
 
 @api_view(["POST"])

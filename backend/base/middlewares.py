@@ -31,6 +31,7 @@ class ConfigsMiddleware:
         configs_defaults = {
             "max_slides_per_run": 10,
             "max_points_per_slide_run": 10,
+            "amount_slide_alternatives": 4,
             "difficulty_1_bonus": 1,
             "difficulty_2_bonus": 1,
             "difficulty_3_bonus": 2,

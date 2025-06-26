@@ -24,7 +24,11 @@ class SlideSerializer(ModelSerializer):
 class RunSerializer(ModelSerializer):
     class Meta:
         model = Run
-        fields = "__all__"
+        fields = [
+            "user",
+            "slides_left",
+            "total_points",
+        ]
 
 class SlideRunSerializer(ModelSerializer):
     class Meta:

@@ -8,7 +8,7 @@ BUGS
 - [x] ao usar a hint o cache da sliderun atual (ao recarregar manteria a sliderun) não funciona mais
 
 MELHORIAS
-- [ ] shuffle nas alternativas de slides para o usuario escolher para nao ficar repetindo a mesma sempre
+- [x] shuffle nas alternativas de slides para o usuario escolher para nao ficar repetindo a mesma sempre
 - [ ] centralizar mensagens de erro em um unico modulo (facil de alterar e adicionar)
 - [ ] testes de integração
 - [ ] na tela que mostra as mensageens dos players, fazer uma seleção aleatória das mensagens para nao ficar repetidno sempre

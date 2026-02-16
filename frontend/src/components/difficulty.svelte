@@ -7,13 +7,13 @@
 </script>
 
 {#if difficultyLevel === 5}
-    <span class="text-red">NÍVEL DIFÍCIL</span>
+    <span class="text-red">LEVEL HARD</span>
 {:else if difficultyLevel === 4}
-    <span class="text-orange">NÍVEL QUASE DIFÍCIL</span>
+    <span class="text-orange">LEVEL SEMI-HARD</span>
 {:else if difficultyLevel === 3}
-    <span class="text-yellow">NÍVEL NORMAL</span>
+    <span class="text-yellow">LEVEL NORMAL</span>
 {:else if difficultyLevel === 2}
-    <span class="text-green">NÍVEL FÁCIL</span>
+    <span class="text-green">LEVEL EASY</span>
 {:else if difficultyLevel === 1}
-    <span class="text-blue">NÍVEL MUITO FÁCIL</span>
+    <span class="text-blue">LEVEL VERY EASY</span>
 {/if}

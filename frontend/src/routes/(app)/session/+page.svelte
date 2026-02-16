@@ -8,32 +8,32 @@
 	import { getCookie, setCookie } from "../../../services/cookies";
 
 	let correctAnswerCatchPhrases = [
-		"Se continuar assim vai até parecer que presta atenção nas aulas!",
-		"Uau, será que temos um gênio aqui ou foi pura sorte?",
-		"Ótimo trabalho! Só falta manter esse ritmo por mais de 5 minutos.",
-		"Impressionante! Estou quase acreditando que você estudou!",
-		"Parabéns! Se continuar assim, talvez um dia nem precise chutar.",
-		"Você é incrível! Mas não se acostuma, ainda tem muito pela frente.",
-		"Continue com o bom trabalho! Ou pelo menos continue enganando bem.",
-		"Se continuar assim, talvez até sua mãe comece a se orgulhar.",
-		"Muito bem! Continue assim e talvez eu pare de duvidar de você.",
-		"Inacreditável! Estou começando a desconfiar que você está trapaceando.",
+		"If you keep this up, you might actually look like you pay attention in movies!",
+		"Wow, do we have a genius here or was that just pure luck?",
+		"Great job! Just need to keep this pace for more than 5 minutes.",
+		"Impressive! I'm almost believing you actually know something!",
+		"Congratulations! If you keep this up, maybe one day you won't need to guess.",
+		"You're amazing! But don't get used to it, there's still a long way to go.",
+		"Keep up the good work! Or at least keep faking it well.",
+		"If you keep this up, maybe even your mom will start feeling proud.",
+		"Very good! Keep it up and maybe I'll stop doubting you.",
+		"Unbelievable! I'm starting to suspect you're cheating.",
 	];
 
 	let wrongAnswerCatchPhrases = [
-		"Alguém andou faltando algumas aulas",
-		"Eita! Se errar fosse um esporte, você já estaria nas Olimpíadas.",
-		"Bom, pelo menos você foi consistente... em errar.",
-		"Interessante abordagem! Errada, mas interessante.",
-		"Quase! Só faltou acertar.",
-		"A resposta certa estava logo ali... Mas você escolheu ignorá-la.",
-		"Se o objetivo era errar, parabéns, missão cumprida!",
-		"Talvez a resposta certa estivesse se escondendo de você dessa vez.",
-		"Pelo menos você está mantendo a média... lá embaixo.",
-		"Eu poderia fingir que essa resposta está certa... Mas nem eu sou tão generoso.",
-		"Você não errou, apenas encontrou um jeito diferente (e incorreto) de responder.",
-		"A resposta certa estava a um neurônio de distância. Pena que ele estava de folga.",
-		"Você errou com tanta confiança que até me fez duvidar da resposta certa.",
+		"Someone's been scrolling while watching.",
+		"Oops! If being wrong was a sport, you'd already be in the Olympics.",
+		"Well, at least you were consistent... in getting it wrong.",
+		"Interesting approach! Wrong, but interesting.",
+		"Almost! You just forgot to get it right.",
+		"The right answer was right there... But you chose to ignore it.",
+		"If the goal was to get it wrong, congratulations, mission accomplished!",
+		"Maybe the right answer was hiding from you this time.",
+		"At least you're keeping the average... way down there.",
+		"I could pretend that answer is correct... But even I'm not that generous.",
+		"You didn't get it wrong, you just found a different (and incorrect) way to answer.",
+		"The right answer was one neuron away. Too bad it was on vacation.",
+		"You got it wrong with so much confidence that you made me doubt the right answer.",
 	];
 
 	let confirm = $state(false);
@@ -50,10 +50,10 @@
 	var loadingHint = $state(false);
 
 	var options = $state([
-		"Carregando... | Carregando...",
-		"Carregando... | Carregando...",
-		"Carregando... | Carregando...",
-		"Carregando... | Carregando...",
+		"Loading... | Loading...",
+		"Loading... | Loading...",
+		"Loading... | Loading...",
+		"Loading... | Loading...",
 	]);
 	var slideImage: string | undefined = $state();
 
@@ -85,8 +85,8 @@
 			});
 		} catch (err: any) {
 			await Swal.fire(
-				"Vish",
-				"Problema inesperado! Tente novamente mais tarde.",
+				"UOPS",
+				"Inexpected problem! Try again later.",
 				"warning",
 			);
 			return;
@@ -94,7 +94,7 @@
 
 		if (response.data.answer == true) {
 			Swal.fire({
-				title: "<strong>BOA! RESOSTA CERTA!</strong>",
+				title: "<strong>NICE! CORRECT ANSWER!</strong>",
 				icon: "success",
 				html: correctAnswerCatchPhrases[
 					Math.floor(Math.random() * correctAnswerCatchPhrases.length)
@@ -104,7 +104,7 @@
 			});
 		} else if (response.data.answer == false) {
 			Swal.fire({
-				title: "<strong>OPS! MAIS SORTE NA PRÓXIMA</strong>",
+				title: "<strong>OPS! BETTER LUCK NEXT TIME</strong>",
 				icon: "error",
 				html: wrongAnswerCatchPhrases[
 					Math.floor(Math.random() * wrongAnswerCatchPhrases.length)
@@ -114,8 +114,8 @@
 			});
 		} else {
 			Swal.fire(
-				"Uai",
-				"Houve algum problema com os servidores",
+				"What?",
+				"Inexpected problem with the servers",
 				"error",
 			).then(() => {
 				selected = null;
@@ -164,8 +164,8 @@
 				goto(`/results`);
 			} else {
 				await Swal.fire(
-					"Uai",
-					"Houve algum problema com os servidores",
+					"What?",
+					"Inexpected problem with the servers",
 					"error",
 				);
 				goto(`/`)
@@ -191,8 +191,8 @@
 		let runId = getCookie("runId");
 		if (!runId) {
 			Swal.fire(
-				"Uai",
-				"Houve algum problema com a sua sessão, redirecionando...",
+				"What?",
+				"Inexpected problem with your session, redirecting...",
 				"error",
 			);
 			return;
@@ -207,8 +207,8 @@
 			loadingHint = false;
 		} catch (err: any) {
 			await Swal.fire(
-				"Vish",
-				"Problema inesperado! Tente novamente mais tarde.",
+				"What?",
+				"Inexpected problem! Try again later.",
 				"warning",
 			);
 		}
@@ -253,31 +253,30 @@
 		<div id="div-scroll-main">
 			<h5 class="mx-auto w-fit font-bold text-sm mb-0">
 				{#if difficultyLevel === 5}
-					<span class="text-red">NÍVEL DIFÍCIL</span>
+					<span class="text-red">LEVEL HARD</span>
 				{:else if difficultyLevel === 4}
-					<span class="text-orange">NÍVEL QUASE DIFÍCIL</span>
+					<span class="text-orange">LEVEL SEMI-HARD</span>
 				{:else if difficultyLevel === 3}
-					<span class="text-yellow">NÍVEL NORMAL</span>
+					<span class="text-yellow">LEVEL NORMAL</span>
 				{:else if difficultyLevel === 2}
-					<span class="text-green">NÍVEL FÁCIL</span>
+					<span class="text-green">LEVEL EASY</span>
 				{:else if difficultyLevel === 1}
-					<span class="text-blue">NÍVEL MUITO FÁCIL</span>
+					<span class="text-blue">LEVEL VERY EASY</span>
 				{/if}
 			</h5>
-			<h2 class="text-whitish text-3xl">De quem é esse slide?</h2>
+			<h2 class="text-whitish text-3xl">From which movie is this?</h2>
 		</div>
 
 		<div class="flex lg:flex-row flex-col">
-			<aside class="lg:w-[600px] flex flex-col justify-end">
+			<aside class="lg:w-fit flex flex-col justify-end">
 				{#if slideImage != ""}
 					<div class="flex w-[90%] mx-auto justify-start mb-[-10px]">
 						<h3 class="mt-4 text-whitish bg-terciary w-fit px-2 py-1 pb-3 rounded-lg text-sm">
 							{#if typeof(slidesLeftAmount) == "undefined"}
-								Carregando...
+								Loading...
 							{:else}
 								{10 - slidesLeftAmount + 1}/{10}
 							{/if}
-							
 						</h3>
 					</div>
 				{/if}
@@ -286,7 +285,7 @@
 					<Loading />
 				{:else}
 					<img
-						class="rounded-lg h-[400px]"
+						class="rounded-lg h-[400px] w-[400px]"
 						src={slideImage}
 						alt="slide"
 					/>
@@ -362,7 +361,7 @@
 							{#if confirm}
 								<p
 									class="absolute font-fredoka text-sm text-whitish mt-16">
-									Clique novamente para confirmar a sua dica
+									Click again to confirm hint
 								</p>
 							{/if}
 						{/if}
@@ -381,7 +380,7 @@
 										? 'border-green text-green'
 										: 'border-red text-red'}"
 							onclick={loading ? null : () => handleNextSlide()}>
-							{hasAnswered ? "AVANÇAR" : "VERIFICAR"}
+							{hasAnswered ? "NEXT" : "CHECK"}
 						</button>
 					{/if}
 				</div>

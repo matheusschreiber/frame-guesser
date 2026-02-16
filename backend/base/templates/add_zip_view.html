@@ -4,6 +4,13 @@
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
 
+    <p>Instructions</p>
+    
+    <ul>
+        <li>The zip must be named with the pattern (using double underline between the director's and movie's name): <code>director_name__movie_name.zip</code></li>
+        <li>The zip must be with the <code>.png</code> images directly (not subdirectories).</li>
+    </ul>
+
     {{form.as_p}}
 
     <div class="submit-row">

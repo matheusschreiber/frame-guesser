@@ -65,15 +65,13 @@ def getNextSlide(request, pk=None):
             status=status.HTTP_301_MOVED_PERMANENTLY,
         )
     
-    slide_run = run_processor.get_or_create_slide_run()
-    if not slide_run:
+    if not run_processor.get_or_create_slide_run():
         return Response(
             data={"error": "Error on SlideRun"},
             status=status.HTTP_400_BAD_REQUEST,
         )
     
     response = run_processor.generate_response()
-    
     return Response(
         data=response, 
         status=status.HTTP_200_OK

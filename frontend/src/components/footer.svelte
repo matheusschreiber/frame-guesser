@@ -1,26 +1,53 @@
-<script lang="ts">
-  import { onMount } from "svelte";
+<script>
+    import { goto } from "$app/navigation";
+    import Button from "./button.svelte";
 
-  
-  onMount(()=>{
-    Array.from(document.getElementsByClassName('year-dynamic')).forEach((element: Element) => {
-      if (element) {
-        element.textContent = (new Date().getFullYear()).toString()
-      }
-    });
-  })
 </script>
+<footer
+  class="relative w-full overflow-hidden bg-whitish text-gray"
+  aria-label="Site footer"
+>
+  <div
+    aria-hidden="true"
+    class="pointer-events-none absolute -top-24 left-6 h-48 w-48 rounded-full bg-amber-300/40 blur-3xl"
+  ></div>
+  <div
+    aria-hidden="true"
+    class="pointer-events-none absolute -bottom-24 right-6 h-56 w-56 rounded-full bg-sky-300/30 blur-3xl"
+  ></div>
 
-<div class="lg:flex hidden h-[200px] pt-20 w-full bg-lightgray items-end pb-8 justify-center">
-  <div class="flex w-full justify-center items-center text-gray text-sm">
-    <p class="text-center w-fit text-sm"><span class="year-dynamic"></span>・<span class="font-bold">Comp Slides</span>・Engenharia da Computação・UFES</p>
-  </div>
-</div>
+  <div class="mx-auto flex max-w-6xl flex-col gap-10 px-6 py-14 md:flex-row md:items-center">
+    <div class="flex-1">
+      <div class="inline-flex items-center gap-3 rounded-full bg-white/70 py-2 text-xs uppercase tracking-[0.2em] text-slate-600">
+        Guess. React. Repeat.
+      </div>
+      <h2 class="mt-4 text-2xl tracking-tight font-bold text-primary">
+        MovieGuesser
+      </h2>
+      <p class="mt-2 max-w-xl text-sm">
+        Quick-fire rounds built for popcorn instincts. No spoilers, no pressure,
+        just a fast way to flex your movie memory.
+      </p>
+    </div>
 
-<div class="flex lg:hidden pt-20 w-full bg-lightgray pb-8">
-  <div class="flex w-full items-start px-5 text-gray text-sm lg:flex-row flex-col">
-    <span class="font-bold mb-4">CompSlides</span>
-    <span>UFES・<span class="year-dynamic"></span></span>
-    <span>Engenharia da Computação</span>
+    <div class="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
+      {#if !window.location.href.includes("login") && !window.location.href.includes("logged")}
+        <Button
+          text="PLAY"
+          func={() => {goto("/login")}}
+        />
+      {/if}
+    </div>
   </div>
-</div>
+
+  <div class="border-t border-lightgray">
+    <div class="mx-auto flex max-w-6xl flex-col items-start gap-3 px-6 py-6 text-xs text-slate-600 sm:flex-row sm:items-center sm:justify-between">
+      <p><b>MovieGuesser</b>・2026</p>
+      <div class="flex flex-wrap gap-4">
+        <span class="rounded-full bg-white/80 px-3 py-1">No ads in gameplay</span>
+        <span class="rounded-full bg-white/80 px-3 py-1">Daily hints</span>
+        <span class="rounded-full bg-white/80 px-3 py-1">Built for phones</span>
+      </div>
+    </div>
+  </div>
+</footer>

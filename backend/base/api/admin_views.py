@@ -65,6 +65,7 @@ def add_zip_view(request):
                 prof_discipline = prof_discipline.replace('_', ' ').title()
             
                 file_list = zf.namelist() 
+                file_list.sort()
                 hints_amount = len(file_list)
                 difficulty_level = len(file_list) % 5 if len(file_list) < 5 else 5
                 

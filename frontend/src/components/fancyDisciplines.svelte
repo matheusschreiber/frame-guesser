@@ -36,7 +36,7 @@
 		try {
 			const response = await api.get("disciplines/");
 			response.data.map((discipline: string) => {
-				disciplines.push(discipline.split("|")[1]);
+				disciplines.push(discipline.split("|")[0]);
 			});
 		} catch (err) {
 			console.error("Error fetching disciplines:", err);

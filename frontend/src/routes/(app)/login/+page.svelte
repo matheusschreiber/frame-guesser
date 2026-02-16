@@ -55,15 +55,15 @@
         goto("/logged");
 
       } else {
-        await Swal.fire("Vish", "Credenciais inválidas ", "warning");
+        await Swal.fire("Uops", "Invalid Credentials", "warning");
       }
 
     } catch (err: any) {
       
       if (err.response.status === 401) {
-        await Swal.fire("Uai", "Credenciais inválidas!", "warning");
+        await Swal.fire("Uops", "Invalid Credentials", "warning");
       } else {
-        await Swal.fire("Vish", "Problema inesperado!", "warning");
+        await Swal.fire("Vish", "Unexpected problem!", "warning");
       }
     }
 
@@ -76,10 +76,10 @@
     <LineBackground variant={2} />
     <div class="px-2 lg:px-0">
       <h5 class="mx-auto w-fit text-green font-bold text-sm mb-4">
-        VAMOS COMEÇAR
+        LET'S START
       </h5>
       <h1 class="mb-16 text-whitish text-3xl">
-        Faça seu login, ou crie uma conta
+        Login or create a new account
       </h1>
     </div>
 
@@ -90,7 +90,7 @@
         <input
           class="bg-terciary h-12 px-4 rounded-lg text-whitish placeholder:font-bold placeholder:text-gray"
           type="text"
-          placeholder="NOME"
+          placeholder="USERNAME"
           name="username"
           max="30"
           bind:value={username}
@@ -98,13 +98,13 @@
         <input
           class="bg-terciary h-12 px-4 rounded-lg text-whitish placeholder:font-bold placeholder:text-gray"
           type="password"
-          placeholder="SENHA"
+          placeholder="PASSWORD"
           name="password"
           bind:value={password}
         />
         <a href="/register" class="mt-16">
           <h4 class="text-pink text-[10pt] font-bold mb-[-10px] underline">
-            Ainda não tenho uma conta
+            I don't have an account yet
           </h4>
         </a>
         <div class="flex justify-center">

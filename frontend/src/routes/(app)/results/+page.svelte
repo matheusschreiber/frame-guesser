@@ -45,14 +45,22 @@
       if (response.data) {
         totalPoints = response.data.total_points;
         slidesReportsList = response.data.slides_reports_list;
-        aboveAveragePercentage = parseFloat(response.data.above_average_percentage)
-        belowAveragePercentage = parseFloat(response.data.below_average_percentage)
+        aboveAveragePercentage = parseFloat(
+          response.data.above_average_percentage,
+        );
+        belowAveragePercentage = parseFloat(
+          response.data.below_average_percentage,
+        );
         slidesHitsCount = response.data.slides_hits_count;
       } else {
         throw Error();
       }
-    } catch (err:any) {
-      await Swal.fire("Vish", "Problema inesperado! Tente novamente mais tarde.", "warning");
+    } catch (err: any) {
+      await Swal.fire(
+        "Vish",
+        "Problema inesperado! Tente novamente mais tarde.",
+        "warning",
+      );
     }
   }
 
@@ -84,49 +92,55 @@
 </script>
 
 <main>
-  <section class="my-8 py-12 bg-purple lg:px-32 px-5 m-16 mb-32 rounded-xl shadow-medium text-center overflow-hidden flex flex-col items-center justify-center">
+  <section
+    class="my-8 py-12 bg-purple lg:px-32 px-5 m-16 mb-32 rounded-xl shadow-medium text-center overflow-hidden flex flex-col items-center justify-center"
+  >
     <LineBackground variant={4} />
-    <h5 class="mx-auto w-fit text-pink font-bold text-sm mb-4">RESULTADOS</h5>
-    <p class="text-whitish text-2xl">Sua pontuação</p>
+    <h5 class="mx-auto w-fit text-pink font-bold text-sm mb-4">RESULTS</h5>
+    <p class="text-whitish text-2xl">Your Score</p>
     <div class="flex items-center gap-4 my-4">
       <img src="icons/star.svg" alt="star icon" />
       <h1 class="text-whitish text-5xl font-bold">{totalPoints} pts</h1>
       <img src="icons/star.svg" alt="star icon" />
     </div>
     {#if totalPoints > 25}
-      <p class="text-lightgray font-fredoka text-sm">Wow! Isso tudo?</p>
+      <p class="text-lightgray font-fredoka text-sm">Wow! All that?</p>
     {:else}
       <p class="text-lightgray font-fredoka text-sm">
-        Alguém tá há muito tempo longe do classroom...
+        Someone don't seem to be going to the cinema for a while...
       </p>
     {/if}
 
     <h2 class="text-3xl text-whitish mt-16">
       {#if aboveAveragePercentage}
-        Você está <u class="text-yellow font-bold">{(aboveAveragePercentage*100).toFixed(2)}%</u>
-        acima da média dos usuários
+        You are <u class="text-yellow font-bold"
+          >{(aboveAveragePercentage * 100).toFixed(2)}%</u
+        >
+        above the average of users
       {:else}
-        Você está <u class="text-yellow font-bold">{(belowAveragePercentage*100).toFixed(2)}%</u>
-        abaixo da média dos usuários
+        You are <u class="text-yellow font-bold"
+          >{(belowAveragePercentage * 100).toFixed(2)}%</u
+        >
+        below the average of users
       {/if}
     </h2>
 
     <p class="text-lightgray text-lg my-16 font-fredoka">
-      Você acertou {slidesHitsCount} de {slidesReportsList.length} slides,
+      You hit {slidesHitsCount} of {slidesReportsList.length} slides,
       {#if slidesHitsCount / slidesReportsList.length > 0.7}
-        parabéns!
+        congratulations!
       {:else if slidesHitsCount / slidesReportsList.length > 0.4}
-        tá bom né?
+        not bad!
       {:else}
-        fazer o que né...
+        meh...
       {/if}
     </p>
 
     <div class="flex flex-wrap justify-center gap-8">
       {#each slidesReportsList as slide}
-        <div class="flex flex-col items-center justify-center bg-terciary rounded-xl">
-          
-
+        <div
+          class="flex flex-col items-center justify-center bg-terciary rounded-xl"
+        >
           <span class="font-bold my-2">
             <Difficulty difficultyLevel={slide.difficulty_level} />
           </span>
@@ -136,7 +150,7 @@
               '/' +
               slide.slide_image_path})"
             class="w-[150px] h-[50px] bg-cover bg-top mx-4"
-></div>
+          ></div>
           <div
             class="bg-secondary px-4 py-2 rounded-lg w-full shadow-medium border-2 {slide.has_hit
               ? 'border-green'
@@ -150,13 +164,17 @@
             </p>
 
             <div class="w-full flex justify-center my-2 gap-2">
-              <div class="flex justify-center text-sm gap-1 rounded-xl items-center w-12 h-7">
-                <img src="icons/lamp.svg" alt="lamp icon" style="width: 10px"/>
+              <div
+                class="flex justify-center text-sm gap-1 rounded-xl items-center w-12 h-7"
+              >
+                <img src="icons/lamp.svg" alt="lamp icon" style="width: 10px" />
                 <span class="font-bold text-green">{slide.hints_used}</span>
               </div>
 
-              <div class="flex justify-center text-sm gap-1 rounded-xl border border-yellow items-center w-12 h-7">
-                <img src="icons/star.svg" alt="star icon" style="width: 10px"/>
+              <div
+                class="flex justify-center text-sm gap-1 rounded-xl border border-yellow items-center w-12 h-7"
+              >
+                <img src="icons/star.svg" alt="star icon" style="width: 10px" />
                 <span class="font-bold text-yellow">{slide.points}</span>
               </div>
             </div>
@@ -167,7 +185,7 @@
 
     <div class="flex mt-32 flex-col gap-4 mb-32">
       <p class="font-fredoka text-lightgray text-sm">
-        Deixe sua comemoração pela vitória, ou seu choro pela derrota
+        Want to share your thoughts about the game? Leave us a message!
       </p>
 
       {#if loading}
@@ -177,11 +195,11 @@
           id="message-textarea"
           class="p-8 h-[200px] w-[500px] rounded-lg placeholder:text-opacity-30"
           oninput={handleInputMessage}
-          placeholder="Escreva uma mensagem"
-></textarea>
+          placeholder="Write a message"
+        ></textarea>
         <div class="flex mt-[-100px] justify-end items-center">
           <p class="text-gray font-bold text-sm">
-            {200 - messageText.length} caracteres restantes
+            {200 - messageText.length} characters left
           </p>
           <div
             class="bg-terciary p-4 scale-50 rounded-xl border-4 border-terciary hover:border-cyan cursor-pointer hover:scale-[.55] transition-transform"
@@ -197,16 +215,16 @@
         <textarea
           class="p-8 h-[200px] w-[500px] rounded-lg placeholder:text-opacity-30"
           placeholder=""
-></textarea>
+        ></textarea>
         <div class="mt-[-150px] flex justify-center items-center flex-col">
-          <p class="text-terciary font-bold text-sm">Mensagem registrada!</p>
+          <p class="text-terciary font-bold text-sm">Message registered!</p>
           <img src="icons/check.svg" alt="check icon" />
         </div>
       {/if}
     </div>
 
     <Button
-      text="DENOVO!"
+      text="AGAIN!"
       func={() => {
         goto("/");
       }}

@@ -7,7 +7,6 @@
   import FancyDisciplines from "../../components/fancyDisciplines.svelte";
   import { goto } from "$app/navigation";
   import { api } from "../../services/api";
-  import Swal from "sweetalert2";
 
   type User = {
     username?: string;
@@ -61,12 +60,13 @@
 
     slider.scrollLeft += 10;
 
-    function loop(){
-      setTimeout(()=>{
-        let messageCard = document.getElementsByClassName('message-card')[0]
-        if (!messageCard) return
-        
-        diffTotaSizeAndActualSize = ((messages.length+1) * messageCard.clientWidth) - slider.clientWidth
+    function loop() {
+      setTimeout(() => {
+        let messageCard = document.getElementsByClassName("message-card")[0];
+        if (!messageCard) return;
+
+        diffTotaSizeAndActualSize =
+          (messages.length + 1) * messageCard.clientWidth - slider.clientWidth;
 
         // finds the limit at the right border
         if (Math.abs(slider.scrollLeft - diffTotaSizeAndActualSize) < 130) {
@@ -81,23 +81,21 @@
         }
 
         // motor direction control
-        if (Math.abs(speed)<speedLimit) speed += (direction * acceleration);
-        else speed = speedLimit * direction
+        if (Math.abs(speed) < speedLimit) speed += direction * acceleration;
+        else speed = speedLimit * direction;
 
         // motor
         slider.scrollLeft += speed;
 
-
-        loop()
-      }, framerate)
+        loop();
+      }, framerate);
     }
 
-    loop()
-    
+    loop();
   }
 
   async function fetchUsers() {
-    try{
+    try {
       const response = await api.get("user/list/");
       users = response.data;
     } catch (error) {
@@ -106,12 +104,12 @@
   }
 
   async function fetchMessages() {
-    try{
+    try {
       const response = await api.get("user/message/list/");
       messages = response.data;
       fetchingMessages = false;
     } catch (error) {
-      apiError = true;  
+      apiError = true;
     }
   }
 
@@ -126,21 +124,31 @@
 <main>
   {#if apiError}
     <div class="w-full flex justify-center">
-      <div class="border border-2-gray rounded-lg py-4 w-80 mt-5 absolute animate-pulse px-8 bg-red text-whitish">
+      <div
+        class="border border-2-gray rounded-lg py-4 w-80 mt-5 absolute animate-pulse px-8 bg-red text-whitish"
+      >
         <div class="flex items-center gap-1 mb-4">
-          <img src="icons/tip.svg" alt="error icon" class="inline-block mr-2 h-6" />
-          <p class="text-xl font-bold">Erro</p>
+          <img
+            src="icons/tip.svg"
+            alt="error icon"
+            class="inline-block mr-2 h-6"
+          />
+          <p class="text-xl font-bold">Error</p>
         </div>
-        <p class="text-sm">Houve um problema ao se conectar com os servidores. Tente novamente mais tarde.</p>
+        <p class="text-sm">
+          There was an error connecting to the servers. Please try again later.
+        </p>
       </div>
     </div>
   {/if}
-  <header class="flex w-full justify-center items-center flex-col-reverse lg:flex-row lg:justify-around my-32 px-10 lg:px-0 h-[400px] lg:h-auto gap-6 lg:gap-0">
+  <header
+    class="flex w-full justify-center items-center flex-col-reverse lg:flex-row lg:justify-around my-32 px-10 lg:px-0 h-[400px] lg:h-auto gap-6 lg:gap-0"
+  >
     <FancyDisciplines />
     <Logo />
   </header>
   <p class="text-gray font-fredoka w-fit mx-auto text-lg text-center">
-    Você conhece mesmo os slides dos seus professores?
+    You really know about movies, ey?
   </p>
   <section
     class="my-8 py-10 px-6 lg:p-16 lg:pt-32 bg-purple mx-5 lg:mx-[10%] lg:m-32 rounded-xl shadow-medium text-center overflow-hidden"
@@ -148,11 +156,13 @@
     <div class="hidden lg:flex">
       <LineBackground />
     </div>
-    <h5 class="mx-auto w-fit text-cyan font-bold text-sm mb-4">COMO JOGAR</h5>
+    <h5 class="mx-auto w-fit text-cyan font-bold text-sm mb-4">HOW TO PLAY</h5>
     <h1 class="mb-16 text-whitish text-3xl mx-16">
-      Adivinhe apenas olhando um slide
+      Guess only by looking at a frame of the movie
     </h1>
-    <div class="flex justify-center items-center mb-16 flex-col lg:justify-around lg:flex-row gap-12 lg:gap-1">
+    <div
+      class="flex justify-center items-center mb-16 flex-col lg:justify-around lg:flex-row gap-12 lg:gap-1"
+    >
       <div
         class="flex flex-col items-center gap-4 hover:scale-105 lg:w-[150px] transition-all"
       >
@@ -162,9 +172,12 @@
           <h1 class="bg-terciary rounded-full px-3 py-1 mb-4 text-sm font-bold">
             1
           </h1>
-          <img src="icons/slide.svg" alt="icon slide" />
+          <img src="icons/frame.svg" alt="icon frame" />
         </div>
-        <p class="text-whitish">Olhe para <span class="font-handwriting text-cyan">todos</span> os detalhes de um slide</p>
+        <p class="text-whitish">
+          Search for <span class="font-handwriting text-cyan">all</span> the
+          possible details of a frame
+        </p>
       </div>
 
       <div
@@ -179,7 +192,9 @@
           <img src="icons/lamp.svg" alt="icon lamp" />
         </div>
         <p class="text-whitish">
-          Use as <span class="font-handwriting text-green">dicas</span> para ter mais chances de <span class="font-handwriting text-green">acertar</span>
+          Use the <span class="font-handwriting text-green">hints</span> to
+          improve your chances of
+          <span class="font-handwriting text-green">guessing</span>
         </p>
       </div>
 
@@ -194,26 +209,35 @@
           </h1>
           <img src="icons/trophy.svg" alt="icon trophy" />
         </div>
-        <p class="text-whitish">Quanto menos dicas, <span class="font-handwriting text-red">maior</span> a sua pontuação</p>
+        <p class="text-whitish">
+          The fewer hints you use, <span class="font-handwriting text-red">higher</span> your score!
+        </p>
       </div>
     </div>
 
-    <div class="hover:animate-none w-fit m-auto" class:opacity-50={apiError} class:animate-bounce={!apiError}>
+    <div
+      class="hover:animate-none w-fit m-auto"
+      class:opacity-50={apiError}
+      class:animate-bounce={!apiError}
+    >
       <Button
-        text="JOGAR"
-        func={() => {!apiError?goto("/login"):()=>{}}}
+        text="PLAY"
+        func={() => {
+          !apiError ? goto("/login") : () => {};
+        }}
       />
     </div>
   </section>
-  
+
   <!-- TODO: responsividade desse negocio aqui -->
-  <section class="my-8 flex lg:flex-row flex-col items-center lg:py-10 lg:px-32 w-full justify-around">
+  <section
+    class="my-8 flex lg:flex-row flex-col items-center lg:py-10 lg:px-32 w-full justify-around"
+  >
     <div>
-      <h5 class="w-fit text-blue font-bold text-sm">DESTAQUE-SE</h5>
+      <h5 class="w-fit text-blue font-bold text-sm">IMPROVE</h5>
       <h1 class="font-bold text-terciary text-5xl mb-4">Ranking</h1>
       <p class="font-fredoka text-gray w-[300px]">
-        Reza a lenda que quem acertar mais slides consegue passar o resto da
-        faculade <u>sem fazer finais...</u>
+        Check out the ranking and see how you are doing against other players!
       </p>
     </div>
     <div
@@ -239,7 +263,9 @@
               <td class="font-bold text-terciary text-left pl-2 lg:w-64"
                 >{user.username}</td
               >
-              <td class="font-bold text-terciary whitespace-nowrap">{user.total_points?.toFixed(2)} pts</td>
+              <td class="font-bold text-terciary whitespace-nowrap"
+                >{user.total_points?.toFixed(2)} pts</td
+              >
               <td class="{i != 0 ? 'invisible' : 'visible'} w-8"
                 ><img
                   class="mx-auto"
@@ -256,7 +282,7 @@
 
   <section class="my-8">
     <h5 class="mx-auto w-fit text-red font-bold text-sm mb-4">
-      DEIXE SEU RECADO
+      YOUR OPINION MATTER
     </h5>
     {#each [1, 2] as row}
       <div
@@ -265,21 +291,23 @@
       >
         {#if fetchingMessages}
           {#each [1, 2, 3, 4, 5, 6, 7] as _}
-          <div
-            class="animate-skeletonEffectCard px-8 py-4 bg-whitish shadow-medium rounded-xl gap-4 my-4 flex message-card"
-          >
             <div
-              class="h-16 w-16 animate-skeletonEffectItem rounded-full"
-            ></div>
-            <div class="w-[300px]">
-              <h3
-                class="animate-skeletonEffectItem w-full text-sm font-bold text-terciary h-4 rounded-lg"
-              >.</h3>
-              <p
-                class="animate-skeletonEffectItem w-full font-fredoka text-gray h-8 mt-3 rounded-lg"
-              ></p>
+              class="animate-skeletonEffectCard px-8 py-4 bg-whitish shadow-medium rounded-xl gap-4 my-4 flex message-card"
+            >
+              <div
+                class="h-16 w-16 animate-skeletonEffectItem rounded-full"
+              ></div>
+              <div class="w-[300px]">
+                <h3
+                  class="animate-skeletonEffectItem w-full text-sm font-bold text-terciary h-4 rounded-lg"
+                >
+                  .
+                </h3>
+                <p
+                  class="animate-skeletonEffectItem w-full font-fredoka text-gray h-8 mt-3 rounded-lg"
+                ></p>
+              </div>
             </div>
-          </div>
           {/each}
         {:else}
           {#each row == 1 ? messages : messages.reverse() as message}
@@ -289,7 +317,7 @@
                 ? 'hidden'
                 : 'flex'}"
             >
-              <img src="icons/user.svg" alt="user icon" />
+              <img src="icons/popcorn.svg" alt="popcorn icon" />
               <div class="w-[300px]">
                 <h3 class="w-full text-sm font-bold text-terciary">
                   {message.username}

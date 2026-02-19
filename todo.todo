@@ -1,7 +1,3 @@
-BUGS
-- iniciar com banco vazio da alguns problemas
-- salvar estado do jogo anterior (ter um botao para "continuar" ao inves de "começar" na tela inicial)
-
 MELHORIAS
 - atualizar README.md
 - possibilitar ver as ultimas dicas (setinhas de avançar e voltar)
@@ -13,7 +9,7 @@ MELHORIAS
 
 REFATORACAO
 - estrutura de geracao de hint (automatico):
-    - o algoritmo recebe apenas uma imagem 900x900 com o filename 'filme__diretor.png/jpg' e entao o resto é gerado automaticamente (isso é para tornar o processo de geracao o mais facil possivel)
+    - o algoritmo recebe apenas uma imagem 400x400 com o filename 'filme__diretor.png/jpg' e entao o resto é gerado automaticamente (isso é para tornar o processo de geracao o mais facil possivel)
     - detectar features especificas como rostos, elementos que estão presentes no titulo do filme, etc
     - detectar features gerais como pessoas, objetos, etc
     - agrupar features de maneira a nao gerar overlap

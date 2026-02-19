@@ -1,6 +1,9 @@
 */**/__pycache__
 */**/db.sqlite3
-slides
+scripts/slides/outputs/
+scripts/slides/pngs/
+scripts/slides/zips/
+scripts/slides/yolo26n.pt
 venv
 .vscode
 */**/*.jpg

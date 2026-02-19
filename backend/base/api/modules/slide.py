@@ -1,7 +1,7 @@
 from django.db.models import Q
 
-from base.api.serializers import *
-from base.models import *
+from base.api.serializers import SlideRunSerializer
+from base.models import User, Slide, SlideImage, Run, SlideRun, Config
 from base.api.modules.processors import RunProcessor
 
 from rest_framework.decorators import api_view, permission_classes
@@ -172,7 +172,7 @@ def getAnswerSlide(request, pk):
         current_hint = SlideImage.objects.get(id=current_run.current_hint.id)
         slide = Slide.objects.get(id=current_hint.slide.id)
         slide_image_final = SlideImage.objects.get(
-            Q(slide=slide) & Q(hint_index=slide.hints_amount -1)
+            Q(slide=slide) & Q(hint_index=slide.hints_amount-1)
         )
 
         current_slide_run = SlideRun.objects.get(
@@ -279,7 +279,7 @@ def getHistoryRun(request, pk=None):
             max_points_per_slide_run = int(
                 Config.objects.get(name="max_points_per_slide_run").value
             )
-        except:
+        except Config.DoesNotExist:
             return Response(
                 data={
                     "error": "Config not present: max_slides_per_run, max_points_per_slide_run"

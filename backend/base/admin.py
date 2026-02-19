@@ -1,7 +1,7 @@
 from django.contrib import admin
 
-from base.fake_models import *
-from base.models import *
+from base.fake_models import MultipleSlides, MultipleSlidesAdmin, ZipSlides, ZipSlidesAdmin  # noqa: F401
+from base.models import Slide, Run, SlideImage, SlideRun, Config, User, Message
 
 @admin.register(Run)
 class RunCustomAdmin(admin.ModelAdmin):

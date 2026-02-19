@@ -1,5 +1,5 @@
 from base.api.serializers import *
-from base.models import *
+from base.models import Slide
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response

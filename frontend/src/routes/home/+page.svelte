@@ -20,6 +20,7 @@
 
   let users: User[] = $state([{}]);
   let messages: Message[] = $state([{}]);
+  let messages_reversed: Message[] = $state([{}]);
   let fetchingMessages = $state(true);
   let apiError: boolean = $state(false);
 
@@ -69,7 +70,7 @@
           (messages.length + 1) * messageCard.clientWidth - slider.clientWidth;
 
         // finds the limit at the right border
-        if (Math.abs(slider.scrollLeft - diffTotaSizeAndActualSize) < 130) {
+        if (Math.abs(slider.scrollLeft - diffTotaSizeAndActualSize) < document.body.clientWidth*0.2 && speed > 0) {
           speed = 0;
           direction = -1;
         }
@@ -107,6 +108,7 @@
     try {
       const response = await api.get("user/message/list/");
       messages = response.data;
+      messages_reversed = [...response.data].reverse();
       fetchingMessages = false;
     } catch (error) {
       apiError = true;
@@ -310,7 +312,7 @@
             </div>
           {/each}
         {:else}
-          {#each row == 1 ? messages : messages.reverse() as message}
+          {#each row == 1 ? messages : messages_reversed as message}
             <div
               class="px-8 py-4 bg-[#FFF] shadow-medium rounded-xl gap-4 my-4 message-card {message ==
               null

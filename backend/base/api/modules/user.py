@@ -1,7 +1,7 @@
 from django.contrib.auth.hashers import make_password
 
-from base.api.serializers import *
-from base.models import *
+from base.api.serializers import UserSerializer, FilteredUserSerializer, MessageSerializer
+from base.models import User, Message, Run
 
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated

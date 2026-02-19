@@ -182,7 +182,7 @@
 		options = response.data.slide_alternatives;
 		hintsUsed = response.data.hints_used;
 		slidesLeftAmount = response.data.slides_left_amount;
-		totalHintsAmount = response.data.hints_total;
+		totalHintsAmount = response.data.hints_total-1;
 		hasAnswered = hintsUsed == totalHintsAmount ? true : false;
 	}
 
@@ -294,7 +294,7 @@
 
 			<aside class="flex flex-col items-center justify-end px-6">
 				<div
-					class="flex lg:flex-col flex-wrap mt-4 lg:mt-0 gap-4 justify-center lg:justify-between pb-8 items-center lg:h-[350px]">
+					class="flex lg:flex-col flex-wrap mt-4 lg:mt-0 gap-4 justify-center lg:justify-between pb-8 items-center ">
 					{#each options as item, i}
 						<div onclick={() => handleSelection(i)}
 							role="button"

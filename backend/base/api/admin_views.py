@@ -52,45 +52,53 @@ class AddZipForm(forms.Form):
 
 @staff_member_required
 def add_zip_view(request):
-    if request.method == 'POST':
-        form = AddZipForm(request.POST, request.FILES)
-        
-        if form.is_valid():
-            
-            uploaded_zip = form.cleaned_data['zip']
-            with zipfile.ZipFile(uploaded_zip) as zf:
-                
-                prof_discipline = uploaded_zip.name.split('.')[0]
-                prof_discipline = prof_discipline.replace('__', ' | ')
-                prof_discipline = prof_discipline.replace('_', ' ').title()
-            
-                file_list = zf.namelist() 
-                file_list.sort()
-                hints_amount = len(file_list)
-                difficulty_level = len(file_list) % 5 if len(file_list) < 5 else 5
-                
-                slide = Slide.objects.filter(prof_discipline=prof_discipline).first()
-                if not slide:
-                    slide = Slide.objects.create(
-                        prof_discipline=prof_discipline,
-                        hints_amount=hints_amount,
-                        difficulty_level=difficulty_level
-                    )
-                    
-                for existing_image in SlideImage.objects.filter(slide=slide):
-                    existing_image.delete()
-                
-                for idx, filename in enumerate(file_list):
-                    with zf.open(filename) as file:
-                        parsed_file = ContentFile(file.read(), name=filename)
-                        SlideImage.objects.create(hint_index=idx, slide=slide, image=parsed_file)
-
-            if '_addanother' in request.POST:
-                return redirect('add_zip_view')
-            else:
-                return redirect('admin:index')
-    else:
+    if request.method != 'POST':
         form = AddZipForm()
+    else:
+        form = AddZipForm(request.POST, request.FILES)
+        if not form.is_valid():
+            return render(request, 'add_zip_view.html', {'title': 'Add .zip File Page', 'form': form})
+        allzips = form.cleaned_data['zip']
+        
+        with zipfile.ZipFile(allzips) as all_zf:
+            for idx, filename in enumerate(all_zf.namelist()):
+                with all_zf.open(filename) as uploaded_zip:
+                    if not uploaded_zip.name.endswith('.zip'):
+                        raise Exception("Uploaded file is not a .zip file.")
+                    
+                    
+                    with zipfile.ZipFile(uploaded_zip) as zf:
+                        
+                        prof_discipline = uploaded_zip.name.split('.')[0]
+                        prof_discipline = prof_discipline.replace('__', ' | ')
+                        prof_discipline = prof_discipline.replace('_', ' ').title()
+                    
+                        file_list = zf.namelist() 
+                        file_list.sort()
+                        hints_amount = len(file_list)
+                        difficulty_level = len(file_list) % 5 if len(file_list) < 5 else 5
+                        
+                        slide = Slide.objects.filter(prof_discipline=prof_discipline).first()
+                        if not slide:
+                            slide = Slide.objects.create(
+                                prof_discipline=prof_discipline,
+                                hints_amount=hints_amount,
+                                difficulty_level=difficulty_level
+                            )
+                            
+                        for existing_image in SlideImage.objects.filter(slide=slide):
+                            existing_image.delete()
+                        
+                        for idx, filename in enumerate(file_list):
+                            with zf.open(filename) as file:
+                                parsed_file = ContentFile(file.read(), name=filename)
+                                SlideImage.objects.create(hint_index=idx, slide=slide, image=parsed_file)
+
+        if '_addanother' in request.POST:
+            return redirect('add_zip_view')
+        else:
+            return redirect('admin:index')
+    
     
     context = {
         'title': 'Add .zip File Page',

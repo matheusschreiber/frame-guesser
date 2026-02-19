@@ -8,10 +8,11 @@
   import { deleteCookie, getCookie } from "../../../services/cookies";
 
   let username:string|undefined=$state(undefined);
+  let currentRun:number|undefined=$state(undefined);
 
   onMount(()=>{
-    deleteCookie("runId");
     username = getCookie('username')
+    currentRun = parseInt(getCookie("runId"));
     if (!username) goto('/login')
   })
 
@@ -19,7 +20,7 @@
 
 <main>
   {#if username}
-  <section class="my-8 py-12 pt-0 bg-purple lg:m-64 mx-5 mb-32 rounded-xl shadow-medium text-center overflow-hidden flex flex-col items-center justify-center">
+  <section class="my-8 py-12 pt-0 bg-purple lg:mx-64 mx-5 px-5 mb-32 rounded-xl shadow-medium text-center overflow-hidden flex flex-col items-center justify-center">
     <LineBackground variant={2} />
     <div class="px-16 lg:px-0">
       <h5 class="mx-auto w-fit text-green font-bold text-sm mb-4">
@@ -44,12 +45,12 @@
       <h4 class="text-pink text-[10pt] font-bold underline">Logout</h4>
     </a>
 
-    <div class="my-5 lg:hidden flex w-full items-center gap-3 p-5 bg-terciary">
-      <img src="icons/rotate_phone.svg" class="w-10" alt="rotate phone icon" />
-      <p class="text-lightgray text-sm text-left">For those on mobile devices, we recommend <b>landscape mode</b>.</p>
-    </div>
-
-    <Button text="PLAY" func={() => goto("/session")} />
+    {#if currentRun}
+      <p class="text-lightgray text-sm mb-5">
+        You have an active session! Click below to continue where you left off!
+      </p>
+    {/if}
+    <Button text={currentRun?"CONTINUE":"PLAY"} func={() => goto("/session")} />
   </section>
   {:else}
   <section class="my-8 py-12 pt-0 bg-purple m-64 mb-32 rounded-xl shadow-medium text-center overflow-hidden flex flex-col items-center justify-center">

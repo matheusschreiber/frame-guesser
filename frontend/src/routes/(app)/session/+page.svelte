@@ -98,8 +98,8 @@
 				icon: "success",
 				html: correctAnswerCatchPhrases[
 					Math.floor(Math.random() * correctAnswerCatchPhrases.length)
-				],
-				showConfirmButton: false,
+				] + `<br><br><b>+${response.data.points} pts!</b>`,
+				showConfirmButton: true,
 				showCloseButton: true,
 			});
 		} else if (response.data.answer == false) {
@@ -109,7 +109,7 @@
 				html: wrongAnswerCatchPhrases[
 					Math.floor(Math.random() * wrongAnswerCatchPhrases.length)
 				],
-				showConfirmButton: false,
+				showConfirmButton: true,
 				showCloseButton: true,
 			});
 		} else {
@@ -138,7 +138,7 @@
 		loading = true;
 
 		if (!hasAnswered) {
-			handleAnswerSlide();
+			await handleAnswerSlide();
 		} else {
 			await fetchSlide();
 		}
@@ -164,8 +164,8 @@
 				goto(`/results`);
 			} else {
 				await Swal.fire(
-					"What?",
-					"Inexpected problem with the servers",
+					"Wait, what?",
+					"No active session found! Redirecting to home...",
 					"error",
 				);
 				goto(`/`)
@@ -387,4 +387,10 @@
 			</aside>
 		</div>
 	</section>
+	<p class="text-center text-gray lg:w-[500px] w-full mx-auto mb-16 italic">
+		This image has been modified to apply selective blur, pixelation, 
+		and negative effects to specific areas. These regions were identified 
+		through AI-based analysis that focused on detecting significant 
+		features and objects within the image.
+	</p>
 </main>

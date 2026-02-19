@@ -206,6 +206,7 @@ def getAnswerSlide(request, pk):
                 "answer": answer,
                 "slide_image_path": slide_image_final.image.name,
                 "slide": slide.prof_discipline,
+                "points": current_slide_run.points,
             },
             status=status.HTTP_200_OK,
         )

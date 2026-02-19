@@ -2,7 +2,7 @@ from base.models import Run, Slide, SlideRun, SlideImage, User
 from base.api.serializers import RunSerializer, SlideRunSerializer
 
 from logging import getLogger
-logger = getLogger('movieguesser')
+logger = getLogger('frameguesser')
 
 class RunProcessor():
     

@@ -2,7 +2,7 @@
   import { onMount } from "svelte";
   import Button from "../../../components/button.svelte";
   import LineBackground from "../../../components/lineBackground.svelte";
-  import { getCookie } from "../../../services/cookies";
+  import { deleteCookie, getCookie } from "../../../services/cookies";
   import { api } from "../../../services/api";
   import Swal from "sweetalert2";
   import { goto } from "$app/navigation";
@@ -34,6 +34,7 @@
 
     if (runId) {
       fetchResults();
+      deleteCookie("runId");
     } else {
       goto("/");
     }
@@ -93,7 +94,7 @@
 
 <main>
   <section
-    class="my-8 py-12 bg-purple lg:px-32 px-5 m-16 mb-32 rounded-xl shadow-medium text-center overflow-hidden flex flex-col items-center justify-center"
+    class="my-8 py-12 bg-purple lg:px-32 px-5 m-0 lg:m-16 mb-32 rounded-xl shadow-medium text-center overflow-hidden flex flex-col items-center justify-center"
   >
     <LineBackground variant={4} />
     <h5 class="mx-auto w-fit text-pink font-bold text-sm mb-4">RESULTS</h5>
@@ -184,7 +185,7 @@
     </div>
 
     <div class="flex mt-32 flex-col gap-4 mb-32">
-      <p class="font-fredoka text-lightgray text-sm">
+      <p class="font-fredoka text-lightgray text-sm px-16 lg:px-0">
         Want to share your thoughts about the game? Leave us a message!
       </p>
 
@@ -193,7 +194,7 @@
       {:else if !messageSent}
         <textarea
           id="message-textarea"
-          class="p-8 h-[200px] w-[500px] rounded-lg placeholder:text-opacity-30"
+          class="p-8 h-[200px] lg:w-[500px] w-full rounded-lg placeholder:text-opacity-30"
           oninput={handleInputMessage}
           placeholder="Write a message"
         ></textarea>

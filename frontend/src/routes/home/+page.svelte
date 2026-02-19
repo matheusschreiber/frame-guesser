@@ -160,7 +160,7 @@
     </div>
     <h5 class="mx-auto w-fit text-cyan font-bold text-sm mb-4">HOW TO PLAY</h5>
     <h1 class="mb-16 text-whitish text-3xl mx-16">
-      Guess only by looking at a frame of the movie
+      Guess the movie by only looking a frame of it!
     </h1>
     <div
       class="flex justify-center items-center mb-16 flex-col lg:justify-around lg:flex-row gap-12 lg:gap-1"
@@ -196,7 +196,7 @@
         <p class="text-whitish">
           Use the <span class="font-handwriting text-green">hints</span> to
           improve your chances of
-          <span class="font-handwriting text-green">guessing</span>
+          <span class="font-handwriting text-green">success</span>
         </p>
       </div>
 
@@ -212,7 +212,7 @@
           <img src="icons/trophy.svg" alt="icon trophy" />
         </div>
         <p class="text-whitish">
-          The fewer hints you use, <span class="font-handwriting text-red">higher</span> your score!
+          The fewer hints you use, <span class="font-handwriting text-red">higher</span> is your score!
         </p>
       </div>
     </div>

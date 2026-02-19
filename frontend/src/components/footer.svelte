@@ -37,7 +37,7 @@
         Guess. React. Repeat.
       </div>
       <h2 class="mt-4 text-2xl tracking-tight font-bold text-primary">
-        MovieGuesser
+        FrameGuesser
       </h2>
       <p class="mt-2 max-w-xl text-sm">
         Quick-fire rounds built for popcorn instincts. No spoilers, no pressure,
@@ -61,7 +61,7 @@
     <div
       class="mx-auto flex max-w-6xl flex-col items-start gap-3 px-6 py-6 text-xs text-slate-600 sm:flex-row sm:items-center sm:justify-between"
     >
-      <p><b>MovieGuesser</b>・2026</p>
+      <p><b>FrameGuesser</b>・2026</p>
       <div class="flex flex-wrap gap-4">
         <span class="rounded-full bg-white/80 px-3 py-1"
           >No ads in gameplay</span

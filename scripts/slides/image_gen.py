@@ -41,7 +41,7 @@ def get_main_features_areas(img, filename):
     
     # detect all possible generic objects
     model = YOLO("yolo26n.pt")
-    results = model([img])
+    results = model([img], verbose=False)
     objects = results[0].boxes
     for box in objects:
         curr_x = int(box.xyxy[0][0])

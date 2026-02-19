@@ -37,6 +37,7 @@
       class="mb-16 mt-2"
       onclick={() => {
         deleteCookie('auth');
+        deleteCookie('runId');
       }}
       role="button"
       tabindex={1}

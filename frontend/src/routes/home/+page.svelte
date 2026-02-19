@@ -150,7 +150,7 @@
     <Logo />
   </header>
   <p class="text-gray font-fredoka w-fit mx-auto text-lg text-center">
-    You really know about movies, ey?
+    You really know about movies, eh?
   </p>
   <section
     class="my-8 py-10 px-6 lg:p-16 lg:pt-32 bg-purple mx-5 lg:mx-[10%] lg:m-32 rounded-xl shadow-medium text-center overflow-hidden"

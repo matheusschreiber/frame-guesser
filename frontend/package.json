@@ -25,6 +25,7 @@
 	"dependencies": {
 		"@sveltejs/adapter-auto": "^6.0.1",
 		"@sveltejs/adapter-vercel": "^5.7.2",
+		"@vercel/analytics": "^1.6.1",
 		"axios": "^1.4.0",
 		"jwt-decode": "^4.0.0",
 		"sweetalert2": "^11.7.20"

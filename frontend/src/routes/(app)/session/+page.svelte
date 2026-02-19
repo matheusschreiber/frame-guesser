@@ -173,8 +173,10 @@
 
 			return;
 		}
-
-		slideImage = import.meta.env.VITE_API_URL + "/" + response.data.slide_image_path;
+		
+		let slideUrl = import.meta.env.VITE_API_URL + "/" + response.data.slide_image_path;
+		await preloadImage(slideUrl);
+		slideImage = slideUrl;
 
 		setCookie("runId", response.data.run_id);
 		loading = false;
@@ -200,10 +202,10 @@
 
 		try {
 			const response = await api.post("slide/hint/" + runId);
-			slideImage =
-				import.meta.env.VITE_API_URL +
-				"/" +
-				response.data.slide_image_path;
+			let newUrl = import.meta.env.VITE_API_URL + "/" + response.data.slide_image_path;
+			console.log(newUrl)
+			await preloadImage(newUrl);
+			slideImage = newUrl
 			loadingHint = false;
 		} catch (err: any) {
 			await Swal.fire(
@@ -229,6 +231,15 @@
 				document.body.removeEventListener("click", onClickBody);
 			},
 		};
+	}
+
+	function preloadImage(url: string): Promise<void> {
+		return new Promise((resolve, reject) => {
+			const img = new Image();
+			img.src = url;
+			img.onload = () => resolve();
+			img.onerror = reject;
+		});
 	}
 
 	onMount(() => {

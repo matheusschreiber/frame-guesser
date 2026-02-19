@@ -16,7 +16,7 @@ services:
       db:
         condition: service_healthy
     networks:
-      compslidesnetwork:
+      mynetwork:
         ipv4_address: 172.28.2.1
     
   frontend:
@@ -32,7 +32,7 @@ services:
       - backend
     restart: always
     networks:
-      compslidesnetwork:
+      mynetwork:
         ipv4_address: 172.28.2.2
 
   db:
@@ -49,11 +49,11 @@ services:
       timeout: 5s
       retries: 5
     networks:
-      compslidesnetwork:
+      mynetwork:
         ipv4_address: 172.28.2.3
 
 networks:
-  compslidesnetwork:
+  mynetwork:
     ipam:
       driver: default
       config:

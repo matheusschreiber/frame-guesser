@@ -5,7 +5,7 @@
 	import { onMount } from "svelte";
 	import { api } from "../../../services/api";
 	import Loading from "../../../components/loading.svelte";
-	import { getCookie, setCookie } from "../../../services/cookies";
+	import { deleteCookie, getCookie, setCookie } from "../../../services/cookies";
 
 	let correctAnswerCatchPhrases = [
 		"If you keep this up, you might actually look like you pay attention in movies!",
@@ -163,6 +163,7 @@
 			if (err.response.status === 301) {
 				goto(`/results`);
 			} else {
+				deleteCookie("runId");
 				await Swal.fire(
 					"Wait, what?",
 					"No active session found! Redirecting to home...",
@@ -175,7 +176,11 @@
 		}
 		
 		let slideUrl = import.meta.env.VITE_API_URL + "/" + response.data.slide_image_path;
-		await preloadImage(slideUrl);
+		try{
+			await preloadImage(slideUrl);
+		} catch (err) {
+			slideImage = "error.png";
+		}
 		slideImage = slideUrl;
 
 		setCookie("runId", response.data.run_id);
@@ -203,11 +208,11 @@
 		try {
 			const response = await api.post("slide/hint/" + runId);
 			let newUrl = import.meta.env.VITE_API_URL + "/" + response.data.slide_image_path;
-			console.log(newUrl)
 			await preloadImage(newUrl);
 			slideImage = newUrl
 			loadingHint = false;
 		} catch (err: any) {
+			slideImage = "error.png";
 			await Swal.fire(
 				"What?",
 				"Inexpected problem! Try again later.",

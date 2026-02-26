@@ -28,6 +28,6 @@
 		"@vercel/analytics": "^1.6.1",
 		"axios": "^1.4.0",
 		"jwt-decode": "^4.0.0",
-		"svelte-french-toast": "^1.2.0"
+		"svelte-hot-french-toast": "^4.0.0"
 	}
 }

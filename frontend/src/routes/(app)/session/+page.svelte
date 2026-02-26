@@ -1,5 +1,5 @@
 <script lang="ts">
-	import toast, { Toaster } from 'svelte-french-toast';
+	import toast, { Toaster } from 'svelte-hot-french-toast';
 	import LineBackground from "../../../components/lineBackground.svelte";
 	import { goto } from "$app/navigation";
 	import { onMount } from "svelte";

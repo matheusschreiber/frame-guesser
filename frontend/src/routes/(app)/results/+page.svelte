@@ -1,5 +1,5 @@
 <script lang="ts">
-  import toast, { Toaster } from 'svelte-french-toast';
+  import toast, { Toaster } from 'svelte-hot-french-toast';
   import { onMount } from "svelte";
   import Button from "../../../components/button.svelte";
   import LineBackground from "../../../components/lineBackground.svelte";

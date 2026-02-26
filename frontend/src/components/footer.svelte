@@ -61,7 +61,7 @@
     <div
       class="mx-auto flex max-w-6xl flex-col items-start gap-3 px-6 py-6 text-xs text-slate-600 sm:flex-row sm:items-center sm:justify-between"
     >
-      <p><b>FrameGuesser</b>・2026</p>
+      <p><b>FrameGuesser</b>・<a href="https://github.com/matheusschreiber/frame-guesser">Github</a>・2026</p>
       <div class="flex flex-wrap gap-4">
         <span class="rounded-full bg-white/80 px-3 py-1"
           >No ads in gameplay</span

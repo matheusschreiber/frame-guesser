@@ -1,5 +1,6 @@
 from django.urls import path
-from base.api.views import *
+from base.api.views import getNextSlide, getHint, getAnswerSlide, getDisciplines, getHistoryRun
+from base.api.modules.user import createUser, getUsers, MyTokenObtainPairView, addMessageToUser, getMessages
 from rest_framework_simplejwt.views import (TokenRefreshView,)
 
 urlpatterns = [

@@ -17,6 +17,11 @@ class RunCustomAdmin(admin.ModelAdmin):
         'user__email',
     ]
     
+    readonly_fields = [
+        'updated',
+        'created'
+    ]
+    
 @admin.register(Slide)
 class SlideCustomAdmin(admin.ModelAdmin):
     list_display = [
@@ -33,6 +38,11 @@ class SlideCustomAdmin(admin.ModelAdmin):
         'prof_discipline',
         'difficulty_level'
     ]
+    
+    readonly_fields = [
+        'updated',
+        'created'
+    ]
 
 @admin.register(SlideImage)
 class SlideImageCustomAdmin(admin.ModelAdmin):
@@ -47,6 +57,11 @@ class SlideImageCustomAdmin(admin.ModelAdmin):
         'slide__prof_discipline',
         'slide__difficulty_level',
         'hint_index'
+    ]
+    
+    readonly_fields = [
+        'updated',
+        'created'
     ]
 
 @admin.register(SlideRun)
@@ -76,6 +91,11 @@ class SlidedRunCustomAdmin(admin.ModelAdmin):
         'original_slide__difficulty_level'
     ]
     
+    readonly_fields = [
+        'updated',
+        'created'
+    ]
+    
 @admin.register(Config)
 class ConfigCustomAdmin(admin.ModelAdmin):
     list_display = [
@@ -90,9 +110,19 @@ class UserCustomAdmin(admin.ModelAdmin):
         'email'
     ]
 
+    readonly_fields = [
+        'updated',
+        'created'
+    ]
+
 @admin.register(Message)
 class MessagesCustomAdmin(admin.ModelAdmin):
     search_fields = [
         'user__username',
         'text'
+    ]
+
+    readonly_fields = [
+        'updated',
+        'created'
     ]

@@ -61,6 +61,9 @@ class SlideImage(models.Model):
     hint_index = models.IntegerField(help_text="Index of the hint, starting from 0")
     slide = models.ForeignKey(Slide, on_delete=models.CASCADE)
     image = models.ImageField(default="default_slide.jpg", upload_to=HashedDirectory('static/'))
+    times_skipped = models.IntegerField(default=0, help_text="Number of times this hint was skipped")
+    times_guessed_right = models.IntegerField(default=0, help_text="Number of times this hint was the one shown when the user guessed correctly")
+    times_guessed_wrong = models.IntegerField(default=0, help_text="Number of times this hint was the one shown when the user guessed incorrectly")
 
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)

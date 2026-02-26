@@ -93,6 +93,8 @@ def getHint(request, pk):
             Q(slide=current_hint.slide) & Q(hint_index=current_hint.hint_index + 1)
         )
 
+        current_hint.times_skipped += 1
+        current_hint.save()
         user.total_hints_used += 1
         user.save()
 
@@ -181,6 +183,7 @@ def getAnswerSlide(request, pk):
 
         answer = False
         if slide.prof_discipline.lower() == request.data["answer"].lower():
+            current_hint.times_guessed_right += 1
             slide.total_hits += 1
             user.total_hits += 1
             current_run.slides_left -= 1
@@ -191,6 +194,7 @@ def getAnswerSlide(request, pk):
             user.total_points += current_slide_run.points
             current_run.total_points += current_slide_run.points
         else:
+            current_hint.times_guessed_wrong += 1
             slide.total_misses += 1
             user.total_misses += 1
             current_run.slides_left -= 1
@@ -200,6 +204,7 @@ def getAnswerSlide(request, pk):
         user.save()
         current_run.save()
         current_slide_run.save()
+        current_hint.save()
 
         return Response(
             data={

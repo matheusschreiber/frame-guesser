@@ -24,7 +24,6 @@ High-level process:
 - Detect key regions with YOLO
 - Apply obfuscation progressively
 - Export ordered hint images + metadata
-- Build zip output for admin import
 
 ## 📸 Screenshots
 

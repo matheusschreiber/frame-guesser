@@ -1,25 +1,10 @@
 MELHORIAS
-- atualizar README.md
 - possibilitar ver as ultimas dicas (setinhas de avançar e voltar)
-- mostrar quantos pontos ganhou no round
 - centralizar mensagens de erro em um unico modulo (facil de alterar e adicionar)
 - testes de integração
 - repaginar pagina de 404 ta muito feia
 - trocar sweet alerts por alertas na propria interface (um h4 com cor diferente por exemplo)
-
-REFATORACAO
-- estrutura de geracao de hint (automatico):
-    - o algoritmo recebe apenas uma imagem 400x400 com o filename 'filme__diretor.png/jpg' e entao o resto é gerado automaticamente (isso é para tornar o processo de geracao o mais facil possivel)
-    - detectar features especificas como rostos, elementos que estão presentes no titulo do filme, etc
-    - detectar features gerais como pessoas, objetos, etc
-    - agrupar features de maneira a nao gerar overlap
-    - definir prioridades entre features encontradas (idealmente a ideia é especificas > gerais mas pode-se fazer um teste AB aqui)
-    - escolher entre 3 possiveis funcoes de obstrucao (pixelated, blurred and negative)
-    - adicionar infomacoes de metadata no model do SlideImage
-- a cada rodada, é registrado nos metadados da hint qual a taxa de acerte dela
 - a cada 10 vezes que o slide aparece em runs, ele é regenerado para melhorar a taxa de acerte
-- pode-se ter varias versoes diferentes do mesmo slide (differentes hints)
-- refatorar calculo de dificuldade de acordo com numero de funcoes de obstrucao (deve ser automatico)
 
 IDEIAS FEATURES ADICIONAIS
 - adicionar IA generativa para "sabotar" slide. A ideia aqui é que aleatóriamente, pode ter uma IA, tipo um bot em forma de algum inimgo caricato (como um duende ou um elfo) que sabota a imagem do slide da rodada. Ela faz isso gerando algum texto falso ou de outro slide, para te confundir. O jogador tem conhecimento que o slide está sabotado (fica algum indicador visual na página, como um mini duendizinho espionando atrás de algum modal) mas não sabe como a IA sabotou o slide. Acertar esse slides gera mais pontos. Pode-se ter diferentes dificuldades de IA, desde mudanças simples como frases ou ícones, como slides inteiros falsos, em que a própria IA é a dona e o usuário não tem outra opção a não ser errar.

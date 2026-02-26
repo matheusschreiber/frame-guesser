@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Swal from "sweetalert2";
+	import toast, { Toaster } from 'svelte-french-toast';
 	import LineBackground from "../../../components/lineBackground.svelte";
 	import { goto } from "$app/navigation";
 	import { onMount } from "svelte";
@@ -40,6 +40,7 @@
 	let selected: number | null = $state(null);
 	let hintsUsed = $state(0);
 	let totalHintsAmount = $state(0);
+	let phrase:string = $state("");
 
 	let slidesLeftAmount: number = $state();
 	let difficultyLevel: number = $state();
@@ -84,42 +85,23 @@
 				answer: options[selected ? selected : 0],
 			});
 		} catch (err: any) {
-			await Swal.fire(
-				"UOPS",
-				"Inexpected problem! Try again later.",
-				"warning",
-			);
+			toast.error("Unexpected problem! Try again later.");
 			return;
 		}
 
 		if (response.data.answer == true) {
-			Swal.fire({
-				title: "<strong>NICE! CORRECT ANSWER!</strong>",
-				icon: "success",
-				html: correctAnswerCatchPhrases[
-					Math.floor(Math.random() * correctAnswerCatchPhrases.length)
-				] + `<br><br><b>+${response.data.points} pts!</b>`,
-				showConfirmButton: true,
-				showCloseButton: true,
-			});
+			phrase = correctAnswerCatchPhrases[
+				Math.floor(Math.random() * correctAnswerCatchPhrases.length)
+			]
+			toast.success("+" + response.data.points + " pts! Correct answer!");
 		} else if (response.data.answer == false) {
-			Swal.fire({
-				title: "<strong>OPS! BETTER LUCK NEXT TIME</strong>",
-				icon: "error",
-				html: wrongAnswerCatchPhrases[
-					Math.floor(Math.random() * wrongAnswerCatchPhrases.length)
-				],
-				showConfirmButton: true,
-				showCloseButton: true,
-			});
+			phrase = wrongAnswerCatchPhrases[
+				Math.floor(Math.random() * wrongAnswerCatchPhrases.length)
+			]
+			toast.error("Wrong answer!");
 		} else {
-			Swal.fire(
-				"What?",
-				"Inexpected problem with the servers",
-				"error",
-			).then(() => {
-				selected = null;
-			});
+			toast.error("Unexpected response from server! Try again later.");
+			selected = null;
 		}
 
 		slideImage =
@@ -152,6 +134,7 @@
 		answer = null;
 		selected = null;
 		hintsUsed = 0;
+		phrase = "";
 
 		let response;
 		let currentRun = getCookie("runId");
@@ -164,14 +147,9 @@
 				goto(`/results`);
 			} else {
 				deleteCookie("runId");
-				await Swal.fire(
-					"Wait, what?",
-					"No active session found! Redirecting to home...",
-					"error",
-				);
+				toast.error("Unexpected problem with your session! Redirecting to home...");
 				goto(`/`)
 			}
-
 			return;
 		}
 		
@@ -197,11 +175,8 @@
 		loadingHint = true;
 		let runId = getCookie("runId");
 		if (!runId) {
-			Swal.fire(
-				"What?",
-				"Inexpected problem with your session, redirecting...",
-				"error",
-			);
+			toast.error("Unexpected problem with your session! Redirecting to home...");
+			goto(`/`);
 			return;
 		}
 
@@ -213,11 +188,7 @@
 			loadingHint = false;
 		} catch (err: any) {
 			slideImage = "error.png";
-			await Swal.fire(
-				"What?",
-				"Inexpected problem! Try again later.",
-				"warning",
-			);
+			toast.error("Unexpected problem fetching hint! Try again later.");
 		}
 	}
 
@@ -316,7 +287,7 @@
 							role="button"
 							tabindex={2}
 							onkeypress={() => {}}
-							class="bg-secondary px-4 py-2 rounded-lg shadow-medium border-2 select-none w-[200px]
+							class="bg-secondary px-4 py-2 rounded-lg shadow-medium border-2 select-none w-[200px] duration-200 hover:scale-90
               				{answer == i
 								? 'border-green'
 								: selected == i
@@ -356,6 +327,7 @@
 								tabindex={1}
 								class="bg-secondary rounded-3xl shadow-medium h-12 w-12 flex
 									justify-center items-center border-2 select-none
+									duration-200 hover:scale-90
 									{confirm ? 'border-yellow' : 'border-secondary'}
 									{hintsUsed == totalHintsAmount || hasAnswered
 									? 'opacity-20 cursor-not-allowed'
@@ -387,7 +359,7 @@
 						<Loading />
 					{:else}
 						<button
-							class="px-4 py-2 h-12 bg-terciary font-bold text-sm rounded-lg border-2
+							class="px-4 py-2 h-12 bg-terciary font-bold text-sm rounded-lg border-2 duration-200 hover:scale-90
             					{selected == null
 								? 'border-terciary text-whitish'
 								: answer == null
@@ -402,6 +374,7 @@
 				</div>
 			</aside>
 		</div>
+		<p class="mt-4 text-center text-lightgray italic">{phrase}</p>
 	</section>
 	<p class="text-center text-gray lg:w-[500px] w-full mx-auto mb-16 italic">
 		This image has been modified to apply selective blur, pixelation, 
@@ -409,4 +382,5 @@
 		through AI-based analysis that focused on detecting significant 
 		features and objects within the image.
 	</p>
+	<Toaster />
 </main>

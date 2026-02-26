@@ -1,10 +1,10 @@
 <script lang="ts">
+  import toast, { Toaster } from 'svelte-french-toast';
   import { onMount } from "svelte";
   import Button from "../../../components/button.svelte";
   import LineBackground from "../../../components/lineBackground.svelte";
   import { deleteCookie, getCookie } from "../../../services/cookies";
   import { api } from "../../../services/api";
-  import Swal from "sweetalert2";
   import { goto } from "$app/navigation";
   import Difficulty from "../../../components/difficulty.svelte";
   import Loading from "../../../components/loading.svelte";
@@ -57,11 +57,7 @@
         throw Error();
       }
     } catch (err: any) {
-      await Swal.fire(
-        "Vish",
-        "Problema inesperado! Tente novamente mais tarde.",
-        "warning",
-      );
+      toast.error("Unexpected problem! Try again later.");
     }
   }
 
@@ -74,7 +70,7 @@
 
       messageSent = true;
     } catch (err: any) {
-      await Swal.fire("Vish", err.response.data.error, "warning");
+      toast.error(err.response.data.error);
     }
 
     loading = false;
@@ -231,4 +227,5 @@
       }}
     />
   </section>
+  <Toaster/>
 </main>

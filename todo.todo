@@ -1,9 +1,6 @@
 MELHORIAS
 - possibilitar ver as ultimas dicas (setinhas de avançar e voltar)
-- centralizar mensagens de erro em um unico modulo (facil de alterar e adicionar)
-- testes de integração
-- repaginar pagina de 404 ta muito feia
-- trocar sweet alerts por alertas na propria interface (um h4 com cor diferente por exemplo)
+
 - a cada 10 vezes que o slide aparece em runs, ele é regenerado para melhorar a taxa de acerte
 
 IDEIAS FEATURES ADICIONAIS

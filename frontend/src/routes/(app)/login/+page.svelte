@@ -1,10 +1,10 @@
 <script lang="ts">
+  import toast, { Toaster } from 'svelte-french-toast';
   import Button from "../../../components/button.svelte";
   import LineBackground from "../../../components/lineBackground.svelte";
   import { goto } from "$app/navigation";
   import { api } from "../../../services/api";
-  import Swal from "sweetalert2";
-  import { onMount, setContext } from "svelte";
+  import { onMount } from "svelte";
   import Loading from "../../../components/loading.svelte";
   import { getCookie, setCookie } from "../../../services/cookies";
   import { jwtDecode, type JwtPayload } from "jwt-decode";
@@ -33,7 +33,7 @@
 
   async function handleLogin() {
     if (!username || !password) {
-      Swal.fire("Uai", "Ainda tem campos não preenchidos ", "warning");
+      toast.error("There are blank fields");
       return;
     }
 
@@ -55,15 +55,15 @@
         goto("/logged");
 
       } else {
-        await Swal.fire("Uops", "Invalid Credentials", "warning");
+        toast.error("Invalid Credentials");
       }
 
     } catch (err: any) {
       
       if (err.response.status === 401) {
-        await Swal.fire("Uops", "Invalid Credentials", "warning");
+        toast.error("Invalid Credentials");
       } else {
-        await Swal.fire("Vish", "Unexpected problem!", "warning");
+        toast.error("Unexpected problem!");
       }
     }
 
@@ -113,4 +113,5 @@
       {/if}
     </div>
   </section>
+  <Toaster />
 </main>

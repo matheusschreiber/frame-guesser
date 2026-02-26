@@ -1,9 +1,9 @@
 <script lang="ts">
+  import toast, { Toaster } from 'svelte-french-toast';
   import Button from "../../../components/button.svelte";
   import LineBackground from "../../../components/lineBackground.svelte";
   import { goto } from "$app/navigation";
   import { api } from "../../../services/api";
-  import Swal from "sweetalert2";
   import { jwtDecode, type JwtPayload } from "jwt-decode";
   import { deleteCookie, setCookie } from "../../../services/cookies";
   import { onMount } from "svelte";
@@ -37,7 +37,7 @@
       setCookie("username", username);
       goto("/logged");
     } catch (err: any) {
-      await Swal.fire("Uops", err.response.data.error, "warning");
+      toast.error(err.response.data.error);
     }
 
     loading = false;
@@ -112,4 +112,5 @@
       </div>
     {/if}
   </section>
+  <Toaster />
 </main>

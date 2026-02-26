@@ -37,25 +37,25 @@ class MyTokenObtainPairView(TokenObtainPairView):
 def createUser(request):
     if not request.data["username"] or not request.data["password"]:
         return Response(
-            data={"error": "Ainda existem campos para preencher"},
+            data={"error": "There are blank fields"},
             status=status.HTTP_400_BAD_REQUEST,
         )
 
     if User.objects.filter(username=request.data["username"]).exists():
         return Response(
-            data={"error": "Nome de usuário em uso!"},
+            data={"error": "Username already in use!"},
             status=status.HTTP_400_BAD_REQUEST,
         )
 
     if len(request.data["username"]) >= 25:
         return Response(
-            data={"error": "O nome de usuário deve possuir até 25 characteres"},
+            data={"error": "The username must have at most 25 characters"},
             status=status.HTTP_400_BAD_REQUEST,
         )
 
     if len(request.data["password"]) < 8:
         return Response(
-            data={"error": "A senha deve ter mais de 8 caracteres"},
+            data={"error": "The password must have at least 8 characters"},
             status=status.HTTP_400_BAD_REQUEST,
         )
 
@@ -93,13 +93,13 @@ def addMessageToUser(request):
 
         if len(message_text) > 200:
             return Response(
-                data={"error": "Mensagem é muito longa (>200 caracteres)"},
+                data={"error": "Message is too long (>200 characters)"},
                 status=status.HTTP_403_FORBIDDEN,
             )
 
         if len(message_text) == 0:
             return Response(
-                data={"error": "Mensagem em branco?? Sério??"},
+                data={"error": "Message cannot be empty"},
                 status=status.HTTP_403_FORBIDDEN,
             )
 
@@ -110,7 +110,7 @@ def addMessageToUser(request):
 
         if user_messages_amount >= user_runs_amount:
             return Response(
-                data={"error": "É permitida apenas uma mensagem por sessão"},
+                data={"error": "You must play a game to send a message"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -123,19 +123,19 @@ def addMessageToUser(request):
             return Response(status=status.HTTP_200_OK)
         else:
             return Response(
-                data={"error": "Erro ao salvar a mensagem"},
+                data={"error": "Error saving the message"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
     except User.DoesNotExist:
         return Response(
-            data={"error": "Usuário não encontrado"}, status=status.HTTP_400_BAD_REQUEST
+            data={"error": "User not found"}, status=status.HTTP_400_BAD_REQUEST
         )
     except Exception as erro:
         print(erro)
 
         return Response(
-            data={"error": "Problema inesperado"}, status=status.HTTP_400_BAD_REQUEST
+            data={"error": "Unexpected problem"}, status=status.HTTP_400_BAD_REQUEST
         )
 
 

@@ -1,5 +1,5 @@
 from rest_framework.serializers import ModelSerializer
-from base.models import *
+from base.models import Message, Run, Slide, SlideRun, User
 
 class UserSerializer(ModelSerializer):
     class Meta:

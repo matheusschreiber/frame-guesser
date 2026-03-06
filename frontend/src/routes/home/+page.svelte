@@ -7,6 +7,7 @@
   import FancyDisciplines from "../../components/fancyDisciplines.svelte";
   import { goto } from "$app/navigation";
   import { api } from "../../services/api";
+    import { getCookie } from "../../services/cookies";
 
   type User = {
     username?: string;
@@ -225,7 +226,7 @@
       <Button
         text="PLAY"
         func={() => {
-          !apiError ? goto("/login") : () => {};
+          !apiError ? getCookie('auth') ? goto("/logged") : goto("/register") : ()=>{} ;
         }}
       />
     </div>

@@ -2,6 +2,7 @@
   import { goto } from "$app/navigation";
   import { onMount } from "svelte";
   import Button from "./button.svelte";
+    import { getCookie } from "../services/cookies";
 
   export let playable = false;
 
@@ -50,7 +51,7 @@
         <Button
           text="PLAY"
           func={() => {
-            goto("/login");
+            getCookie('auth') ? goto("/logged") : goto("/register");
           }}
         />
       {/if}

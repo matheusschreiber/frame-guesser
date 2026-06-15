@@ -226,13 +226,12 @@
       <Button
         text="PLAY"
         func={() => {
-          !apiError ? getCookie('auth') ? goto("/logged") : goto("/register") : ()=>{} ;
+          !apiError ? goto("/session") : ()=>{} ;
         }}
       />
     </div>
   </section>
 
-  <!-- TODO: responsividade desse negocio aqui -->
   <section
     class="my-8 flex lg:flex-row flex-col items-center lg:py-10 lg:px-32 w-full justify-around"
   >
@@ -252,6 +251,7 @@
       >
         <tbody>
           {#each users as user, i}
+          {#if user.total_points}
             <tr class="h-10">
               <td class="{i != 0 ? 'invisible' : 'visible'} w-8"
                 ><img
@@ -277,6 +277,7 @@
                 /></td
               >
             </tr>
+          {/if}
           {/each}
         </tbody>
       </table>
@@ -315,7 +316,7 @@
         {:else}
           {#each row == 1 ? messages : messages_reversed as message}
             <div
-              class="px-8 py-4 bg-[#FFF] shadow-medium rounded-xl gap-4 my-4 message-card {message ==
+              class="select-none px-8 py-4 bg-[#FFF] shadow-medium rounded-xl gap-4 my-4 message-card {message ==
               null
                 ? 'hidden'
                 : 'flex'}"

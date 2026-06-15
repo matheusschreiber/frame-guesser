@@ -3,6 +3,7 @@
 	import LineBackground from "../../../components/lineBackground.svelte";
 	import { goto } from "$app/navigation";
 	import { onMount } from "svelte";
+	import { createNewAccount } from "../../../services/auth";
 	import { api } from "../../../services/api";
 	import Loading from "../../../components/loading.svelte";
 	import { deleteCookie, getCookie, setCookie } from "../../../services/cookies";
@@ -42,8 +43,8 @@
 	let totalHintsAmount = $state(0);
 	let phrase:string = $state("");
 
-	let slidesLeftAmount: number = $state();
-	let difficultyLevel: number = $state();
+	let slidesLeftAmount: number | null = $state(null);
+	let difficultyLevel: number | null = $state(null);
 
 	var loading = $state(true);
 	var hasAnswered = $state(false);
@@ -129,6 +130,9 @@
 	}
 
 	async function fetchSlide() {
+
+		await ensureAuth();
+
 		hasAnswered = false;
 		loading = true;
 		answer = null;
@@ -218,7 +222,20 @@
 		});
 	}
 
+	async function ensureAuth() {
+		let authCookie = getCookie("auth");
+		if (!authCookie) {
+			let success = await createNewAccount();
+			if (!success) {
+				toast.error("Unexpected error! Try again later.");
+				// goto(`/`);
+				return;
+			}
+		}
+	}
+
 	onMount(() => {
+
 		fetchSlide();
 
 		// script to automatically scroll to the main content of the page
@@ -259,7 +276,7 @@
 				{#if slideImage != ""}
 					<div class="flex w-[90%] mx-auto justify-start mb-[-10px]">
 						<h3 class="mt-4 text-whitish bg-terciary w-fit px-2 py-1 pb-3 rounded-lg text-sm">
-							{#if typeof(slidesLeftAmount) == "undefined"}
+							{#if slidesLeftAmount === null}
 								Loading...
 							{:else}
 								{10 - slidesLeftAmount + 1}/{10}
@@ -272,7 +289,7 @@
 					<Loading />
 				{:else}
 					<img
-						class="rounded-lg h-[400px] w-[400px]"
+						class="rounded-lg h-[400px] w-[400px] lg:mx-0 mx-auto"
 						src={slideImage}
 						alt="slide"
 					/>

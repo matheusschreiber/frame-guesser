@@ -286,7 +286,7 @@
 
   <section class="my-8">
     <h5 class="mx-auto w-fit text-red font-bold text-sm mb-4">
-      YOUR OPINION MATTER
+      YOUR OPINION MATTERS
     </h5>
     {#each [1, 2] as row}
       <div

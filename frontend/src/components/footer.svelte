@@ -21,7 +21,7 @@
 >
   <div
     aria-hidden="true"
-    class="pointer-events-none absolute -top-24 left-6 h-48 w-48 rounded-full bg-amber-300/40 blur-3xl"
+    class="pointer-events-none absolute -top-24 left-6 h-48 w-48 rounded-full bg-purple-300/40 blur-3xl"
   ></div>
   <div
     aria-hidden="true"
@@ -33,7 +33,7 @@
   >
     <div class="flex-1">
       <div
-        class="inline-flex items-center gap-3 rounded-full bg-white/70 py-2 text-xs uppercase tracking-[0.2em] text-slate-600"
+        class="inline-flex items-center gap-3 px-5 rounded-full bg-white/70 py-2 text-xs uppercase tracking-[0.2em] text-slate-600"
       >
         Guess. React. Repeat.
       </div>

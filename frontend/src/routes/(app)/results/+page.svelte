@@ -23,11 +23,11 @@
   };
 
   let runId: string | undefined;
-  let totalPoints: number = $state();
+  let totalPoints: number = $state(0);
   let slidesReportsList: SlideReportType[] = $state([]);
-  let aboveAveragePercentage: number = $state();
-  let belowAveragePercentage: number = $state();
-  let slidesHitsCount: number = $state();
+  let aboveAveragePercentage: number = $state(0);
+  let belowAveragePercentage: number = $state(0);
+  let slidesHitsCount: number = $state(0);
 
   onMount(() => {
     runId = getCookie("runId");
@@ -190,11 +190,11 @@
       {:else if !messageSent}
         <textarea
           id="message-textarea"
-          class="p-8 h-[200px] lg:w-[500px] w-full rounded-lg placeholder:text-opacity-30"
+          class="p-8 h-50 lg:w-125 w-full rounded-lg placeholder:text-opacity-30 bg-white"
           oninput={handleInputMessage}
           placeholder="Write a message"
         ></textarea>
-        <div class="flex mt-[-100px] justify-end items-center">
+        <div class="flex -mt-25 justify-end items-center">
           <p class="text-gray font-bold text-sm">
             {200 - messageText.length} characters left
           </p>
@@ -210,10 +210,10 @@
         </div>
       {:else}
         <textarea
-          class="p-8 h-[200px] w-[500px] rounded-lg placeholder:text-opacity-30"
+          class="p-8 h-50 w-125 rounded-lg placeholder:text-opacity-30 bg-white"
           placeholder=""
         ></textarea>
-        <div class="mt-[-150px] flex justify-center items-center flex-col">
+        <div class="-mt-37.5 flex justify-center items-center flex-col">
           <p class="text-terciary font-bold text-sm">Message registered!</p>
           <img src="icons/check.svg" alt="check icon" />
         </div>

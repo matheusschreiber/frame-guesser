@@ -1,9 +1,53 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Roboto", system-ui, -apple-system, sans-serif;
+  --font-fredoka: "Fredoka", "Roboto", sans-serif;
+  --font-handwriting: "Pacifico", cursive;
+
+  --color-primary: #40128B;
+  --color-secondary: #432475;
+  --color-terciary: #1F0C3E;
+  --color-quaternary: #432475;
+  --color-whitish: #EFEFEF;
+  --color-gray: #797979;
+  --color-lightgray: #D9D9D9;
+  --color-green: #00EC09;
+  --color-yellow: #EAD83A;
+  --color-red: #EF4343;
+  --color-pink: #DD58D6;
+  --color-blue: #4369EF;
+  --color-cyan: #00DEEC;
+  --color-orange: #ffb224;
+
+  --shadow-small: 0px 1px 27px 0px rgba(0, 0, 0, 0.15);
+  --shadow-medium: 0px 0px 22px 0px rgba(0, 0, 0, 0.35);
+  --shadow-heavy: 0px 0px 31px 0px rgba(0, 0, 0, 0.25);
+
+  --background-image-purple: linear-gradient(180deg, #351D5B 0%, #2D1652 100%);
+  --background-image-rankings: url("/backgrounds/rankings_background.svg");
+
+  --keyframes-color-warp: {
+    0%, 100%: { color: #40128B };
+    50%: { color: #1F0C3E };
+  };
+  --keyframes-skeleton-effect-card: {
+    0%: { color: #D9D9D9 };
+    100%: { background-color: #e8e3e3 };
+  };
+  --keyframes-skeleton-effect-item: {
+    0%: { color: #e8e3e3 };
+    100%: { background-color: #D9D9D9 };
+  };
+
+  --animation-color-warp: color-warp 10s ease-in-out infinite;
+  --animation-skeleton-effect-card: skeleton-effect-card 1s linear infinite alternate;
+  --animation-skeleton-effect-item: skeleton-effect-item 1s linear infinite alternate;
+}
 
 @layer base {
   h1 {

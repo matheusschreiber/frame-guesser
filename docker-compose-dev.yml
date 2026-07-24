@@ -23,6 +23,7 @@ services:
     command: npx vite dev --host
     volumes:
       - ./frontend/:/frontend/
+      - /frontend/node_modules
     ports:
       - "8001:5173"
     depends_on:

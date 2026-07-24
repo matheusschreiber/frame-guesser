@@ -274,7 +274,7 @@
 		<div class="flex lg:flex-row flex-col">
 			<aside class="lg:w-fit flex flex-col justify-end">
 				{#if slideImage != ""}
-					<div class="flex w-[90%] mx-auto justify-start mb-[-10px]">
+					<div class="flex w-[90%] mx-auto justify-start -mb-2.5">
 						<h3 class="mt-4 text-whitish bg-terciary w-fit px-2 py-1 pb-3 rounded-lg text-sm">
 							{#if slidesLeftAmount === null}
 								Loading...
@@ -289,7 +289,7 @@
 					<Loading />
 				{:else}
 					<img
-						class="rounded-lg h-[400px] w-[400px] lg:mx-0 mx-auto"
+						class="rounded-lg h-100 w-100 lg:mx-0 mx-auto"
 						src={slideImage}
 						alt="slide"
 					/>
@@ -304,7 +304,7 @@
 							role="button"
 							tabindex={2}
 							onkeypress={() => {}}
-							class="bg-secondary px-4 py-2 rounded-lg shadow-medium border-2 select-none w-[200px] duration-200 hover:scale-90
+							class="bg-secondary px-4 py-2 rounded-lg shadow-medium border-2 select-none w-50 duration-200 hover:scale-90 cursor-pointer
               				{answer == i
 								? 'border-green'
 								: selected == i
@@ -324,14 +324,14 @@
 					{/each}
 				</div>
 
-				<div class="flex justify-around w-full h-[50px]">
+				<div class="flex justify-around w-full h-12.5">
 					<div class="flex flex-col items-center">
 						{#if loadingHint}
 							<Loading />
 						{:else}
 							{#if hintsUsed > 0}
 								<p
-									class="absolute font-fredoka text-sm text-whitish mt-[-25px]">
+									class="absolute font-fredoka text-sm text-whitish -mt-6.25">
 									{hintsUsed}/{totalHintsAmount}
 								</p>
 							{/if}
@@ -376,7 +376,7 @@
 						<Loading />
 					{:else}
 						<button
-							class="px-4 py-2 h-12 bg-terciary font-bold text-sm rounded-lg border-2 duration-200 hover:scale-90
+							class="px-4 py-2 h-12 select-none bg-terciary cursor-pointer font-bold text-sm rounded-lg border-2 duration-200 hover:scale-90
             					{selected == null
 								? 'border-terciary text-whitish'
 								: answer == null
@@ -393,7 +393,7 @@
 		</div>
 		<p class="mt-4 text-center text-lightgray italic">{phrase}</p>
 	</section>
-	<p class="text-center text-gray lg:w-[500px] w-full mx-auto mb-16 italic">
+	<p class="text-center text-gray lg:w-125 w-full mx-auto mb-16 italic">
 		This image has been modified to apply selective blur, pixelation, 
 		and negative effects to specific areas. These regions were identified 
 		through AI-based analysis that focused on detecting significant 

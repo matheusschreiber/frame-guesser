@@ -2,13 +2,13 @@
   import { goto } from "$app/navigation";
   import { onMount } from "svelte";
   import Button from "./button.svelte";
-    import { getCookie } from "../services/cookies";
+  import { getCookie } from "../services/cookies";
 
   export let playable = false;
 
   onMount(() => {
-    let isLoginPage = window.location.href.includes("login") 
-    let isLoggedPage = window.location.href.includes("logged")
+    let isLoginPage = window.location.href.includes("login");
+    let isLoggedPage = window.location.href.includes("logged");
     if (isLoginPage || isLoggedPage) {
       playable = true;
     }
@@ -44,6 +44,11 @@
         Quick-fire rounds built for popcorn instincts. No spoilers, no pressure,
         just a fast way to flex your movie memory.
       </p>
+      <p class="mt-10 max-w-xl text-sm">
+        FrameGuesser is a non-commercial trivia project. Donations strictly support
+        server hosting costs and are not required to play. All movie content is
+        property of their respective owners.
+      </p>
     </div>
 
     <div class="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
@@ -51,7 +56,7 @@
         <Button
           text="PLAY"
           func={() => {
-            getCookie('auth') ? goto("/logged") : goto("/register");
+            getCookie("auth") ? goto("/logged") : goto("/register");
           }}
         />
       {/if}
@@ -62,7 +67,13 @@
     <div
       class="mx-auto flex max-w-6xl flex-col items-start gap-3 px-6 py-6 text-xs text-slate-600 sm:flex-row sm:items-center sm:justify-between"
     >
-      <p><b>FrameGuesser</b>・<a href="https://github.com/matheusschreiber/frame-guesser">Github</a>・2026</p>
+      <p>
+        <b>FrameGuesser</b>・<a
+          href="https://github.com/matheusschreiber/frame-guesser">Github</a
+        >・<a href="/terms">Terms of Service</a>・<a href="/privacy"
+          >Privacy Policy</a
+        >・2026
+      </p>
       <div class="flex flex-wrap gap-4">
         <span class="rounded-full bg-white/80 px-3 py-1"
           >No ads in gameplay</span

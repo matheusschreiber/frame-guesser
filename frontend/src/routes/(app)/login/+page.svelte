@@ -83,7 +83,7 @@
       </h1>
     </div>
 
-    <div class="flex flex-col w-[350px] gap-4 px-5 lg:px-0">
+    <div class="flex flex-col w-87.5 gap-4 px-5 lg:px-0">
       {#if loading}
         <Loading />
       {:else}
@@ -103,7 +103,7 @@
           bind:value={password}
         />
         <a href="/register" class="mt-16">
-          <h4 class="text-pink text-[10pt] font-bold mb-[-10px] underline">
+          <h4 class="text-pink text-[10pt] font-bold -mb-2.5 underline">
             I don't have an account yet
           </h4>
         </a>

@@ -1,5 +1,7 @@
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model  # type: ignore
+
 from base.models import Config
+
 
 class CreateAdminMiddleware:
     def __init__(self, get_response):
@@ -16,7 +18,7 @@ class CreateAdminMiddleware:
             if not User.objects.filter(username=username).exists():
                 User.objects.create_superuser(username=username, email="", password=password)
                 print("Superuser created.")
-        except:
+        except:  # noqa: E722, S110
             pass
                 
         return self.get_response(request)
@@ -29,9 +31,9 @@ class ConfigsMiddleware:
     def __call__(self, request):
         
         configs_defaults = {
-            "max_slides_per_run": 10,
-            "max_points_per_slide_run": 10,
-            "amount_slide_alternatives": 4,
+            "max_movies_per_run": 10,
+            "max_points_per_movie_run": 10,
+            "amount_movie_alternatives": 4,
             "difficulty_1_bonus": 1,
             "difficulty_2_bonus": 1,
             "difficulty_3_bonus": 2,

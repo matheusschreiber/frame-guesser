@@ -43,8 +43,8 @@
 	let totalHintsAmount = $state(0);
 	let phrase:string = $state("");
 
-	let slidesLeftAmount: number | null = $state(null);
-	let difficultyLevel: number | null = $state(null);
+	let moviesLeftAmount = $state<number | null>(null);
+	let difficultyLevel = $state<number | null>(null);
 
 	var loading = $state(true);
 	var hasAnswered = $state(false);
@@ -57,7 +57,7 @@
 		"Loading... | Loading...",
 		"Loading... | Loading...",
 	]);
-	var slideImage: string | undefined = $state();
+	var frame: string | undefined = $state();
 
 	function handleConfirm() {
 		if (hasAnswered) return;
@@ -76,13 +76,13 @@
 		else selected = pos;
 	}
 
-	async function handleAnswerSlide() {
+	async function handleAnswerMovie() {
 		let runId = getCookie("runId");
 		if (!runId) return;
 
 		let response;
 		try {
-			response = await api.put("slide/answer/" + runId, {
+			response = await api.put("movie/answer/" + runId, {
 				answer: options[selected ? selected : 0],
 			});
 		} catch (err: any) {
@@ -105,11 +105,11 @@
 			selected = null;
 		}
 
-		slideImage =
-			import.meta.env.VITE_API_URL + "/" + response.data.slide_image_path;
+		frame =
+			import.meta.env.VITE_API_URL + "/" + response.data.frame_path;
 
 		options.map((option: string, idx: number) => {
-			if (option.toLowerCase() == response.data.slide.toLowerCase())
+			if (option.toLowerCase() == response.data.movie_verbose.toLowerCase())
 				answer = idx;
 		});
 
@@ -117,19 +117,19 @@
 		hasAnswered = true;
 	}
 
-	async function handleNextSlide() {
+	async function handleNextMovie() {
 		loading = true;
 
 		if (!hasAnswered) {
-			await handleAnswerSlide();
+			await handleAnswerMovie();
 		} else {
-			await fetchSlide();
+			await fetchMovie();
 		}
 
 		loading = false;
 	}
 
-	async function fetchSlide() {
+	async function fetchMovie() {
 
 		await ensureAuth();
 
@@ -145,7 +145,7 @@
 
 		try {
 			currentRun = currentRun ? currentRun : "0";
-			response = await api.get("slide/" + currentRun);
+			response = await api.get("movie/" + currentRun);
 		} catch (err: any) {
 			if (err.response.status === 301) {
 				goto(`/results`);
@@ -157,20 +157,20 @@
 			return;
 		}
 		
-		let slideUrl = import.meta.env.VITE_API_URL + "/" + response.data.slide_image_path;
+		let frameUrl = import.meta.env.VITE_API_URL + "/" + response.data.frame_path;
 		try{
-			await preloadImage(slideUrl);
+			await preloadImage(frameUrl);
 		} catch (err) {
-			slideImage = "error.png";
+			frame = "error.png";
 		}
-		slideImage = slideUrl;
+		frame = frameUrl;
 
 		setCookie("runId", response.data.run_id);
 		loading = false;
 		difficultyLevel = response.data.difficulty_level;
-		options = response.data.slide_alternatives;
+		options = response.data.movie_alternatives;
 		hintsUsed = response.data.hints_used;
-		slidesLeftAmount = response.data.slides_left_amount;
+		moviesLeftAmount = response.data.movies_left_amount;
 		totalHintsAmount = response.data.hints_total-1;
 		hasAnswered = hintsUsed == totalHintsAmount ? true : false;
 	}
@@ -185,13 +185,13 @@
 		}
 
 		try {
-			const response = await api.post("slide/hint/" + runId);
-			let newUrl = import.meta.env.VITE_API_URL + "/" + response.data.slide_image_path;
+			const response = await api.post("movie/hint/" + runId);
+			let newUrl = import.meta.env.VITE_API_URL + "/" + response.data.frame_path;
 			await preloadImage(newUrl);
-			slideImage = newUrl
+			frame = newUrl
 			loadingHint = false;
 		} catch (err: any) {
-			slideImage = "error.png";
+			frame = "error.png";
 			toast.error("Unexpected problem fetching hint! Try again later.");
 		}
 	}
@@ -236,7 +236,7 @@
 
 	onMount(() => {
 
-		fetchSlide();
+		fetchMovie();
 
 		// script to automatically scroll to the main content of the page
 		let d = document.getElementById("div-scroll-main");
@@ -273,25 +273,25 @@
 
 		<div class="flex lg:flex-row flex-col">
 			<aside class="lg:w-fit flex flex-col justify-end">
-				{#if slideImage != ""}
+				{#if frame != ""}
 					<div class="flex w-[90%] mx-auto justify-start -mb-2.5">
 						<h3 class="mt-4 text-whitish bg-terciary w-fit px-2 py-1 pb-3 rounded-lg text-sm">
-							{#if slidesLeftAmount === null}
+							{#if moviesLeftAmount === null}
 								Loading...
 							{:else}
-								{10 - slidesLeftAmount + 1}/{10}
+								{10 - moviesLeftAmount + 1}/{10}
 							{/if}
 						</h3>
 					</div>
 				{/if}
 
-				{#if slideImage == "" || slideImage == undefined}
+				{#if frame == "" || frame == undefined}
 					<Loading />
 				{:else}
 					<img
 						class="rounded-lg h-100 w-100 lg:mx-0 mx-auto"
-						src={slideImage}
-						alt="slide"
+						src={frame}
+						alt="frame"
 					/>
 				{/if}
 			</aside>
@@ -384,7 +384,7 @@
 									: selected == answer
 										? 'border-green text-green'
 										: 'border-red text-red'}"
-							onclick={loading ? null : () => handleNextSlide()}>
+							onclick={loading ? null : () => handleNextMovie()}>
 							{hasAnswered ? "NEXT" : "CHECK"}
 						</button>
 					{/if}

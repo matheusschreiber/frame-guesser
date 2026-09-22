@@ -13,10 +13,12 @@
   let messageText = $state("");
   let loading = $state(false);
 
-  type SlideReportType = {
+  type MovieReportType = {
     has_hit: number;
-    prof_discipline: string;
-    slide_image_path: string;
+    name: string;
+    year: number;
+    director: string;
+    frame_path: string;
     difficulty_level: number;
     points: number;
     hints_used: number;
@@ -24,10 +26,10 @@
 
   let runId: string | undefined;
   let totalPoints: number = $state(0);
-  let slidesReportsList: SlideReportType[] = $state([]);
+  let moviesReportsList: MovieReportType[] = $state([]);
   let aboveAveragePercentage: number = $state(0);
   let belowAveragePercentage: number = $state(0);
-  let slidesHitsCount: number = $state(0);
+  let moviesHitsCount: number = $state(0);
 
   onMount(() => {
     runId = getCookie("runId");
@@ -45,14 +47,14 @@
       const response = await api.get("/history/" + runId);
       if (response.data) {
         totalPoints = response.data.total_points;
-        slidesReportsList = response.data.slides_reports_list;
+        moviesReportsList = response.data.movies_reports_list;
         aboveAveragePercentage = parseFloat(
           response.data.above_average_percentage,
         );
         belowAveragePercentage = parseFloat(
           response.data.below_average_percentage,
         );
-        slidesHitsCount = response.data.slides_hits_count;
+        moviesHitsCount = response.data.movies_hits_count;
       } else {
         throw Error();
       }
@@ -123,10 +125,10 @@
     </h2>
 
     <p class="text-lightgray text-lg my-16 font-fredoka">
-      You hit {slidesHitsCount} of {slidesReportsList.length} slides,
-      {#if slidesHitsCount / slidesReportsList.length > 0.7}
+      You hit {moviesHitsCount} of {moviesReportsList.length} movies,
+      {#if moviesHitsCount / moviesReportsList.length > 0.7}
         congratulations!
-      {:else if slidesHitsCount / slidesReportsList.length > 0.4}
+      {:else if moviesHitsCount / moviesReportsList.length > 0.4}
         not bad!
       {:else}
         meh...
@@ -134,30 +136,30 @@
     </p>
 
     <div class="flex flex-wrap justify-center gap-8">
-      {#each slidesReportsList as slide}
+      {#each moviesReportsList as movie}
         <div
           class="flex flex-col items-center justify-center bg-terciary rounded-xl"
         >
           <span class="font-bold my-2">
-            <Difficulty difficultyLevel={slide.difficulty_level} />
+            <Difficulty difficultyLevel={movie.difficulty_level} />
           </span>
 
           <div
             style="background-image: url({import.meta.env.VITE_API_URL +
               '/' +
-              slide.slide_image_path})"
-            class="w-[150px] h-[50px] bg-cover bg-top mx-4"
+              movie.frame_path})"
+            class="w-37.5 h-12.5 bg-cover bg-top mx-4"
           ></div>
           <div
-            class="bg-secondary px-4 py-2 rounded-lg w-full shadow-medium border-2 {slide.has_hit
+            class="bg-secondary px-4 py-2 rounded-lg w-full shadow-medium border-2 {movie.has_hit
               ? 'border-green'
               : 'border-red'}"
           >
             <h3 class="text-whitish font-bold text-sm">
-              {slide.prof_discipline.split("|")[0].trim().toUpperCase()}
+              {movie.name.toUpperCase()} {movie.year ? `(${movie.year})` : ''}
             </h3>
             <p class="text-gray text-sm">
-              {slide.prof_discipline.split("|")[1].trim().toUpperCase()}
+              {movie.director.toUpperCase()}
             </p>
 
             <div class="w-full flex justify-center my-2 gap-2">
@@ -165,14 +167,14 @@
                 class="flex justify-center text-sm gap-1 rounded-xl items-center w-12 h-7"
               >
                 <img src="icons/lamp.svg" alt="lamp icon" style="width: 10px" />
-                <span class="font-bold text-green">{slide.hints_used}</span>
+                <span class="font-bold text-green">{movie.hints_used}</span>
               </div>
 
               <div
                 class="flex justify-center text-sm gap-1 rounded-xl border border-yellow items-center w-12 h-7"
               >
                 <img src="icons/star.svg" alt="star icon" style="width: 10px" />
-                <span class="font-bold text-yellow">{slide.points}</span>
+                <span class="font-bold text-yellow">{movie.points}</span>
               </div>
             </div>
           </div>

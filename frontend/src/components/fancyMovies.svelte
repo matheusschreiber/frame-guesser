@@ -2,7 +2,7 @@
 	import { onMount } from "svelte";
 	import { api } from "../services/api";
 
-	let disciplines: string[] = [];
+	let movies: string[] = [];
 
 	let text = $state("");
 
@@ -32,27 +32,27 @@
 		}
 	}
 
-	async function fetchDisciplines() {
+	async function fetchMovies() {
 		try {
-			const response = await api.get("disciplines/");
-			response.data.map((discipline: string) => {
-				disciplines.push(discipline.split("|")[0]);
+			const response = await api.get("movie/list/");
+			response.data.map((movie: { name: string, year: number }) => {
+				movies.push(`${movie.name} (${movie.year})`);
 			});
 		} catch (err) {
-			console.error("Error fetching disciplines:", err);
+			console.error("Error fetching movies:", err);
 		}
 	}
 
 	onMount(async () => {
-		fetchDisciplines();
+		fetchMovies();
 
 		while (true) {
-			if (disciplines.length) {
-				let index = Math.floor(Math.random() * disciplines.length);
+			if (movies.length) {
+				let index = Math.floor(Math.random() * movies.length);
 
-				await addTyping(disciplines[index]);
+				await addTyping(movies[index]);
 				await sleep(duration * 0.45);
-				await eraseTyping(disciplines[index]);
+				await eraseTyping(movies[index]);
 			}
 
 			await sleep(0.01);
@@ -67,7 +67,7 @@
 
 <h1
 	id="title-typing-effect"
-	class="text-5xl font-bold text-terciary lg:w-[400px]
+	class="text-5xl font-bold text-terciary lg:w-100
   text-center md:text-left"
 >
 	{text}<span class="text-green {blink ? 'invisible' : 'visible'}">_</span>

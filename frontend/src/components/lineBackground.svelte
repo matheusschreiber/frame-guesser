@@ -7,7 +7,7 @@
 </script>
 
 {#if variant==1}
-<div class="mb-[-600px] mt-[-50px] mx-[-15%] flex w-fill justify-center">
+<div class="-mb-150 -mt-12.5 mx-[-15%] flex w-fill justify-center">
   <svg xmlns="http://www.w3.org/2000/svg" width="1586" height="597" viewBox="0 0 1586 597" fill="none">
     <path d="M1584 1.49976C1541.39 59.0148 1457.88 114.622 1357 160.286C1337.9 168.931 1318.18 177.219 1298 185.097C1240.05 207.715 1178.29 226.946 1116.5 241.5C1067.61 253.015 1006.97 263.304 938.5 269.597" stroke="#DD58D6" stroke-width="3" stroke-linecap="round"/>
     <path d="M1116.5 241.5C1178.29 226.946 1240.05 207.715 1298 185.097" stroke="#EAD83A" stroke-width="3" stroke-linecap="round"/>
@@ -19,7 +19,7 @@
 {/if}
 
 {#if variant==2}
-<div class="flex w-fill justify-center mb-[-500px] mt-[-50px]">
+<div class="flex w-fill justify-center -mb-125 -mt-12.5">
   <svg xmlns="http://www.w3.org/2000/svg" width="1645" height="621" viewBox="0 0 1645 621" fill="none">
     <path d="M1.99988 619.463C44.6071 561.948 128.123 506.341 229 460.677C248.097 452.032 267.817 443.743 288 435.866C345.948 413.247 407.708 394.016 469.5 379.463C516.237 368.455 573.715 358.567 638.5 352.22" stroke="#2BEFFC" stroke-width="3" stroke-linecap="round"/>
     <path d="M469.5 379.463C407.708 394.016 345.948 413.247 288 435.866" stroke="#EAD83A" stroke-width="3" stroke-linecap="round"/>
@@ -31,7 +31,7 @@
 {/if}
 
 {#if variant==3}
-<div class="flex w-fill justify-center mb-[-1000px] mt-[-50px] ml-[-800px]">
+<div class="flex w-fill justify-center -mb-250 -mt-12.5 -ml-200">
   <svg xmlns="http://www.w3.org/2000/svg" width="281" height="1077" viewBox="0 0 281 1077" fill="none">
     <path d="M205.667 1075.5C231.411 1020.98 260.236 934.405 272.62 836" stroke="#EF4343" stroke-width="3" stroke-linecap="round"/>
     <path d="M171.167 404.5C275.87 535.26 290.463 700.297 272.041 840.5" stroke="#2BEFFC" stroke-width="3" stroke-linecap="round"/>
@@ -43,7 +43,7 @@
 {/if}
 
 {#if variant==4}
-<div class="flex w-fill justify-center mb-[-1600px] mt-[-50px] ml-[-1000px]">
+<div class="flex w-fill justify-center mb-[-1600px] -mt-12.5 -ml-250">
   <svg xmlns="http://www.w3.org/2000/svg" width="325" height="1667" viewBox="0 0 325 1667" fill="none">
     <path d="M8.09766 1330.5C19.3344 1395.5 70.9998 1540 22.9998 1665.5" stroke="#2BEFFC" stroke-width="3" stroke-linecap="round"/>
     <path d="M83.5985 938.5C83.5985 938.5 -24.4023 1142.5 8.09782 1330.5" stroke="#DD58D6" stroke-width="3" stroke-linecap="round"/>

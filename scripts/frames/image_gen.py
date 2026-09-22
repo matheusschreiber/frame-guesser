@@ -1,4 +1,4 @@
-from ultralytics import YOLO
+# from ultralytics import YOLO
 from tqdm import tqdm
 import zipfile
 import random
@@ -32,31 +32,22 @@ def negative_rectangle(img, x, y, w, h, negative_strength=1):
 def get_main_features_areas(img, filename):
     x,y,w,h,f = [],[],[],[],[]
     
-    # separate objects that are on the title
-    director_and_movie_title = filename.split('.')[0]
-    movie_title = director_and_movie_title.split('__')[0]
-    elements_from_title = movie_title.split(' ')
-    
-    priority_order = ["face", "person", "text"] + elements_from_title 
-    
     # detect all possible generic objects
-    model = YOLO("yolo26n.pt")
-    results = model([img], verbose=False)
-    objects = results[0].boxes
-    for box in objects:
-        curr_x = int(box.xyxy[0][0])
-        curr_y = int(box.xyxy[0][1])
-        curr_w = int(box.xyxy[0][2] - box.xyxy[0][0])
-        curr_h = int(box.xyxy[0][3] - box.xyxy[0][1])
-        class_name = model.names[int(box.cls[0])]
-        if class_name not in priority_order:
-            priority_order.append(class_name)
-            
+    saliency = cv2.saliency.StaticSaliencySpectralResidual_create()
+    (_, saliencyMap) = saliency.computeSaliency(img)
+    saliencyMap = (saliencyMap * 255).astype("uint8")
+    _, thresh = cv2.threshold(saliencyMap, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
+    contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    contours = sorted(contours, key=cv2.contourArea, reverse=True)
+    for idx, cnt in enumerate(contours):
+        curr_x, curr_y, curr_w, curr_h = cv2.boundingRect(cnt)
+        if curr_w < 50 or curr_h < 50:
+            continue
         x.append(curr_x)
         y.append(curr_y)
         w.append(curr_w)
         h.append(curr_h)
-        f.append(class_name)
+        f.append(f"{idx + 1}")
             
     # recongnize faces
     # TODO:
@@ -64,41 +55,34 @@ def get_main_features_areas(img, filename):
     # recognize text
     # TODO:
     
-    # ordering features by priority
-    features_with_priority = sorted(zip(x, y, w, h, f), key=lambda item: priority_order.index(item[4]) )
-    x, y, w, h, f = zip(*features_with_priority) if features_with_priority else ([], [], [], [], []) 
-    
-    # print("Detected features (ordered by priority):")
-    # for idx, feature in enumerate(f):
-    #     print(f"Feature {idx+1}: {feature} at ({x[idx]}, {y[idx]}) with size ({w[idx]}, {h[idx]})")
-        
     return x, y, w, h, f
 
-def image_gen(image_path, outputs_path, zips_path):
+def generate_images(image_path: str)->list:
+    print("="*50)
+    print(f"Processing image: {image_path}")
+    print("="*50)
+    
     image = cv2.imread(image_path)
-    if os.path.exists(outputs_path):
-        shutil.rmtree(outputs_path)
-    os.makedirs(outputs_path, exist_ok=True)
+    image = cv2.resize(image, (400, 400))
     
     original_filename_with_ext = image_path.split('/')[-1]
-    original_filename_no_ext = original_filename_with_ext.split('.')[0]
-    outputs_path = os.path.join(outputs_path, original_filename_no_ext)
-    os.makedirs(outputs_path, exist_ok=True)
-    
     xs, ys, widths, heights, features = get_main_features_areas(image, original_filename_with_ext)
     functions = [blur_rectangle, pixelated_rectangle, negative_rectangle]
     
     metadata = []
     MAX_FEATURES = 5
-    curr_feature = len(features) if len(features) < MAX_FEATURES else MAX_FEATURES
-    cv2.imwrite(f"{outputs_path}/hint{curr_feature+1}.png", image)
+    curr_feature = min(MAX_FEATURES, len(features))
+    new_images = [image.copy()]
     for x, y, w, h, f in zip(xs, ys, widths, heights, features):
         if curr_feature <= 0:
             break
+
         func = functions[random.randint(0, len(functions)-1)]
+        
+        # negative function can be used only once
         if func == negative_rectangle:
             functions = list(filter(lambda x: x != negative_rectangle, functions))
-        hint_output_path = f"{outputs_path}/hint{curr_feature}.png"
+
         metadata.append({
             "x": x,
             "y": y,
@@ -106,36 +90,29 @@ def image_gen(image_path, outputs_path, zips_path):
             "height": h,
             "feature": f,
             "func": func.__name__,
-            "original_filename": original_filename_with_ext,
-            "output_filename": hint_output_path,
-            "times_played": 0,
-            "times_hit": 0,
-            "times_missed": 0,
+            "original_filename": original_filename_with_ext
         })
         
         image = func(image, x, y, w, h)
-        cv2.imwrite(hint_output_path, image)
-        curr_feature -= 1
-        
-    # zip the hints files together    
-    os.makedirs(zips_path, exist_ok=True)
-    with zipfile.ZipFile(f"{zips_path}/{original_filename_no_ext}.zip", 'w') as zipf:
-        for file in os.listdir(outputs_path):
-            zipf.write(os.path.join(outputs_path, file), file)
+        new_images.append(image.copy())
+        curr_feature -= 1    
     
-    with open(f"{outputs_path}/metadata.json", 'w') as f:
-        json.dump(metadata, f, indent=4)
-        
-    # cv2.imshow('IMAGE', image)
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
+    print(metadata)
+    
+    print("="*50)
+    print(f"Finished processing image: {image_path}. A total of {len(new_images)} images were generated.")
+    print("="*50, end="\n\n")
+    
+    return new_images
 
 if __name__ == "__main__":
 
-    pngs_path = os.path.join('pngs')
-    zips_path = os.path.join('zips')
-    outputs_path = os.path.join('outputs')
-    
-    pngs = os.listdir(pngs_path)
-    for png in tqdm(pngs):
-        image_gen(os.path.join(pngs_path, png), outputs_path, zips_path)
+    input_path = os.path.join('pngs')
+    input_images = os.listdir(input_path)
+    for png in tqdm(input_images):
+        generated_images = generate_images(os.path.join(input_path, png))
+        
+        for image in generated_images:
+            cv2.imshow('IMAGE', image)
+            cv2.waitKey(0)
+            cv2.destroyAllWindows()

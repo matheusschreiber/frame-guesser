@@ -12,7 +12,8 @@
 
   onMount(()=>{
     username = getCookie('username')
-    currentRun = parseInt(getCookie("runId"));
+    let runid = getCookie("runId") || "0"
+    currentRun = parseInt(runid);
     if (!username) goto('/login')
   })
 

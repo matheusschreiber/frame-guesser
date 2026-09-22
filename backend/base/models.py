@@ -1,11 +1,12 @@
-from django.utils.deconstruct import deconstructible
-from django.contrib.auth.models import AbstractUser
-from django.db import models
-
 import uuid
 
+from django.contrib.auth.models import AbstractUser  # type: ignore
+from django.db import models  # type: ignore
+from django.utils.deconstruct import deconstructible  # type: ignore
+
+
 @deconstructible
-class HashedDirectory():
+class HashedDirectory:
     def __init__(self, diretorio):
         self.diretorio = f"{diretorio}/"
 
@@ -25,10 +26,10 @@ class User(AbstractUser):
     created = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        ordering = ['-total_points']
+        ordering = ['-total_points']  # noqa: RUF012
 
     USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = []  # noqa: RUF012
 
 
 class Message(models.Model):
@@ -42,8 +43,10 @@ class Message(models.Model):
         return (str(self.user) + " | " + self.text[:20])
 
 
-class Slide(models.Model):
-    prof_discipline = models.CharField(max_length=300)
+class Movie(models.Model):
+    name = models.CharField(max_length=200)
+    year = models.IntegerField()
+    director = models.CharField(max_length=200)
     hints_amount = models.IntegerField()
     total_hits = models.IntegerField(default=0)
     total_misses = models.IntegerField(default=0)
@@ -54,13 +57,13 @@ class Slide(models.Model):
     created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return str(self.id) + " | " + self.prof_discipline
+        return str(self.id) + " | " + f"{self.name} ({self.year}) | {self.director}"
+    
 
-
-class SlideImage(models.Model):
+class Frame(models.Model):
     hint_index = models.IntegerField(help_text="Index of the hint, starting from 0")
-    slide = models.ForeignKey(Slide, on_delete=models.CASCADE)
-    image = models.ImageField(default="default_slide.jpg", upload_to=HashedDirectory('static/'))
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
+    image = models.ImageField(default="default_frame.jpg", upload_to=HashedDirectory('static/'))
     times_skipped = models.IntegerField(default=0, help_text="Number of times this hint was skipped")
     times_guessed_right = models.IntegerField(default=0, help_text="Number of times this hint was the one shown when the user guessed correctly")
     times_guessed_wrong = models.IntegerField(default=0, help_text="Number of times this hint was the one shown when the user guessed incorrectly")
@@ -69,13 +72,13 @@ class SlideImage(models.Model):
     created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return str(self.hint_index) + " | " + self.slide.prof_discipline
+        return str(self.hint_index) + " | " + self.movie.name
 
 
 class Run(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    current_hint = models.ForeignKey(SlideImage, on_delete=models.CASCADE, null=True, blank=True)
-    slides_left = models.IntegerField()
+    current_hint = models.ForeignKey(Frame, on_delete=models.CASCADE, null=True, blank=True)
+    movies_left = models.IntegerField()
     total_points = models.FloatField(default=0.0)
 
     updated = models.DateTimeField(auto_now=True)
@@ -84,20 +87,20 @@ class Run(models.Model):
     def __str__(self):
         return str(self.id) + " | " + str(self.user)
 
-class SlideRun(models.Model):
-    original_slide = models.ForeignKey(Slide, null=True, on_delete=models.CASCADE)
-    run_id = models.ForeignKey(Run, null=True,  on_delete=models.CASCADE)
+class MovieRun(models.Model):
+    original_movie = models.ForeignKey(Movie, null=True, on_delete=models.CASCADE)
+    run = models.ForeignKey(Run, null=True, on_delete=models.CASCADE)
     has_hit = models.BooleanField(default=False)
     has_missed = models.BooleanField(default=False)
     hints_used = models.IntegerField(default=0)
     points = models.FloatField(default=0.0)
-    slide_alternatives = models.ManyToManyField(Slide, related_name='alternatives')
+    movie_alternatives = models.ManyToManyField(Movie, related_name='alternatives')
 
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return str(self.id) + " | " + str(self.run_id.id) + " | " + self.original_slide.prof_discipline
+        return str(self.id) + " | " + str(self.run.id) + " | " + self.original_movie.name
     
 class Config(models.Model):
     name = models.CharField(max_length=200, unique=True)

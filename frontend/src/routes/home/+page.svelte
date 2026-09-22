@@ -4,10 +4,9 @@
   import LineBackground from "../../components/lineBackground.svelte";
   import Logo from "../../components/logo.svelte";
   import { onMount } from "svelte";
-  import FancyDisciplines from "../../components/fancyDisciplines.svelte";
+  import FancyMovies from "../../components/fancyMovies.svelte";
   import { goto } from "$app/navigation";
   import { api } from "../../services/api";
-    import { getCookie } from "../../services/cookies";
 
   type User = {
     username?: string;
@@ -71,7 +70,11 @@
           (messages.length + 1) * messageCard.clientWidth - slider.clientWidth;
 
         // finds the limit at the right border
-        if (Math.abs(slider.scrollLeft - diffTotaSizeAndActualSize) < document.body.clientWidth*0.2 && speed > 0) {
+        if (
+          Math.abs(slider.scrollLeft - diffTotaSizeAndActualSize) <
+            document.body.clientWidth * 0.2 &&
+          speed > 0
+        ) {
           speed = 0;
           direction = -1;
         }
@@ -145,9 +148,9 @@
     </div>
   {/if}
   <header
-    class="flex w-full justify-center items-center flex-col-reverse lg:flex-row lg:justify-around my-32 px-10 lg:px-0 h-[400px] lg:h-auto gap-6 lg:gap-0"
+    class="flex w-full justify-center items-center flex-col-reverse lg:flex-row lg:justify-around my-32 px-10 lg:px-0 h-100 lg:h-auto gap-6 lg:gap-0"
   >
-    <FancyDisciplines />
+    <FancyMovies />
     <Logo />
   </header>
   <p class="text-gray font-fredoka w-fit mx-auto text-lg text-center">
@@ -167,10 +170,10 @@
       class="flex justify-center items-center mb-16 flex-col lg:justify-around lg:flex-row gap-12 lg:gap-1"
     >
       <div
-        class="flex flex-col items-center gap-4 hover:scale-105 lg:w-[150px] transition-all"
+        class="flex flex-col items-center gap-4 hover:scale-105 lg:w-37.5 transition-all"
       >
         <div
-          class="bg-quaternary h-[150px] w-[150px] lg:w-full text-whitish rounded-lg p-4 flex flex-col items-center justify-center shadow-heavy"
+          class="bg-quaternary h-37.5 w-37.5 lg:w-full text-whitish rounded-lg p-4 flex flex-col items-center justify-center shadow-heavy"
         >
           <h1 class="bg-terciary rounded-full px-3 py-1 mb-4 text-sm font-bold">
             1
@@ -178,16 +181,16 @@
           <img src="icons/frame.svg" alt="icon frame" />
         </div>
         <p class="text-whitish">
-          Search for <span class="font-handwriting text-cyan">all</span> the
-          possible details of a frame
+          Search for <span class="font-handwriting text-cyan">all</span> the possible
+          details of a frame
         </p>
       </div>
 
       <div
-        class="flex flex-col items-center gap-4 hover:scale-105 lg:w-[150px] transition-all"
+        class="flex flex-col items-center gap-4 hover:scale-105 lg:w-37.5 transition-all"
       >
         <div
-          class="bg-quaternary h-[150px] w-[150px] lg:w-full text-whitish rounded-lg p-4 flex flex-col items-center justify-center shadow-heavy"
+          class="bg-quaternary h-37.5 w-37.5 lg:w-full text-whitish rounded-lg p-4 flex flex-col items-center justify-center shadow-heavy"
         >
           <h1 class="bg-terciary rounded-full px-3 py-1 mb-4 text-sm font-bold">
             2
@@ -202,10 +205,10 @@
       </div>
 
       <div
-        class="flex flex-col items-center gap-4 hover:scale-105 lg:w-[150px] transition-all"
+        class="flex flex-col items-center gap-4 hover:scale-105 lg:w-37.5 transition-all"
       >
         <div
-          class="bg-quaternary h-[150px] w-[150px] lg:w-full text-whitish rounded-lg p-4 flex flex-col items-center justify-center shadow-heavy"
+          class="bg-quaternary h-37.5 w-37.5 lg:w-full text-whitish rounded-lg p-4 flex flex-col items-center justify-center shadow-heavy"
         >
           <h1 class="bg-terciary rounded-full px-3 py-1 mb-4 text-sm font-bold">
             3
@@ -213,7 +216,9 @@
           <img src="icons/trophy.svg" alt="icon trophy" />
         </div>
         <p class="text-whitish">
-          The fewer hints you use, <span class="font-handwriting text-red">higher</span> is your score!
+          The fewer hints you use, <span class="font-handwriting text-red"
+            >higher</span
+          > is your score!
         </p>
       </div>
     </div>
@@ -226,7 +231,7 @@
       <Button
         text="PLAY"
         func={() => {
-          !apiError ? goto("/session") : ()=>{} ;
+          !apiError ? goto("/session") : () => {};
         }}
       />
     </div>
@@ -238,46 +243,46 @@
     <div>
       <h5 class="w-fit text-blue font-bold text-sm">IMPROVE</h5>
       <h1 class="font-bold text-terciary text-5xl mb-4">Ranking</h1>
-      <p class="font-fredoka text-gray w-[300px]">
+      <p class="font-fredoka text-gray w-75">
         Check out the ranking and see how you are doing against other players!
       </p>
     </div>
     <div
-      class="lg:bg-rankings bg-center bg-contain bg-no-repeat lg:py-12 mt-6 lg:mt-0 lg:px-8 lg:w-[600px] lg:h-[450px] flex justify-center items-center"
+      class="lg:bg-rankings bg-center bg-contain bg-no-repeat lg:py-12 mt-6 lg:mt-0 lg:px-8 lg:w-150 lg:h-112.5 flex justify-center items-center"
     >
       <table
         id="new-scroll"
-        class="lg:w-[80%] text-center lg:ml-8 max-h-[200px] table-cell overflow-scroll overflow-x-hidden bg-[white] lg:bg-none rounded-lg p-6 lg:p-0"
+        class="lg:w-[80%] text-center lg:ml-8 max-h-50 table-cell overflow-scroll overflow-x-hidden bg-[white] lg:bg-none rounded-lg p-6 lg:p-0"
       >
         <tbody>
           {#each users as user, i}
-          {#if user.total_points}
-            <tr class="h-10">
-              <td class="{i != 0 ? 'invisible' : 'visible'} w-8"
-                ><img
-                  class="mx-auto"
-                  src="icons/crown.svg"
-                  alt="crown icon"
-                /></td
-              >
-              <td class="font-bold text-gray text-[8pt]"
-                >{(i + 1 + "").padStart(2, "0")}</td
-              >
-              <td class="font-bold text-terciary text-left pl-2 lg:w-64"
-                >{user.username}</td
-              >
-              <td class="font-bold text-terciary whitespace-nowrap"
-                >{user.total_points?.toFixed(2)} pts</td
-              >
-              <td class="{i != 0 ? 'invisible' : 'visible'} w-8"
-                ><img
-                  class="mx-auto"
-                  src="icons/crown.svg"
-                  alt="crown icon"
-                /></td
-              >
-            </tr>
-          {/if}
+            {#if user.total_points}
+              <tr class="h-10">
+                <td class="{i != 0 ? 'invisible' : 'visible'} w-8"
+                  ><img
+                    class="mx-auto"
+                    src="icons/crown.svg"
+                    alt="crown icon"
+                  /></td
+                >
+                <td class="font-bold text-gray text-[8pt]"
+                  >{(i + 1 + "").padStart(2, "0")}</td
+                >
+                <td class="font-bold text-terciary text-left pl-2 lg:w-64"
+                  >{user.username}</td
+                >
+                <td class="font-bold text-terciary whitespace-nowrap"
+                  >{user.total_points?.toFixed(2)} pts</td
+                >
+                <td class="{i != 0 ? 'invisible' : 'visible'} w-8"
+                  ><img
+                    class="mx-auto"
+                    src="icons/crown.svg"
+                    alt="crown icon"
+                  /></td
+                >
+              </tr>
+            {/if}
           {/each}
         </tbody>
       </table>
@@ -301,7 +306,7 @@
               <div
                 class="h-16 w-16 animate-skeletonEffectItem rounded-full"
               ></div>
-              <div class="w-[300px]">
+              <div class="w-75">
                 <h3
                   class="animate-skeletonEffectItem w-full text-sm font-bold text-terciary h-4 rounded-lg"
                 >
@@ -316,13 +321,13 @@
         {:else}
           {#each row == 1 ? messages : messages_reversed as message}
             <div
-              class="select-none px-8 py-4 bg-[#FFF] shadow-medium rounded-xl gap-4 my-4 message-card {message ==
+              class="select-none px-8 py-4 bg-white shadow-medium rounded-xl gap-4 my-4 message-card {message ==
               null
                 ? 'hidden'
                 : 'flex'}"
             >
               <img src="icons/popcorn.svg" alt="popcorn icon" />
-              <div class="w-[300px]">
+              <div class="w-75">
                 <h3 class="w-full text-sm font-bold text-terciary">
                   {message.username}
                 </h3>

@@ -1,32 +1,34 @@
-from django.contrib import admin
+from django.contrib import admin  # type: ignore
 
-from base.fake_models import MultipleSlides, MultipleSlidesAdmin, ZipSlides, ZipSlidesAdmin  # noqa: F401
-from base.models import Slide, Run, SlideImage, SlideRun, Config, User, Message
+from base.models import Config, Frame, Message, Movie, MovieRun, Run, User
+
 
 @admin.register(Run)
 class RunCustomAdmin(admin.ModelAdmin):
-    list_display = [
+    list_display = [  # noqa: RUF012
         'user',
         'current_hint',
-        'slides_left',
+        'movies_left',
         'total_points',
     ]
 
-    search_fields = [
+    search_fields = [  # noqa: RUF012
         'user__username',
         'user__email',
     ]
     
-    readonly_fields = [
+    readonly_fields = [  # noqa: RUF012
         'updated',
         'created'
     ]
     
-@admin.register(Slide)
-class SlideCustomAdmin(admin.ModelAdmin):
-    list_display = [
+@admin.register(Movie)
+class MovieCustomAdmin(admin.ModelAdmin):
+    list_display = [  # noqa: RUF012
         'id',
-        'prof_discipline',
+        'name',
+        'year',
+        'director',
         'hints_amount',
         'total_hits',
         'total_misses',
@@ -34,43 +36,45 @@ class SlideCustomAdmin(admin.ModelAdmin):
         'difficulty_level'
     ]
 
-    search_fields = [
-        'prof_discipline',
+    search_fields = [  # noqa: RUF012
+        'name',
+        'year',
+        'director',
         'difficulty_level'
     ]
     
-    readonly_fields = [
+    readonly_fields = [  # noqa: RUF012
         'updated',
         'created'
     ]
 
-@admin.register(SlideImage)
-class SlideImageCustomAdmin(admin.ModelAdmin):
-    list_display = [
+@admin.register(Frame)
+class FrameCustomAdmin(admin.ModelAdmin):
+    list_display = [  # noqa: RUF012
         'id',
-        'slide',
+        'movie',
         'hint_index',
         'image'
     ]
 
-    search_fields = [
-        'slide__prof_discipline',
-        'slide__difficulty_level',
+    search_fields = [  # noqa: RUF012
+        'movie__name',
+        'movie__difficulty_level',
         'hint_index'
     ]
     
-    readonly_fields = [
+    readonly_fields = [  # noqa: RUF012
         'updated',
         'created'
     ]
 
-@admin.register(SlideRun)
-class SlidedRunCustomAdmin(admin.ModelAdmin):
-    list_display = [
+@admin.register(MovieRun)
+class MovieRunCustomAdmin(admin.ModelAdmin):
+    list_display = [  # noqa: RUF012
         'id',
-        'run_id',
+        'run',
         'user',
-        'original_slide',
+        'original_movie',
         'has_hit',
         'has_missed',
         'points',
@@ -79,50 +83,52 @@ class SlidedRunCustomAdmin(admin.ModelAdmin):
 
     @admin.display()
     def user(self, obj):
-        return obj.run_id.user
+        return obj.run.user
 
     @admin.display()
     def difficulty(self, obj):
-        return obj.original_slide.difficulty_level
+        return obj.original_movie.difficulty_level
     
-    search_fields = [
-        'run_id__user__username',
-        'original_slide__prof_discipline',
-        'original_slide__difficulty_level'
+    search_fields = [  # noqa: RUF012
+        'run__user__username',
+        'original_movie__name',
+        'original_movie__year',
+        'original_movie__director',
+        'original_movie__difficulty_level',
     ]
     
-    readonly_fields = [
+    readonly_fields = [  # noqa: RUF012
         'updated',
         'created'
     ]
     
 @admin.register(Config)
 class ConfigCustomAdmin(admin.ModelAdmin):
-    list_display = [
+    list_display = [  # noqa: RUF012
         'name',
         'value'
     ]
 
 @admin.register(User)
 class UserCustomAdmin(admin.ModelAdmin):
-    search_fields = [
+    search_fields = [  # noqa: RUF012
         'username',
         'email'
     ]
 
-    readonly_fields = [
+    readonly_fields = [  # noqa: RUF012
         'updated',
         'created'
     ]
 
 @admin.register(Message)
 class MessagesCustomAdmin(admin.ModelAdmin):
-    search_fields = [
+    search_fields = [  # noqa: RUF012
         'user__username',
         'text'
     ]
 
-    readonly_fields = [
+    readonly_fields = [  # noqa: RUF012
         'updated',
         'created'
     ]

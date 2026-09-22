@@ -45,7 +45,7 @@
 <div class="w-full flex justify-center">
     <div
         id="bg-external-loading-spinner"
-        class="border-0 border-t-1"
+        class="border-0 border-t"
         style="border-radius:100%; height: 40px; width:40px; border-bottom-width: 3px; border-right-width: 3px; padding-left: 4px; padding-top: 4px;"
     >
         <div

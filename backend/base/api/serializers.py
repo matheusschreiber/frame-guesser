@@ -1,5 +1,6 @@
-from rest_framework.serializers import ModelSerializer
-from base.models import Message, Run, Slide, SlideRun, User
+from base.models import Message, Movie, MovieRun, Run, User
+from rest_framework.serializers import ModelSerializer  # type: ignore
+
 
 class UserSerializer(ModelSerializer):
     class Meta:
@@ -8,7 +9,7 @@ class UserSerializer(ModelSerializer):
 
 class FilteredUserSerializer(UserSerializer):
     class Meta(UserSerializer.Meta):
-        fields = [
+        fields = [  # noqa: RUF012
             "username",
             "total_points",
             "total_hits",
@@ -16,23 +17,23 @@ class FilteredUserSerializer(UserSerializer):
             "total_hints_used",
         ]
 
-class SlideSerializer(ModelSerializer):
+class MovieSerializer(ModelSerializer):
     class Meta:
-        model = Slide
+        model = Movie
         fields = "__all__"
 
 class RunSerializer(ModelSerializer):
     class Meta:
         model = Run
-        fields = [
+        fields = [  # noqa: RUF012
             "user",
-            "slides_left",
+            "movies_left",
             "total_points",
         ]
 
-class SlideRunSerializer(ModelSerializer):
+class MovieRunSerializer(ModelSerializer):
     class Meta:
-        model = SlideRun
+        model = MovieRun
         fields = "__all__"
 
 class MessageSerializer(ModelSerializer):

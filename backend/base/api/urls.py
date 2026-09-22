@@ -1,7 +1,16 @@
-from django.urls import path
-from base.api.views import getNextSlide, getHint, getAnswerSlide, getDisciplines, getHistoryRun
-from base.api.modules.user import createUser, getUsers, MyTokenObtainPairView, addMessageToUser, getMessages
-from rest_framework_simplejwt.views import (TokenRefreshView,)
+from base.api.modules.movie import addMovie, generateHints, listMovies, listMoviesAdmin
+from base.api.modules.user import (
+    MyTokenObtainPairView,
+    addMessageToUser,
+    createUser,
+    getMessages,
+    getUsers,
+)
+from base.api.views import getAnswerMovie, getHint, getHistoryRun, getNextMovie
+from django.urls import path  # type: ignore
+from rest_framework_simplejwt.views import (  # type: ignore
+    TokenRefreshView,
+)
 
 urlpatterns = [
     path('user/token/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
@@ -11,10 +20,13 @@ urlpatterns = [
     path("user/message/", addMessageToUser, name='add_message_user'),
     path("user/message/list/", getMessages, name="list_messages"),
 
-    path("slide/<str:pk>", getNextSlide, name="get_next_slide"),
-    path("slide/hint/<str:pk>", getHint, name="hint_slide"),
-    path("slide/answer/<str:pk>", getAnswerSlide, name="answer_slide"),
+    path("movie/new/", addMovie, name="add_movie"),
+    path("movie/list/admin/", listMoviesAdmin, name="list_movies_admin"),
+    path("movie/list/", listMovies, name="list_movies"),
+    path("movie/generate-hints/", generateHints, name="generate_hints"),
+    path("movie/<str:pk>", getNextMovie, name="get_next_movie"),
+    path("movie/hint/<str:pk>", getHint, name="hint_movie"),
+    path("movie/answer/<str:pk>", getAnswerMovie, name="answer_movie"),
 
-    path("disciplines/", getDisciplines, name="get_disciplines"),
     path("history/<str:pk>", getHistoryRun, name='get_history'),
 ]

@@ -9,9 +9,9 @@
   import { onMount } from "svelte";
   import Loading from "../../../components/loading.svelte";
 
-  let username: string = $state();
-  let password: string = $state();
-  let confirmPassword: string = $state();
+  let username = $state<string|undefined>();
+  let password = $state<string|undefined>();
+  let confirmPassword = $state<string|undefined>();
   let loading: boolean = $state(false);
 
   async function handleRegister() {
@@ -64,7 +64,7 @@
     {#if loading}
       <Loading />
     {:else}
-      <div class="flex flex-col w-[350px] gap-4 px-5 lg:px-0">
+      <div class="flex flex-col w-87.5 gap-4 px-5 lg:px-0">
         <p class="text-lightgray font-fredoka">
           Pick a creative username
         </p>
@@ -98,11 +98,11 @@
           class="text-red z-0 transition-all
         {confirmPassword != password && confirmPassword != ''
             ? 'mt-0'
-            : 'mt-[-40px]'}">Passwords don't match</span
+            : '-mt-10'}">Passwords don't match</span
         >
 
         <a href="/login" class="mt-16"
-          ><h4 class="text-pink text-[10pt] mb-[-10px] font-bold underline">
+          ><h4 class="text-pink text-[10pt] -mb-2.5 font-bold underline">
             I already have an account
           </h4></a
         >

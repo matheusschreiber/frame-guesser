@@ -21,9 +21,20 @@ Players receive progressively clearer image hints, pick the correct movie/discip
 The utility in `scripts/frames/image_gen.py` can generate multiple hint images from source frames by applying progressive visual transformations (blur/pixelate/negative) and exporting zip bundles.
 
 High-level process:
-- Detect key regions with YOLO
-- Apply obfuscation progressively
-- Export ordered hint images + metadata
+
+- Detect key regions (YOLO11n ONNX)
+    - It's the smallest model in the YOLO11 family — fast on CPU, low memory, and more than good enough to spot the dominant subjects in a movie still.
+    - Inference goes through `cv2.dnn.readNetFromONNX` with the CPU target. That means the *only* runtime dependency for hint generation is OpenCV (`opencv-contrib-python-headless`) — no `torch`, no `ultralytics`, no CUDA drivers. Keeps the backend image small and portable.
+- Apply obfuscation progressively on detected regions
+
+This script is used by Staff members in a dedicated page to onboard movies without touching the CLI.
+
+- Log in as a staff account directly on the page.
+- Upload a source image and use the built-in 400×400 cropper (drag + zoom) to frame it.
+- Click **GENERATE HINTS** — the backend runs the image through the AI pipeline described above and streams the hint set back for preview.
+- It is possible to **REGENERATE HINTS** to run the pipeline again on the same crop.
+- The rest of the details such as name, year and director are typed by the user and then saved.
+- The same page also lists all existing movies in list or grid view, with search and difficulty/hint-count badges, to avoid adding duplicate movies.
 
 ## 📸 Screenshots
 

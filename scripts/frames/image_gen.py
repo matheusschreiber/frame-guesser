@@ -1,11 +1,11 @@
-# from ultralytics import YOLO
-from tqdm import tqdm
-import zipfile
-import random
-import cv2
 import os
-import json
-import shutil
+import random
+import urllib.request  # type: ignore
+
+import cv2  # type: ignore
+from django.conf import settings  # type: ignore
+from tqdm import tqdm
+
 
 def blur_rectangle(img, x, y, w, h, blur_strength=101):
     roi = img[y:y+h, x:x+w]
@@ -29,33 +29,70 @@ def negative_rectangle(img, x, y, w, h, negative_strength=1):
     img[y:y+h, x:x+w] = blended_roi
     return img
 
-def get_main_features_areas(img, filename):
-    x,y,w,h,f = [],[],[],[],[]
-    
-    # detect all possible generic objects
-    saliency = cv2.saliency.StaticSaliencySpectralResidual_create()
-    (_, saliencyMap) = saliency.computeSaliency(img)
-    saliencyMap = (saliencyMap * 255).astype("uint8")
-    _, thresh = cv2.threshold(saliencyMap, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
-    contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    contours = sorted(contours, key=cv2.contourArea, reverse=True)
-    for idx, cnt in enumerate(contours):
-        curr_x, curr_y, curr_w, curr_h = cv2.boundingRect(cnt)
-        if curr_w < 50 or curr_h < 50:
-            continue
-        x.append(curr_x)
-        y.append(curr_y)
-        w.append(curr_w)
-        h.append(curr_h)
-        f.append(f"{idx + 1}")
-            
-    # recongnize faces
-    # TODO:
-    
-    # recognize text
-    # TODO:
-    
-    return x, y, w, h, f
+def get_main_features_areas(img, conf_thresh=0.25, nms_thresh=0.45, max_boxes=5):
+    YOLO_FILE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "yolo11n.onnx")
+    net = cv2.dnn.readNetFromONNX(YOLO_FILE_PATH)
+    net.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV)
+    net.setPreferableTarget(cv2.dnn.DNN_TARGET_CPU)
+
+    h_orig, w_orig = img.shape[:2]
+
+    # Preprocessing: 640x640 letterbox tensor normalized to [0, 1]
+    blob = cv2.dnn.blobFromImage(img, 1.0 / 255.0, (640, 640), swapRB=True, crop=False)
+    net.setInput(blob)
+    output = net.forward()  # Shape: (1, 84, 8400)
+
+    # Transpose to (8400, 84): rows are candidate boxes, cols are [x, y, w, h, class_scores...]
+    preds = output[0].T
+
+    boxes = []
+    confidences = []
+    scale_x = w_orig / 640.0
+    scale_y = h_orig / 640.0
+
+    for row in preds:
+        # Check all 80 class scores at once
+        class_scores = row[4:]
+        _, max_score, _, _ = cv2.minMaxLoc(class_scores)
+
+        # If any object type is detected with sufficient confidence
+        if max_score >= conf_thresh:
+            cx, cy, w, h = row[0], row[1], row[2], row[3]
+            x = int((cx - 0.5 * w) * scale_x)
+            y = int((cy - 0.5 * h) * scale_y)
+            width = int(w * scale_x)
+            height = int(h * scale_y)
+
+            boxes.append([x, y, width, height])
+            confidences.append(float(max_score))
+
+    if not boxes:
+        return [], [], [], [], []
+
+    # Non-Maximum Suppression to merge overlapping boxes into a single target
+    indices = cv2.dnn.NMSBoxes(boxes, confidences, conf_thresh, nms_thresh)
+
+    detected = []
+    if len(indices) > 0:
+        for idx in indices.flatten():
+            bx, by, bw, bh = boxes[idx]
+            # Clip bounds to image canvas
+            bx = max(0, bx)
+            by = max(0, by)
+            bw = min(w_orig - bx, bw)
+            bh = min(h_orig - by, bh)
+            detected.append((bx, by, bw, bh))
+
+    # Sort boxes by area descending (largest visual subjects first)
+    detected = sorted(detected, key=lambda b: b[2] * b[3], reverse=True)[:max_boxes]
+
+    xs = [b[0] for b in detected]
+    ys = [b[1] for b in detected]
+    ws = [b[2] for b in detected]
+    hs = [b[3] for b in detected]
+    fs = [f"object_{i+1}" for i in range(len(detected))]
+
+    return xs, ys, ws, hs, fs
 
 def generate_images(image_path: str)->list:
     print("="*50)
@@ -66,7 +103,7 @@ def generate_images(image_path: str)->list:
     image = cv2.resize(image, (400, 400))
     
     original_filename_with_ext = image_path.split('/')[-1]
-    xs, ys, widths, heights, features = get_main_features_areas(image, original_filename_with_ext)
+    xs, ys, widths, heights, features = get_main_features_areas(image)
     functions = [blur_rectangle, pixelated_rectangle, negative_rectangle]
     
     metadata = []

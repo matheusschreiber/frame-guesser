@@ -4,8 +4,7 @@ services:
       context: ./backend/
       dockerfile: Dockerfile.prod
     volumes:
-      - ./backend/db.sqlite3:/backend/db.sqlite3
-      # - /var/www/static:/var/www/static
+      - /var/www/static:/var/www/static
       - ./scripts:/scripts/
     ports:
       - "8000:8000"

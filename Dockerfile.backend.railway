@@ -1,3 +1,7 @@
+# this dockerfile is for the backend deployed on railway
+# it basically only adds the script folder to the backend Docker image
+# because normally it is in the outside directory
+
 FROM python:3.11-slim
 
 ENV PYTHONUNBUFFERED=1
@@ -18,7 +22,8 @@ COPY requirements.txt .
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
-COPY . /app/
+COPY backend /app/
+COPY scripts /scripts/
 
 RUN mkdir -p /app/public
 RUN chmod -R 755 /app/public

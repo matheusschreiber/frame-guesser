@@ -9,7 +9,7 @@ export const api = axios.create({
 // List of urls that don't need the access token
 const nonProtectedUrls = [
   'user/list/',
-  'disciplines/',
+  'movie/list/',
   'user/create/',
   'user/token/',
   'user/message/list/'

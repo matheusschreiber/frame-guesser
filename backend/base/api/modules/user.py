@@ -1,17 +1,21 @@
-from django.contrib.auth.hashers import make_password
-
-from base.api.serializers import UserSerializer, FilteredUserSerializer, MessageSerializer
-from base.models import User, Message, Run
-
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-from rest_framework import status
-
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from rest_framework_simplejwt.views import TokenObtainPairView
-
 import re
+
+from base.api.serializers import (
+    FilteredUserSerializer,
+    MessageSerializer,
+    UserSerializer,
+)
+from base.models import Message, Run, User
+from django.contrib.auth.hashers import make_password  # type: ignore
+from rest_framework import status  # type: ignore
+from rest_framework.decorators import api_view, permission_classes  # type: ignore
+from rest_framework.permissions import IsAuthenticated  # type: ignore
+from rest_framework.response import Response  # type: ignore
+from rest_framework_simplejwt.serializers import (  # type: ignore
+    TokenObtainPairSerializer,  # type: ignore
+)
+from rest_framework_simplejwt.views import TokenObtainPairView  # type: ignore
+
 
 @api_view(["GET"])
 def getUsers(request):

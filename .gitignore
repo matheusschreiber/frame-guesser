@@ -9,3 +9,4 @@ nginx.conf
 db_data
 backend/static
 backend/public
+todo.todo

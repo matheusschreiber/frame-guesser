@@ -42,6 +42,7 @@
 	let hintsUsed = $state(0);
 	let totalHintsAmount = $state(0);
 	let phrase:string = $state("");
+	let username:string = $state("");
 
 	let moviesLeftAmount = $state<number | null>(null);
 	let difficultyLevel = $state<number | null>(null);
@@ -172,7 +173,7 @@
 		hintsUsed = response.data.hints_used;
 		moviesLeftAmount = response.data.movies_left_amount;
 		totalHintsAmount = response.data.hints_total-1;
-		hasAnswered = hintsUsed == totalHintsAmount ? true : false;
+		hasAnswered = response.data.has_hit || response.data.has_missed;
 	}
 
 	async function fetchNewHint() {
@@ -232,6 +233,16 @@
 				return;
 			}
 		}
+
+		username = getCookie("username") || "";
+	}
+
+	function handleLogout() {
+		deleteCookie("auth");
+		deleteCookie("username");
+		deleteCookie("runId");
+		username = "";
+		goto(`/home`);
 	}
 
 	onMount(() => {
@@ -239,20 +250,31 @@
 		fetchMovie();
 
 		// script to automatically scroll to the main content of the page
-		let d = document.getElementById("div-scroll-main");
-		if (d) {
-			window.scrollTo({
-				top: d.offsetTop - 25,
-				left: 0,
-				behavior: "smooth",
-			});
-		}
+		// let d = document.getElementById("div-scroll-main");
+		// if (d) {
+		// 	window.scrollTo({
+		// 		top: d.offsetTop - 25,
+		// 		left: 0,
+		// 		behavior: "smooth",
+		// 	});
+		// }
 	});
 </script>
 
 <main>
-	<section class="my-8 pt-12 pb-24 bg-purple lg:w-fit w-full lg:px-32 px-3 m-auto rounded-xl shadow-medium text-center overflow-hidden flex flex-col items-center justify-center">
+	<div class="bg-secondary px-10 py-3 text-white rounded-t-xl w-fit mx-auto">
+		Logged in as <b class="text-whitish">{username}</b>
+		<button
+			type="button"
+			class="ml-5 text-pink text-[10pt] font-bold underline cursor-pointer"
+			onclick={() => {handleLogout()}}
+		>
+			Log out
+		</button>
+	</div>
+	<section class="mb-8 pt-12 pb-24 bg-purple lg:w-fit w-full lg:px-32 px-3 m-auto rounded-xl shadow-medium text-center overflow-hidden flex flex-col items-center justify-center">
 		<LineBackground variant={3} />
+
 
 		<div id="div-scroll-main">
 			<h5 class="mx-auto w-fit font-bold text-sm mb-0">

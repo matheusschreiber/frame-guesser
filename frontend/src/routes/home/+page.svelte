@@ -223,17 +223,31 @@
       </div>
     </div>
 
-    <div
-      class="hover:animate-none w-fit m-auto"
-      class:opacity-50={apiError}
-      class:animate-bounce={!apiError}
-    >
-      <Button
-        text="PLAY"
-        func={() => {
-          !apiError ? goto("/session") : () => {};
+    <div class="flex flex-col justify-center">
+      <div
+        class="hover:animate-none w-fit m-auto"
+        class:opacity-50={apiError}
+        class:animate-bounce={!apiError}
+      >
+        <Button
+          text="PLAY AS A GUEST"
+          func={() => {
+            !apiError ? goto("/session") : () => {};
+          }}
+        />
+      </div>
+
+      <button
+        type="button"
+        class="mt-2 text-pink text-[10pt] font-bold underline cursor-pointer"
+        onclick={() => {
+          if (!apiError) {
+            goto("/login");
+          }
         }}
-      />
+      >
+        Log in or Create an Account
+      </button>
     </div>
   </section>
 

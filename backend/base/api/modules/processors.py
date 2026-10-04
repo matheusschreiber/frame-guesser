@@ -153,6 +153,8 @@ class RunProcessor:
             "run_id": self.run.id,
             "movies_left_amount": self.run.movies_left,
             "frame_path": self.movie_run_current_hint.image.name,
+            "has_hit": self.movie_run.has_hit,
+            "has_missed": self.movie_run.has_missed,
             "hints_used": self.movie_run.hints_used,
             "hints_total": self.movie_run.original_movie.hints_amount,
             "difficulty_level": self.movie_run.original_movie.difficulty_level,

@@ -16,28 +16,38 @@ Players receive progressively clearer image hints, pick the correct movie option
 - End-of-run report with points, accuracy, and average comparison
 - Admin upload tools for frames (single batch or zip bundles)
 
+## 🏗️ Infrastructure & Tech Stack
+
+- **Backend:** Django and Django REST Framework provide the API, with JWT-based authentication.
+- **Database:** MySQL, accessed through Django's ORM.
+- **Frontend:** SvelteKit with Svelte 5 and TypeScript.
+- **Development and deployment:** Docker Compose configurations are provided for development and production. A dedicated Dockerfile supports deploying the backend to Railway.
+- **Frame generation:** Standalone Python scripts generate progressive image hints using OpenCV and a YOLO11n ONNX model.
+
 ## 🖼️ Frame generation pipeline (AI model)
 
 The utility in `scripts/frames/image_gen.py` can generate multiple hint images from source frames by applying progressive visual transformations (blur/pixelate/negative) and exporting zip bundles.
 
-High-level process:
+The pipeline works in two steps:
 
-- Detect key regions (YOLO11n ONNX)
-    - It's the smallest model in the YOLO11 family — fast on CPU, low memory, and more than good enough to spot the dominant subjects in a movie still.
-    - Inference goes through `cv2.dnn.readNetFromONNX` with the CPU target. That means the *only* runtime dependency for hint generation is OpenCV (`opencv-contrib-python-headless`) — no `torch`, no `ultralytics`, no CUDA drivers. Keeps the backend image small and portable.
-- Apply obfuscation progressively on detected regions
+- Detect prominent regions in the frame, such as objects, people, and faces, using YOLO11n ONNX.
+    - As the smallest model in the YOLO11 family, it runs quickly on a CPU with a modest memory footprint and can identify the main subjects in a movie still.
+    - Inference uses `cv2.dnn.readNetFromONNX` with the CPU target. Hint generation requires OpenCV (`opencv-contrib-python-headless`), but not `torch`, `ultralytics`, or CUDA drivers, keeping the backend image smaller and easier to deploy.
+- Apply progressively stronger obfuscation to the detected regions.
 
-This script is used by Staff members in a dedicated page to onboard movies without touching the CLI.
+The script is available through a dedicated page, so staff can add movies without using the command line.
 
 - Log in as a staff account directly on the page.
 - Upload a source image and use the built-in 400×400 cropper (drag + zoom) to frame it.
 - Click **GENERATE HINTS** — the backend runs the image through the AI pipeline described above and streams the hint set back for preview.
-- It is possible to **REGENERATE HINTS** to run the pipeline again on the same crop.
-- The rest of the details such as name, year and director are typed by the user and then saved.
-- The same page also lists all existing movies in list or grid view, with search and difficulty/hint-count badges, to avoid adding duplicate movies.
+- Click **REGENERATE HINTS** to run the pipeline again on the same crop and produce different obfuscation effects.
+- Enter the movie's title, year, and director, then save the movie.
+- Browse existing movies in list or grid view, with search and difficulty and hint-count badges to help avoid duplicates.
 
 ## 📸 Screenshots
 
 ![alt text](screenshot2.png)
 
 ![alt text](screenshot1.png)
+
+![alt text](screenshot3.png)

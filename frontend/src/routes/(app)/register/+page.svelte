@@ -19,12 +19,12 @@
     if (confirmPassword != password) return;
 
     try {
-      const responseFromUserCreation = await api.post("user/create/", {
+      const responseFromUserCreation = await api.post("users/", {
         username,
         password,
       });
 
-      const responseFromTokenAcquisition = await api.post("user/token/", {
+      const responseFromTokenAcquisition = await api.post("users/token/", {
         username,
         password,
       });

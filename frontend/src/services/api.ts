@@ -8,11 +8,10 @@ export const api = axios.create({
 
 // List of urls that don't need the access token
 const nonProtectedUrls = [
-  'user/list/',
-  'movie/list/',
-  'user/create/',
-  'user/token/',
-  'user/message/list/'
+  'movies/titles/',  // movie listing
+  'users/',          // user creation and listing
+  'users/token/',
+  'users/message/list/'
 ]
 
 // This is to add the access token to the request
@@ -58,7 +57,7 @@ api.interceptors.response.use((response) => {
   }
 
   // If the original request is the refresh token, delete the cookie and redirect
-  if (originalRequest.url == '/user/token/refresh/') {
+  if (originalRequest.url == '/users/token/refresh/') {
     deleteCookie('auth')
     window.location.href = "/login";
     return Promise.reject(error);
@@ -93,7 +92,7 @@ api.interceptors.response.use((response) => {
       }
 
       // Refresh the token via API endpoint
-      const response = await api.post('/user/token/refresh/', {"refresh":refreshToken});
+      const response = await api.post('/users/token/refresh/', {"refresh":refreshToken});
       
       // If the response is successful, set the new access token and refresh token in the cookie
       setCookie("auth", JSON.stringify(response.data));

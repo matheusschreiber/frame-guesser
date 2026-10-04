@@ -2,7 +2,7 @@
 
 An interactive movie-frame guessing game built with **Django REST API + SvelteKit frontend**.
 
-Players receive progressively clearer image hints, pick the correct movie/discipline option, and score points based on both difficulty and how quickly they answer.
+Players receive progressively clearer image hints, pick the correct movie option, and score points based on both difficulty and how quickly they answer.
 
 ---
 

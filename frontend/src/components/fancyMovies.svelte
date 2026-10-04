@@ -34,7 +34,7 @@
 
 	async function fetchMovies() {
 		try {
-			const response = await api.get("movie/list/");
+			const response = await api.get("movies/titles/");
 			response.data.map((movie: { name: string, year: number }) => {
 				movies.push(`${movie.name} (${movie.year})`);
 			});

@@ -66,7 +66,7 @@
   async function handleMessage() {
     loading = true;
     try {
-      const response = await api.post("user/message/", {
+      const response = await api.post("users/messages/", {
         message: messageText,
       });
 

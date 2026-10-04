@@ -83,7 +83,7 @@
 
 		let response;
 		try {
-			response = await api.put("movie/answer/" + runId, {
+			response = await api.put("movies/answer/" + runId, {
 				answer: options[selected ? selected : 0],
 			});
 		} catch (err: any) {
@@ -146,7 +146,7 @@
 
 		try {
 			currentRun = currentRun ? currentRun : "0";
-			response = await api.get("movie/" + currentRun);
+			response = await api.get("movies/next/" + currentRun);
 		} catch (err: any) {
 			if (err.response.status === 301) {
 				goto(`/results`);
@@ -186,7 +186,7 @@
 		}
 
 		try {
-			const response = await api.post("movie/hint/" + runId);
+			const response = await api.post("movies/hints/" + runId);
 			let newUrl = import.meta.env.VITE_API_URL + "/" + response.data.frame_path;
 			await preloadImage(newUrl);
 			frame = newUrl

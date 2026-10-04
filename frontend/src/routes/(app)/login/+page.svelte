@@ -40,7 +40,7 @@
     try {
       loading = true;
       const response = await api.post(
-        "user/token/",
+        "users/token/",
         {
           username,
           password

@@ -7,6 +7,8 @@ from base.api.serializers import (
 )
 from base.models import Message, Run, User
 from django.contrib.auth.hashers import make_password  # type: ignore
+from django.views.decorators.csrf import csrf_exempt  # type: ignore
+from django.views.decorators.http import require_http_methods  # type: ignore
 from rest_framework import status  # type: ignore
 from rest_framework.decorators import api_view, permission_classes  # type: ignore
 from rest_framework.permissions import IsAuthenticated  # type: ignore
@@ -15,6 +17,14 @@ from rest_framework_simplejwt.serializers import (  # type: ignore
     TokenObtainPairSerializer,  # type: ignore
 )
 from rest_framework_simplejwt.views import TokenObtainPairView  # type: ignore
+
+
+@csrf_exempt
+@require_http_methods(["GET", "POST"])
+def usersHandler(request):
+    if request.method == "POST":
+        return createUser(request)
+    return getUsers(request)
 
 
 @api_view(["GET"])
@@ -90,6 +100,14 @@ def profanity_filter(text: str):
     return filtered_text
 
 
+@csrf_exempt
+@require_http_methods(["GET", "POST"])
+def messagesHandler(request):
+    if request.method == "POST":
+        return addMessageToUser(request)
+    return getMessages(request)
+
+
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def addMessageToUser(request):
@@ -136,7 +154,7 @@ def addMessageToUser(request):
         return Response(
             data={"error": "User not found"}, status=status.HTTP_400_BAD_REQUEST
         )
-    except Exception as erro:
+    except Exception as erro:  # noqa: BLE001
         print(erro)
 
         return Response(
@@ -146,7 +164,7 @@ def addMessageToUser(request):
 
 @api_view(["GET"])
 def getMessages(request):
-    messages = list()
+    messages = []
 
     for message in Message.objects.all():
         messages.append({"username": message.user.username, "text": message.text})

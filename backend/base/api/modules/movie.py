@@ -46,7 +46,6 @@ def create_new_movie_run(movie, run, movie_alternatives):
 def movie_run_has_ended(movie_run):
     return movie_run.hints_used == movie_run.original_movie.hints_amount
 
-
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def getNextMovie(request, pk=None):
@@ -59,7 +58,8 @@ def getNextMovie(request, pk=None):
     amount_movie_alternatives = int(amount_movie_alternatives.value) if amount_movie_alternatives else 4
     
     run_processor = RunProcessor(
-        pk, request.user.id, 
+        pk, # run_id 
+        request.user.id, 
         max_movies_per_run, 
         max_points_per_movie_run, 
         amount_movie_alternatives
@@ -489,7 +489,7 @@ def listMoviesAdmin(request):
 
 
 @api_view(["GET"])
-def listMovies(request):
+def listMoviesTitles(request):
     movies = Movie.objects.all().order_by("-created")
 
     data = []

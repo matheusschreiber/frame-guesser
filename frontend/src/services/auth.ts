@@ -6,12 +6,12 @@ export async function createNewAccount() {
     let username = "Guest_" + Math.random().toString().substring(2, 15);
 
     try {
-        const responseFromUserCreation = await api.post("user/create/", {
+        const responseFromUserCreation = await api.post("users/", {
             username: username,
             password: username,
         });
 
-        const responseFromTokenAcquisition = await api.post("user/token/", {
+        const responseFromTokenAcquisition = await api.post("users/token/", {
             username: username,
             password: username,
         });

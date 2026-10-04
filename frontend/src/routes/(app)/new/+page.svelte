@@ -76,7 +76,7 @@
   async function fetchMovies(q: string = "") {
     try {
       loadingMovies = true;
-      const response = await api.get("movie/list/admin/", { params: q ? { q } : {} });
+      const response = await api.get("movies/admin/", { params: q ? { q } : {} });
       movies = response.data;
     } catch {
       // Silent — list is a helper, not the main action.
@@ -111,7 +111,7 @@
     }
     try {
       loggingIn = true;
-      const response = await api.post("user/token/", {
+      const response = await api.post("users/token/", {
         username: loginUsername,
         password: loginPassword,
       });
@@ -298,7 +298,7 @@
       const formData = new FormData();
       formData.append("image", blob, filename);
 
-      const response = await api.post("movie/generate-hints/", formData, {
+      const response = await api.post("movies/hints/", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       if (response.status === 200) {
@@ -332,7 +332,7 @@
         formData.append("images", dataUrlToBlob(dataUrl), `hint${idx}.png`);
       });
 
-      const response = await api.post("movie/new/", formData, {
+      const response = await api.post("movies/", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       if (response.status === 201) {

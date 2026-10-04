@@ -101,7 +101,7 @@
 
   async function fetchUsers() {
     try {
-      const response = await api.get("user/list/");
+      const response = await api.get("users/");
       users = response.data;
     } catch (error) {
       apiError = true;
@@ -110,7 +110,7 @@
 
   async function fetchMessages() {
     try {
-      const response = await api.get("user/message/list/");
+      const response = await api.get("users/messages/");
       messages = response.data;
       messages_reversed = [...response.data].reverse();
       fetchingMessages = false;

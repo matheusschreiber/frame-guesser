@@ -11,12 +11,14 @@ const nonProtectedUrls = [
   'movies/titles/',  // movie listing
   'users/',          // user creation and listing
   'users/token/',
-  'users/messages/'
 ]
 
 // This is to add the access token to the request
 api.interceptors.request.use((request) => {
   if (request.url && nonProtectedUrls.includes(request.url)) return request
+
+  // TODO: do this properly later
+  if (request.url && request.url == 'users/messages/' && request.method?.toUpperCase() == 'GET') return request
   
   // Get the access token from the cookie
   const rawTokens = getCookie('auth');

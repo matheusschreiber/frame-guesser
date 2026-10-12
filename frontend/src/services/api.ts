@@ -11,7 +11,7 @@ const nonProtectedUrls = [
   'movies/titles/',  // movie listing
   'users/',          // user creation and listing
   'users/token/',
-  'users/message/list/'
+  'users/messages/'
 ]
 
 // This is to add the access token to the request
@@ -23,6 +23,7 @@ api.interceptors.request.use((request) => {
 
   // If there is no access token, redirect to login
   if (!rawTokens) {
+    console.log(request.url)
     goto('/login');
     return request
   }

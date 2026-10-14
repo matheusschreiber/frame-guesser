@@ -65,3 +65,8 @@ class MovieStatsTests(APITestCase):
     def test_non_integer_params_return_400(self):
         response = self.client.get(self.url, {"limit": "abc"})
         self.assertEqual(response.status_code, 400)
+        
+    def test_min_plays_exact_value(self):
+        make_movie("MINPLAYS", hits=2, misses=4)  # 0.333
+        response = self.client.get(self.url, {"min_plays": 6})
+        self.assertIn("MINPLAYS", [m["name"] for m in response.data])

@@ -5,7 +5,8 @@ from base.api.modules.processors import RunProcessor
 from base.api.serializers import MovieRunSerializer
 from base.models import Config, Frame, Movie, MovieRun, Run, User
 from django.core.files.uploadedfile import UploadedFile  # type: ignore
-from django.db.models import Q  # type: ignore
+from django.db.models import F, FloatField, Q  # type: ignore
+from django.db.models.functions import Cast  # type: ignore
 from rest_framework import status  # type: ignore
 from rest_framework.decorators import (  # type: ignore
     api_view,
@@ -20,6 +21,9 @@ from rest_framework.permissions import (  # type: ignore
 from rest_framework.response import Response  # type: ignore
 
 REQUIRED_IMAGE_SIZE = (400, 400)
+DEFAULT_STATS_MIN_PLAYS = 5
+DEFAULT_STATS_LIMIT = 10
+MAX_STATS_LIMIT = 50
 
 def create_new_movie_run(movie, run, movie_alternatives):
     new_movie_run = MovieRunSerializer(
@@ -503,3 +507,69 @@ def listMoviesTitles(request):
 
     return Response(data=data, status=status.HTTP_200_OK)
 
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def listMovieStats(request):
+    """
+    Rank movies by hit rate, where hit rate = hits / (hits + misses).
+
+    Query params:
+      order:     "hardest" (lowest hit rate first, default) or "easiest"
+      min_plays: only include movies played at least this many times
+                 (default 5, minimum effective value 1)
+      limit:     maximum number of movies returned (default 10, max 50)
+    """
+    order = request.query_params.get("order", "hardest")
+    if order not in ("hardest", "easiest"):
+        return Response(
+            data={"error": "order must be 'hardest' or 'easiest'."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    try:
+        min_plays = int(request.query_params.get("min_plays", DEFAULT_STATS_MIN_PLAYS))
+        limit = int(request.query_params.get("limit", DEFAULT_STATS_LIMIT))
+    except ValueError:
+        return Response(
+            data={"error": "min_plays and limit must be integers."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    if min_plays < 0 or limit < 1:
+        return Response(
+            data={"error": "min_plays must be >= 0 and limit must be >= 1."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    limit = min(limit, MAX_STATS_LIMIT)
+    # a movie with zero plays has no hit rate, so never include it
+    min_plays = max(min_plays, 1)
+
+    movies = (
+        Movie.objects.annotate(plays=F("total_hits") + F("total_misses"))
+        .filter(plays__gt=min_plays)
+        .annotate(hit_rate=Cast(F("total_hits"), FloatField()) / Cast(F("plays"), FloatField()))
+    )
+
+    if order == "hardest":
+        movies = movies.order_by("hit_rate", "-plays", "id")
+    else:
+        movies = movies.order_by("-hit_rate", "-plays", "id")
+
+    data = [
+        {
+            "id": movie.id,
+            "name": movie.name,
+            "year": movie.year,
+            "director": movie.director,
+            "difficulty_level": movie.difficulty_level,
+            "plays": movie.plays,
+            "hits": movie.total_hits,
+            "misses": movie.total_misses,
+            "hit_rate": round(movie.hit_rate, 3),
+        }
+        for movie in movies[:limit]
+    ]
+
+    return Response(data=data, status=status.HTTP_200_OK)

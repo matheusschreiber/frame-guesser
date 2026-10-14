@@ -1,3 +1,4 @@
+import math
 import re
 
 from base.api.serializers import (
@@ -17,6 +18,71 @@ from rest_framework_simplejwt.serializers import (  # type: ignore
     TokenObtainPairSerializer,  # type: ignore
 )
 from rest_framework_simplejwt.views import TokenObtainPairView  # type: ignore
+
+
+DEFAULT_LEADERBOARD_PAGE_SIZE = 10
+MAX_LEADERBOARD_PAGE_SIZE = 50
+
+
+@api_view(["GET"])
+def getLeaderboard(request):
+    """
+    Paginated leaderboard of players, ordered by total points (highest first).
+    Ties are broken alphabetically by username so pages are stable.
+
+    Query params:
+      page:      1-based page number (default 1)
+      page_size: players per page (default 10, max 50)
+
+    Each result has a global `rank` (1 = best player overall, not per page)
+    and an `accuracy` between 0 and 1 (hits / (hits + misses)).
+    """
+    try:
+        page = int(request.query_params.get("page", 1))
+        page_size = int(
+            request.query_params.get("page_size", DEFAULT_LEADERBOARD_PAGE_SIZE)
+        )
+    except ValueError:
+        return Response(
+            data={"error": "page and page_size must be integers."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    if page < 1 or page_size < 1:
+        return Response(
+            data={"error": "page and page_size must be >= 1."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    page_size = min(page_size, MAX_LEADERBOARD_PAGE_SIZE)
+
+    total = User.objects.count()
+    offset = (page - 1) * page_size
+    users = User.objects.order_by("-total_points", "username")[offset : offset + page_size]
+
+    results = []
+    for rank, user in enumerate(users, start=1):
+        attempts = user.total_hits + user.total_misses
+        accuracy = round(user.total_hits / attempts, 3) if attempts else 0.0
+        results.append(
+            {
+                "rank": rank,
+                "username": user.username,
+                "total_points": user.total_points,
+                "accuracy": accuracy,
+            }
+        )
+
+    return Response(
+        data={
+            "page": page,
+            "page_size": page_size,
+            "total": total,
+            "total_pages": math.ceil(total / page_size),
+            "results": results,
+        },
+        status=status.HTTP_200_OK,
+    )
 
 
 @csrf_exempt

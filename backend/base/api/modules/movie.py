@@ -20,6 +20,9 @@ from rest_framework.permissions import (  # type: ignore
 from rest_framework.response import Response  # type: ignore
 
 REQUIRED_IMAGE_SIZE = (400, 400)
+RUN_STATUSES = ("all", "finished", "in_progress")
+DEFAULT_RUNS_LIMIT = 20
+MAX_RUNS_LIMIT = 100
 
 def create_new_movie_run(movie, run, movie_alternatives):
     new_movie_run = MovieRunSerializer(
@@ -503,3 +506,57 @@ def listMoviesTitles(request):
 
     return Response(data=data, status=status.HTTP_200_OK)
 
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def listMyRuns(request):
+    """
+    List the authenticated user's own runs, newest first.
+
+    Query params:
+      status: "all" (default), "finished" (no movies left) or "in_progress"
+      limit:  maximum number of runs returned (default 20, max 100)
+    """
+    run_status = request.query_params.get("status", "all")
+    if run_status not in RUN_STATUSES:
+        return Response(
+            data={"error": f"status must be one of {', '.join(RUN_STATUSES)}."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    try:
+        limit = int(request.query_params.get("limit", DEFAULT_RUNS_LIMIT))
+    except ValueError:
+        return Response(
+            data={"error": "limit must be an integer."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    if limit < 1:
+        return Response(
+            data={"error": "limit must be >= 1."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    limit = min(limit, MAX_RUNS_LIMIT)
+
+    runs = Run.objects.filter(user=request.user)
+    if run_status == "finished":
+        runs = Run.objects.filter(movies_left=0)
+    elif run_status == "in_progress":
+        runs = runs.filter(movies_left__gt=0)
+
+    runs = runs.order_by("-created", "-id")[:limit]
+
+    data = [
+        {
+            "id": run.id,
+            "created": run.created,
+            "total_points": round(run.total_points, 2),
+            "movies_left": run.movies_left,
+            "status": "finished" if run.movies_left == 0 else "in_progress",
+        }
+        for run in runs
+    ]
+
+    return Response(data=data, status=status.HTTP_200_OK)

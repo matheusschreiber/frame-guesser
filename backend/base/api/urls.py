@@ -5,6 +5,7 @@ from base.api.modules.movie import (
     getHint,
     getHistoryRun,
     getNextMovie,
+    listMyRuns,
     listMoviesAdmin,
     listMoviesTitles,
 )
@@ -32,5 +33,6 @@ urlpatterns = [
     path("movies/hints/<str:pk>", getHint, name="hint_movie"),
     path("movies/answer/<str:pk>", getAnswerMovie, name="answer_movie"),
     
+    path("users/me/runs/", listMyRuns, name="list_my_runs"),
     path("history/<str:pk>", getHistoryRun, name='get_history'),
 ]

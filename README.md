@@ -13,6 +13,7 @@ Players receive progressively clearer image hints, pick the correct movie option
 - Progressive hints per frame (request next hint anytime)
 - Scoring based on hint usage + frame difficulty
 - Leaderboard/home feed with users + feedback messages
+- My runs endpoint (`GET /users/me/runs/`) listing your own runs, filterable by status
 - End-of-run report with points, accuracy, and average comparison
 - Admin upload tools for frames (single batch or zip bundles)
 

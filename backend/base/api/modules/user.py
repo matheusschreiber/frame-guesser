@@ -1,5 +1,6 @@
 import re
 
+from base.api.modules.streaks import compute_streaks
 from base.api.serializers import (
     FilteredUserSerializer,
     MessageSerializer,
@@ -7,6 +8,7 @@ from base.api.serializers import (
 )
 from base.models import Message, Run, User
 from django.contrib.auth.hashers import make_password  # type: ignore
+from django.utils import timezone  # type: ignore
 from django.views.decorators.csrf import csrf_exempt  # type: ignore
 from django.views.decorators.http import require_http_methods  # type: ignore
 from rest_framework import status  # type: ignore
@@ -170,3 +172,20 @@ def getMessages(request):
         messages.append({"username": message.user.username, "text": message.text})
 
     return Response(data=messages, status=status.HTTP_200_OK)
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def getMyStreak(request):
+    """
+    Daily play streak of the authenticated user (see compute_streaks).
+    Days are counted in the server's current timezone.
+    """
+    created_dates = Run.objects.filter(user=request.user).values_list(
+        "created", flat=True
+    )
+    played_days = [timezone.localtime(created).date() for created in created_dates]
+
+    streaks = compute_streaks(played_days, today=timezone.localdate())
+
+    return Response(data=streaks, status=status.HTTP_200_OK)

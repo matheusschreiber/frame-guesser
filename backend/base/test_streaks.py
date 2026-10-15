@@ -1,4 +1,4 @@
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 
 from base.api.modules.streaks import compute_streaks
 from base.models import Run, User
@@ -56,6 +56,7 @@ class ComputeStreaksTests(SimpleTestCase):
         result = compute_streaks(days_ago(0, 2, 1), TODAY)
 
         self.assertEqual(result["current_streak"], 3)
+        self.assertEqual(result["longest_streak"], 3)
 
     def test_gap_of_one_day_breaks_the_streak(self):
         result = compute_streaks(days_ago(3, 1, 0), TODAY)
@@ -67,6 +68,12 @@ class ComputeStreaksTests(SimpleTestCase):
         days = [date(2024, 2, 28), date(2024, 2, 29), date(2024, 3, 1)]
 
         self.assertEqual(compute_streaks(days, date(2024, 3, 1))["current_streak"], 3)
+        
+    def test_duplicate_dates(self):
+        result = compute_streaks(days_ago(2, 1, 1, 0), TODAY)
+
+        self.assertEqual(result["current_streak"], 3)
+        self.assertEqual(result["longest_streak"], 3)
 
 
 # CreateAdminMiddleware recreates an "admin" user on every request; irrelevant here

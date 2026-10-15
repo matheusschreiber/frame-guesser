@@ -13,6 +13,7 @@ Players receive progressively clearer image hints, pick the correct movie option
 - Progressive hints per frame (request next hint anytime)
 - Scoring based on hint usage + frame difficulty
 - Leaderboard/home feed with users + feedback messages
+- Run history endpoint (`GET /users/me/history/`) listing your recent runs with the movies played
 - End-of-run report with points, accuracy, and average comparison
 - Admin upload tools for frames (single batch or zip bundles)
 

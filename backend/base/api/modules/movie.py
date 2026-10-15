@@ -20,6 +20,8 @@ from rest_framework.permissions import (  # type: ignore
 from rest_framework.response import Response  # type: ignore
 
 REQUIRED_IMAGE_SIZE = (400, 400)
+DEFAULT_HISTORY_LIMIT = 10
+MAX_HISTORY_LIMIT = 50
 
 def create_new_movie_run(movie, run, movie_alternatives):
     new_movie_run = MovieRunSerializer(
@@ -503,3 +505,61 @@ def listMoviesTitles(request):
 
     return Response(data=data, status=status.HTTP_200_OK)
 
+
+def _serialize_run(run):
+    movies = [
+        {
+            "name": movie_run.original_movie.name,
+            "year": movie_run.original_movie.year,
+            "has_hit": movie_run.has_hit,
+            "hints_used": movie_run.hints_used,
+            "points": round(movie_run.points, 2),
+        }
+        for movie_run in run.movierun_set.order_by("id")
+    ]
+
+    return {
+        "id": run.id,
+        "created": run.created,
+        "movies_left": run.movies_left,
+        "total_points": round(run.total_points, 2),
+        "hits": sum(1 for movie in movies if movie["has_hit"]),
+        "movies": movies,
+    }
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def listMyHistory(request):
+    """
+    The authenticated user's most recent runs, newest first, each with the
+    movies that were played in it.
+
+    Query params:
+      limit: maximum number of runs returned (default 10, max 50)
+    """
+    try:
+        limit = int(request.query_params.get("limit", DEFAULT_HISTORY_LIMIT))
+    except ValueError:
+        return Response(
+            data={"error": "limit must be an integer."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    if limit < 1:
+        return Response(
+            data={"error": "limit must be >= 1."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    limit = min(limit, MAX_HISTORY_LIMIT)
+
+    runs = (
+        Run.objects.filter(user=request.user)
+        .select_related("user")
+        .order_by("-created", "-id")[:limit]
+    )
+
+    data = [_serialize_run(run) for run in runs]
+
+    return Response(data=data, status=status.HTTP_200_OK)

@@ -1,5 +1,6 @@
 import re
 
+from base.api.modules.summary import average_points, hit_rate_percent
 from base.api.serializers import (
     FilteredUserSerializer,
     MessageSerializer,
@@ -7,6 +8,7 @@ from base.api.serializers import (
 )
 from base.models import Message, Run, User
 from django.contrib.auth.hashers import make_password  # type: ignore
+from django.db.models import Count, Max, Q, Sum  # type: ignore
 from django.views.decorators.csrf import csrf_exempt  # type: ignore
 from django.views.decorators.http import require_http_methods  # type: ignore
 from rest_framework import status  # type: ignore
@@ -170,3 +172,37 @@ def getMessages(request):
         messages.append({"username": message.user.username, "text": message.text})
 
     return Response(data=messages, status=status.HTTP_200_OK)
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def getMySummary(request):
+    """
+    Profile summary of the authenticated user: answers, hit rate and runs.
+    A run counts as finished when it has no movies left.
+    """
+    user = request.user
+
+    runs = Run.objects.filter(user=user).aggregate(
+        runs_played=Count("id"),
+        finished_runs=Count("id", filter=Q(movies_left=0)),
+        finished_points=Sum("total_points", filter=Q(movies_left=0)),
+        best_run_points=Max("total_points"),
+    )
+
+    finished_runs = runs["finished_runs"]
+
+    data = {
+        "username": user.username,
+        "hits": user.total_hits,
+        "misses": user.total_misses,
+        "hit_rate_percent": hit_rate_percent(user.total_hits, user.total_misses),
+        "runs_played": runs["runs_played"],
+        "finished_runs": finished_runs,
+        "best_run_points": round(runs["best_run_points"] or 0.0, 2),
+        "average_points_per_finished_run": average_points(
+            runs["finished_points"] or 0.0, finished_runs
+        ),
+    }
+
+    return Response(data=data, status=status.HTTP_200_OK)

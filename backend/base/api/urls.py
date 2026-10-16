@@ -10,6 +10,7 @@ from base.api.modules.movie import (
 )
 from base.api.modules.user import (
     MyTokenObtainPairView,
+    getMySummary,
     messagesHandler,
     usersHandler,
 )
@@ -21,6 +22,7 @@ from rest_framework_simplejwt.views import (  # type: ignore
 urlpatterns = [
     path('users/token/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('users/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path("users/me/summary/", getMySummary, name="my_summary"),
     path('users/', usersHandler, name='users_create_and_list'),
     path("users/messages/", messagesHandler, name='message_create_and_list'),
 

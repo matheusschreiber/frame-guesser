@@ -1,12 +1,14 @@
 import re
 
+from base.api.modules.hit_streak import longest_hit_streak
 from base.api.serializers import (
     FilteredUserSerializer,
     MessageSerializer,
     UserSerializer,
 )
-from base.models import Message, Run, User
+from base.models import Message, MovieRun, Run, User
 from django.contrib.auth.hashers import make_password  # type: ignore
+from django.db.models import Q  # type: ignore
 from django.views.decorators.csrf import csrf_exempt  # type: ignore
 from django.views.decorators.http import require_http_methods  # type: ignore
 from rest_framework import status  # type: ignore
@@ -170,3 +172,28 @@ def getMessages(request):
         messages.append({"username": message.user.username, "text": message.text})
 
     return Response(data=messages, status=status.HTTP_200_OK)
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def getMyBestStreak(request):
+    """
+    Longest streak of correct answers of the authenticated user, counting all
+    the movies they answered (hit or miss) in the order they were played.
+    Movies that were left unanswered are ignored.
+    """
+    answered = (
+        MovieRun.objects.filter(run__user=request.user)
+        .filter(Q(has_hit=True) | Q(has_missed=True))
+        .order_by("id")
+        .values_list("has_hit", flat=True)
+    )
+
+    results = list(answered)
+
+    data = {
+        "best_hit_streak": longest_hit_streak(results),
+        "movies_answered": len(results),
+    }
+
+    return Response(data=data, status=status.HTTP_200_OK)

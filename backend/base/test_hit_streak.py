@@ -23,6 +23,9 @@ class LongestHitStreakTests(SimpleTestCase):
         self.assertEqual(
             longest_hit_streak([True, True, True, False, True, True, False]), 3
         )
+    
+    def test_all_hits(self):
+        self.assertEqual(longest_hit_streak([True, True, True]), 3)
 
     def test_earlier_streak_wins_over_a_later_shorter_one(self):
         self.assertEqual(longest_hit_streak([True, True, True, False, True]), 3)
@@ -98,3 +101,37 @@ class MyBestStreakViewTests(APITestCase):
 
         self.assertEqual(response.data["best_hit_streak"], 1)
         self.assertEqual(response.data["movies_answered"], 2)
+        
+    def test_different_creation_order(self):
+        mr1 = MovieRun.objects.create(
+            run=Run.objects.create(user=self.user, movies_left=0, total_points=0),
+            original_movie=self.movie,
+            has_hit=True,
+            has_missed=False,
+        )
+        
+        mr2 = MovieRun.objects.create(
+            run=Run.objects.create(user=self.user, movies_left=0, total_points=0),
+            original_movie=self.movie,
+            has_hit=False,
+            has_missed=True,
+        )
+        
+        mr3 = MovieRun.objects.create(
+            run=Run.objects.create(user=self.user, movies_left=0, total_points=0),
+            original_movie=self.movie,
+            has_hit=True,
+            has_missed=False,
+        )
+        
+        mr1.id = 1
+        mr3.id = 2
+        mr2.id = 3
+        mr1.save()
+        mr2.save()
+        mr3.save()
+    
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.data["best_hit_streak"], 1)
+        self.assertEqual(response.data["movies_answered"], 3)

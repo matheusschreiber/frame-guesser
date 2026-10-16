@@ -28,6 +28,9 @@ class HitRatePercentTests(SimpleTestCase):
 
     def test_halves_round_up(self):
         self.assertEqual(hit_rate_percent(7, 1), 88)  # 87.5
+        
+    def test_almost_almost_all_hits(self):
+        self.assertEqual(hit_rate_percent(199, 1), 100)  # 99.5
 
 
 class AveragePointsTests(SimpleTestCase):
@@ -85,6 +88,13 @@ class MySummaryViewTests(APITestCase):
         self.assertEqual(response.data["finished_runs"], 2)
         self.assertEqual(response.data["best_run_points"], 99.0)
         self.assertEqual(response.data["average_points_per_finished_run"], 30.0)
+        
+    def test_round_builtin_function(self):
+        self.user.total_hits=5
+        self.user.total_misses=3
+        self.user.save()
+        response = self.client.get(self.url)
+        self.assertEqual(response.data["hit_rate_percent"], 63) 
 
     def test_ignores_other_users_runs(self):
         other = User.objects.create_user(username="other", password="secret123")

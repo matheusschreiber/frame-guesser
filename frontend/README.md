@@ -25,6 +25,24 @@ npm run dev
 npm run dev -- --open
 ```
 
+## Maintenance Mode
+
+Set `MAINTENANCE_MODE=true` in `frontend/.env` (use `frontend/.env.example`
+for a new environment), or set it in your hosting provider's frontend environment
+variables. Restart the dev server after changing `.env`; restart or redeploy the
+frontend in production so the running server receives the updated value.
+
+While enabled, every frontend page URL redirects to `/maintenance`, including
+unknown URLs. The maintenance page returns HTTP 503 with `Retry-After: 300` and
+`Cache-Control: no-store`. Static assets remain available, and regular pages do
+not load or make backend requests. The backend itself is not put into maintenance.
+
+Set `MAINTENANCE_MODE=false` (or remove it) and restart/redeploy to restore the
+normal routes. `/maintenance` then redirects to `/home`. Only the exact value
+`true` enables maintenance. This is a server-side variable; no `VITE_` prefix is
+needed. Visitors already on an open page will enter maintenance on their next
+navigation or reload.
+
 ## Building
 
 To create a production version of your app:

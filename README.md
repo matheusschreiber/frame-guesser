@@ -1,6 +1,21 @@
-# 🎬 Frame Guesser
+<h1 align="center">🎬 Frame Guesser</h1>
 
-An interactive movie-frame guessing game built with **Django REST API + SvelteKit frontend**.
+<p align="center">
+  An interactive movie-frame guessing game built with <b>Django REST API + SvelteKit frontend</b>.
+</p>
+
+<p align="center">
+  <img alt="Django" src="https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=django&logoColor=white">
+  <img alt="SvelteKit" src="https://img.shields.io/badge/SvelteKit-FF3E00?style=for-the-badge&logo=svelte&logoColor=white">
+  <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white">
+  <img alt="MySQL" src="https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white">
+  <img alt="Docker" src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white">
+  <img alt="OpenCV" src="https://img.shields.io/badge/OpenCV-5C3EE8?style=for-the-badge&logo=opencv&logoColor=white">
+</p>
+
+<p align="center">
+  <img alt="Frame Guesser gameplay" src="screenshot1.png">
+</p>
 
 Players receive progressively clearer image hints, pick the correct movie option, and score points based on both difficulty and how quickly they answer.
 
@@ -48,6 +63,8 @@ The script is available through a dedicated page, so staff can add movies withou
 
 ![alt text](screenshot2.png)
 
-![alt text](screenshot1.png)
+![alt text](screenshot4.png)
+
+![alt text](screenshot5.png)
 
 ![alt text](screenshot3.png)
